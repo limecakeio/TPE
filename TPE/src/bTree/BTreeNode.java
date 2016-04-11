@@ -3,16 +3,16 @@ package bTree;
 public class BTreeNode {
 
 	private Integer [] values;
-	private BTreeNode [] children;
+	private BTreeNode [] childrenNodes;
 
 	// SETUP BTREE NODE
 	BTreeNode(int magnitude){
 
 		// array length: (magnitude x2)+1
 		values = new Integer [(magnitude*2)+1];
-		children = new BTreeNode [(magnitude*2)+1];
+		childrenNodes = new BTreeNode [(magnitude*2)+2];
 		
-		setChildren(children);
+		setNullReferences(childrenNodes);
 		
 	}
 
@@ -20,11 +20,11 @@ public class BTreeNode {
 
 		// array length: (magnitude x2)+1
 		values = new Integer [(magnitude*2)+1];
-		children = new BTreeNode [(magnitude*2)+1];
+		childrenNodes = new BTreeNode [(magnitude*2)+2];
 		
 		// set values
 		values[0] = value;
-		setChildren(children);
+		setNullReferences(childrenNodes);
 	}
 
 	// BTREE NODE MTHODS
@@ -37,11 +37,11 @@ public class BTreeNode {
 	}
 	
 	public BTreeNode getChild(int index){
-		return children[index];
+		return childrenNodes[index];
 	}
 	
 	// SPECIAL
-	private BTreeNode[] setChildren(BTreeNode[] children){
+	private BTreeNode[] setNullReferences(BTreeNode[] children){
 		
 		for(int i = 0; i < children.length; i++){
 			children [i] = null;
