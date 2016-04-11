@@ -17,7 +17,30 @@ public class BTree implements BTreeInterface{
 	// CORE INTERFACE METHODS
 	public boolean insert(Integer o){
 		
-		return false;
+		BTreeNode pointer = root;
+		return insert(o, pointer);
+	}
+	private boolean insert(Integer o, BTreeNode pointer){
+		
+		int i = 0;
+		Integer [] values = pointer.getValuesFull();
+		
+		if (values[i] == null){
+			pointer.setValues(o, i);
+			return true;
+		}
+		else if (o.compareTo(values[i]) == -1){
+				pointer = pointer.getChild(i);
+				return insert(o, pointer);
+		}
+		else if (o.compareTo(values[i]) == 1){
+				while (o.compareTo(values[i]) == 1 && i < values.length-1){
+					i++;
+				}
+			pointer = pointer.getChild(i);
+			return insert(o, pointer);
+		}
+		else return false;
 	}
 
 	public boolean insert(String filename) {
