@@ -11,7 +11,7 @@ public class BTreeNode {
 		// array length: (magnitude x2)+1
 		values = new Integer [(magnitude*2)+1];
 		childrenNodes = new BTreeNode [(magnitude*2)+2];
-		
+	
 		setNullReferences(childrenNodes);
 		
 	}
@@ -34,6 +34,10 @@ public class BTreeNode {
 
 	public Integer getValues(int index){
 		return values[index];
+	}
+	
+	public Integer[] getValuesFull(){
+		return values;
 	}
 	
 	public BTreeNode getChild(int index){

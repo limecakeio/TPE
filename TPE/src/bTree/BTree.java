@@ -6,18 +6,17 @@ public class BTree implements BTreeInterface{
 	
 	// B-TREE SET UP
 	
-	public BTree(){
-		// TODO Auto-generated constructor stub
+	public BTree(int magnitude){
+		root = new BTreeNode(magnitude);
 	}
 	
-	public BTree(Integer o){
-		// TODO Auto-generated constructor stub
+	public BTree(int magnitude, Integer o){
+		root = new BTreeNode(magnitude, o);
 	}
 	
 	// CORE INTERFACE METHODS
-	
-	public boolean insert(Integer o) {
-		// TODO Auto-generated method stub
+	public boolean insert(Integer o){
+		
 		return false;
 	}
 
