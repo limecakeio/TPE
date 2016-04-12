@@ -2,47 +2,28 @@ package bTree;
 
 public class BTree implements BTreeInterface{
 	
+	private int magnitude;
 	private BTreeNode root;
 	
 	// B-TREE SET UP
 	
 	public BTree(int magnitude){
-		root = new BTreeNode(magnitude);
+		root = null;
+		this.magnitude = magnitude;
 	}
 	
-	public BTree(int magnitude, Integer o){
+	public BTree(Integer o, int magnitude){
 		root = new BTreeNode(magnitude, o);
+		this.magnitude = magnitude;
 	}
 	
 	// CORE INTERFACE METHODS
 	public boolean insert(Integer o){
 		
-		BTreeNode pointer = root;
-		return insert(o, pointer);
+		// TODO Auto-generated method stub
+		return false;
 	}
-	private boolean insert(Integer o, BTreeNode pointer){
-		
-		int i = 0;
-		Integer [] values = pointer.getValuesFull();
-		
-		if (values[i] == null){
-			pointer.setValues(o, i);
-			return true;
-		}
-		else if (o.compareTo(values[i]) == -1){
-				pointer = pointer.getChild(i);
-				return insert(o, pointer);
-		}
-		else if (o.compareTo(values[i]) == 1){
-				while (o.compareTo(values[i]) == 1 && i < values.length-1){
-					i++;
-				}
-			pointer = pointer.getChild(i);
-			return insert(o, pointer);
-		}
-		else return false;
-	}
-
+	
 	public boolean insert(String filename) {
 		// TODO Auto-generated method stub
 		return false;
@@ -101,5 +82,53 @@ public class BTree implements BTreeInterface{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	// SPECIAL METHODS
+	
+	private BTreeNode preinsert(Integer o){
+		
+		int i = 0;
+		boolean found = false;
+		BTreeNode parent = null;
+		BTreeNode child = root;
+
+		// tree contains elements
+		if (child != null){
+			
+			// search and insert
+			while (!found){
+
+				// check stored value: empty
+				if (child.getValue(i) == null){
+					child.setValues(o, i);
+					found = true;
+				}
+				// check stored value: o > value[i]
+				else if ((child.getValue(i)).compareTo(o) == 1){
+					i++;
+				}
+				// check stored value: o < value[i]
+				else if ((child.getValue(i)).compareTo(o) == -1){
+
+					// check left child: not present
+					if (child.getChild(i) == null){
+						i++;
+					}
+					// check left child: present
+					else {
+						parent = child;
+						child = child.getChild(i);
+						i = 0;
+					}
+				}
+			}
+		}
+		// tree is empty
+		else {
+			root = new BTreeNode(o, magnitude);
+		}
+		return parent;
+	}
+	
 	
 }
