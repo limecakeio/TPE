@@ -19,8 +19,9 @@ public class BTree implements BTreeInterface{
 	
 	// CORE INTERFACE METHODS
 	public boolean insert(Integer o){
+
+		BTreeNode node = preinsert(o);
 		
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
@@ -85,49 +86,61 @@ public class BTree implements BTreeInterface{
 	
 	// SPECIAL METHODS
 	
+	// public for testing
 	private BTreeNode preinsert(Integer o){
 		
 		int i = 0;
 		boolean found = false;
-		BTreeNode parent = null;
-		BTreeNode child = root;
+		BTreeNode pointer = root;
 
 		// tree contains elements
-		if (child != null){
+		if (pointer != null){
 			
 			// search and insert
 			while (!found){
 
 				// check stored value: empty
-				if (child.getValue(i) == null){
-					child.setValues(o, i);
+				if (pointer.getValue(i) == null){
+					pointer.setValues(o, i);
 					found = true;
 				}
 				// check stored value: o > value[i]
-				else if ((child.getValue(i)).compareTo(o) == 1){
-					i++;
-				}
-				// check stored value: o < value[i]
-				else if ((child.getValue(i)).compareTo(o) == -1){
-
-					// check left child: not present
-					if (child.getChild(i) == null){
+				else if ((pointer.getValue(i)).compareTo(o) == 1){
+					
+					// check right child: not present
+					if (pointer.getChild(i+1) == null){
 						i++;
 					}
-					// check left child: present
+					// check right child: descend
 					else {
-						parent = child;
-						child = child.getChild(i);
+						pointer = pointer.getChild(i+1);
 						i = 0;
 					}
+				}
+				// check stored value: o < value[i]
+				else if ((pointer.getValue(i)).compareTo(o) == -1){
+
+					// check left child: not present
+					if (pointer.getChild(i) == null){
+						i++;
+					}
+					// check left child: descend
+					else {
+						pointer = pointer.getChild(i);
+						i = 0;
+					}
+				}
+				// check stored value: o == value[i]
+				else if ((pointer.getValue(i)).compareTo(o) == 0){
+					// we do something here... println?
 				}
 			}
 		}
 		// tree is empty
 		else {
-			root = new BTreeNode(o, magnitude);
+			pointer = new BTreeNode(o, magnitude);
 		}
-		return parent;
+		return pointer;
 	}
 	
 	
