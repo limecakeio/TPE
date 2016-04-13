@@ -33,9 +33,9 @@ public class BTreeRichardTest {
 		Integer b = new Integer(13);
 		Integer c = new Integer(300);
 		Integer d = new Integer(300);
-		assertEquals((bTree.BTreeRichard.compareTo(a, b)), -1);
-		assertEquals((bTree.BTreeRichard.compareTo(c, d)), 0);
-		assertEquals((bTree.BTreeRichard.compareTo(d, a)), 1);
+		assertEquals((a.compareTo(b)), -1);
+		assertEquals((c.compareTo(d)), 0);
+		assertEquals((d.compareTo(a)), 1);
 	}
 
 }
