@@ -28,7 +28,7 @@ public interface BTreeInterface {
 	 */
 	int size();
 	
-	/** Returns the height of the B-Tree as an in value.
+	/** Returns the height of the B-Tree as an int value.
 	 * @return The height of the B-Tree as an int value.
 	 */
 	int height();

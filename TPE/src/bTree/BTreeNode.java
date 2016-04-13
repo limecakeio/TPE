@@ -29,7 +29,7 @@ public class BTreeNode {
 
 	// BTREE NODE MTHODS
 	public void setValues(Integer value, int index){
-		values [index] = value;
+		values[index] = value;
 	}
 
 	public Integer getValues(int index){
