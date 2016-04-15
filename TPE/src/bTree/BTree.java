@@ -13,14 +13,15 @@ public class BTree implements BTreeInterface{
 	}
 	
 	public BTree(Integer o, int magnitude){
-		root = new BTreeNode(magnitude, o);
+		root = new BTreeNode(o, magnitude);
 		this.magnitude = magnitude;
 	}
 	
 	// CORE INTERFACE METHODS
 	public boolean insert(Integer o){
-
-		BTreeNode node = preinsert(o);
+		
+		// -- 1 -- 
+		preinsert(o);
 		
 		return false;
 	}
