@@ -40,12 +40,24 @@ public class Integer {
 		}
 	}
 	
+	//Integer to String
 	public static String toString(Integer o) {
 		String output = "" + transformInteger(o);
 		return output;
 	}
 	
-	//Ensure that no nulls are included when working with array
+	//Integer Array to String (no space at end)
+	public static String toString(Integer[] a) {
+		String output = "";
+		for(int i = 0; i < a.length; i++) {
+			output += transformInteger(a[i]);
+			if(i < a.length-1)
+				output+= " ";
+		}
+		return output;
+	}
+	
+	//Ensure that no null-values are included when working with arrays
 	public static int establishRange(Integer[] array) {
 		int i = 0;
 		while(i < array.length) {
