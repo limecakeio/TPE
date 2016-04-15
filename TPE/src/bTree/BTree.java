@@ -91,19 +91,32 @@ public class BTree implements BTreeInterface{
 	public boolean preinsert(Integer o){
 		
 		int i = 0;
-		boolean found = false;
+		boolean success = false;
+		BTreeNode parent = null;
 		BTreeNode pointer = root;
 
 		// tree contains elements
 		if (pointer != null){
 			
 			// search and insert
-			while (!found){
+			while (!success){
 
 				// check stored value: empty
 				if (pointer.getValue(i) == null){
 					pointer.setValues(o, i);
-					found = true;
+					Integer.insertionSort(pointer.getValues());
+					
+					// check node: overload
+					if (criteriaCheck(pointer)){
+						success = true;
+					}
+					else {
+						// case: root
+						if (parent == null){
+							 //do stuff here
+						}
+
+					}
 				}
 				// check stored value: o > value[i]
 				else if ((pointer.getValue(i)).compareTo(o) == 1){
@@ -145,6 +158,24 @@ public class BTree implements BTreeInterface{
 		// testing
 		pointer.printnode();
 		// testing
-		return found;
+		return success;
+	}
+	
+	private boolean criteriaCheck(BTreeNode pointer){
+		Integer [] values = pointer.getValues();
+		
+		// check last array element
+		if (values[values.length-1] == null)
+			return true;
+		return false;
+	}
+	
+	private boolean leafCheck(BTreeNode pointer){
+		Integer [] values = pointer.getValues();
+		
+		// check last array element
+		if (values[values.length-1] == null && values[values.length-1] == null)
+			return true;
+		return false;
 	}
 }

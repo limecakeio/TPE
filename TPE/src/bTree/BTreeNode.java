@@ -32,6 +32,10 @@ public class BTreeNode {
 		return values[index];
 	}
 	
+	public Integer[] getValues(){
+		return values;
+	}
+	
 	public int getValuesLength(){
 		return values.length;
 	}
