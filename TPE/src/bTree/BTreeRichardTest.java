@@ -37,5 +37,18 @@ public class BTreeRichardTest {
 		assertEquals((c.compareTo(d)), 0);
 		assertEquals((d.compareTo(a)), 1);
 	}
+	@Test
+	public void insertionSortTest() {
+		Integer[] unsorted = {new Integer(10), new Integer(9), new Integer(7), new Integer(23), new Integer(12), new Integer(1), null };
+		
+		for(int i = 0; i < unsorted.length; i++) {
+			System.out.print(Integer.toString(unsorted[i]) + ", ");
+		}
+		System.out.print("\n");
+		Integer.insertionSort(unsorted);
+		for(int i = 0; i < unsorted.length; i++) {
+			System.out.print(Integer.toString(unsorted[i]) + ", ");
+		}
+	}
 
 }
