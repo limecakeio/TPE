@@ -11,9 +11,6 @@ public class BTreeNode {
 		// array length: (magnitude x2)+1
 		values = new Integer [(magnitude*2)+1];
 		childrenNodes = new BTreeNode [(magnitude*2)+2];
-	
-		setNullReferences(childrenNodes);
-		
 	}
 
 	BTreeNode(Integer value, int magnitude){
@@ -24,7 +21,6 @@ public class BTreeNode {
 		
 		// set values
 		values[0] = value;
-		setNullReferences(childrenNodes);
 	}
 
 	// BTREE NODE MTHODS
@@ -45,12 +41,18 @@ public class BTreeNode {
 	}
 	
 	// SPECIAL
-	private BTreeNode[] setNullReferences(BTreeNode[] children){
+	public void printnode(){
+		Integer[] storage = values;
 		
-		for(int i = 0; i < children.length; i++){
-			children [i] = null;
+		for (int i = 0; i != storage.length; i++){
+			if (values[i] == null){
+				System.out.print("null, ");
+			}
+			else {
+				System.out.print(storage[i].transformInteger(storage[i]) +  ", ");
+			}
 		}
-		return children;
+		System.out.println("");
 	}
 
 }

@@ -88,7 +88,7 @@ public class BTree implements BTreeInterface{
 	// SPECIAL METHODS
 	
 	// public for testing
-	private BTreeNode preinsert(Integer o){
+	public boolean preinsert(Integer o){
 		
 		int i = 0;
 		boolean found = false;
@@ -140,9 +140,11 @@ public class BTree implements BTreeInterface{
 		// tree is empty
 		else {
 			pointer = new BTreeNode(o, magnitude);
-		}
-		return pointer;
+			root = pointer;
+		}	
+		// testing
+		pointer.printnode();
+		// testing
+		return found;
 	}
-	
-	
 }
