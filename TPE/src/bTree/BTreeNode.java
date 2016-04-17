@@ -3,21 +3,21 @@ package bTree;
 public class BTreeNode {
 
 	private Integer [] values;
-	private BTreeNode [] childrenNodes;
+	private BTreeNode [] children;
 
 	// SETUP BTREE NODE
 	BTreeNode(int magnitude){
 
 		// array length: (magnitude x2)+1
 		values = new Integer [(magnitude*2)+1];
-		childrenNodes = new BTreeNode [(magnitude*2)+2];
+		children = new BTreeNode [(magnitude*2)+2];
 	}
 
 	BTreeNode(Integer value, int magnitude){
 
 		// array length: (magnitude x2)+1
 		values = new Integer [(magnitude*2)+1];
-		childrenNodes = new BTreeNode [(magnitude*2)+2];
+		children = new BTreeNode [(magnitude*2)+2];
 		
 		// set values
 		values[0] = value;
@@ -36,12 +36,12 @@ public class BTreeNode {
 		return values;
 	}
 	
-	public int getValuesLength(){
-		return values.length;
+	public BTreeNode getChild(int index){
+		return children[index];
 	}
 	
-	public BTreeNode getChild(int index){
-		return childrenNodes[index];
+	public BTreeNode[] getChildren(){
+		return children;
 	}
 	
 	// SPECIAL
@@ -53,7 +53,7 @@ public class BTreeNode {
 				System.out.print("null, ");
 			}
 			else {
-				System.out.print(storage[i].transformInteger(storage[i]) +  ", ");
+				System.out.print(Integer.transformInteger(storage[i]) +  ", ");
 			}
 		}
 		System.out.println("");

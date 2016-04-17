@@ -65,19 +65,107 @@ public class BTree implements BTreeInterface{
 		return false;
 	}
 
-	public void printPreorder() {
-		// TODO Auto-generated method stub
+	/* There is no defined convention for pre-, in- or postorder transversion strategy 
+	 * for working with a B-Tree. We define them as following:
+	 * 
+	 * (1) Preorder
+	 * ------------
+	 * While using the preorder transversion strategy, we first enter and look up all
+	 * of the values contained within the node and then attempt to repeat the process for 
+	 * each child of the given node.
+	 * 
+	 * (2) Inorder
+	 * ------------
+	 * While using the inorder transversion strategy, we first enter and look up all of the 
+	 * values contained within the left-most node and then enter the smallest value in the node 
+	 * above (parent). The process is then repeated for each child of the parent node, while we work
+	 * our way from the bottom to the top. 
+	 * 
+	 * (3) Postorder
+	 * -------------
+	 * While using the postorder transversion strategy, we first attempt to look up and enter
+	 * all of the children nodes referenced within the given node before entering the given node itself.
+	 */
+	
+	public void printPreorder(){
 		
+		BTreeNode pointer = root;
+		printPreorder(pointer);
+	}
+	private void printPreorder(BTreeNode pointer){
+		if (pointer != null){
+			
+			// get data: current node
+			Integer[] values = pointer.getValues();
+			BTreeNode[] children = pointer.getChildren();
+			
+			// first: get all current node values 
+			for (int i = 0; i < values.length -1; i++){
+				if (values[i] != null)
+				System.out.print(Integer.toString(values[i]) + ", ");
+			}
+			// second: repeat for each child of the node
+			for (int i = 0; i < children.length -1; i++){
+				printPreorder(pointer.getChild(i));
+			}
+		}
 	}
 
-	public void printInorder() {
-		// TODO Auto-generated method stub
+	public void printInorder(){
 		
+		BTreeNode pointer = root;
+		printInorder(pointer);
+	}
+	private void printInorder(BTreeNode pointer){
+		if (pointer != null){
+			
+			// get data: current node
+			Integer[] values = pointer.getValues();
+			BTreeNode[] children = pointer.getChildren();
+			
+			// first: visit left-most node
+			printInorder(pointer.getChild(0));
+			
+			// second: visit smallest parent node value
+			if (values[0] != null){
+			System.out.print(values[0] + ", ");
+			}
+			
+			// third: repeat strategy for bigger elements
+			for (int i = 1; i < children.length -1; i++){
+				
+				// get remaining values of the node
+				if (values[i] != null){
+					System.out.print(values[i] + ", ");
+				}
+				// get remaining children of the node
+				printInorder(pointer.getChild(i));
+			}
+		}
 	}
 
-	public void printPostorder() {
-		// TODO Auto-generated method stub
+	public void printPostorder(){
 		
+		BTreeNode pointer = root;
+		printPostorder(pointer);
+	}
+	private void printPostorder(BTreeNode pointer){
+		if (pointer != null){
+			
+			// get data: current node
+			Integer[] values = pointer.getValues();
+			BTreeNode[] children = pointer.getChildren();
+			
+			// first: try to enter all children nodes
+			for (int i = 0; i < children.length -1; i++){
+				printPostorder(pointer.getChild(i));
+			}
+			// second: get all current node values
+			for (int i = 0; i < values.length -1; i++){
+				if (values[i] != null)
+				System.out.print(Integer.toString(values[i]) + ", ");
+			}
+		}
 	}
 
 	public void printLevelorder() {
@@ -106,14 +194,15 @@ public class BTree implements BTreeInterface{
 					pointer.setValues(o, i);
 					Integer.insertionSort(pointer.getValues());
 					
-					// check node: overload
+					// check node: healthy
 					if (criteriaCheck(pointer)){
 						success = true;
 					}
+					// check node: overload
 					else {
 						// case: root
 						if (parent == null){
-							 //do stuff here
+							 burstTree(magnitude, pointer.getValues(), pointer.getChildren());
 						}
 
 					}
@@ -161,6 +250,25 @@ public class BTree implements BTreeInterface{
 		return success;
 	}
 	
+	private void burstTree(int magnitude, Integer[] values, BTreeNode[] children) {
+
+		// split the root - create 2 new nodes and populate
+		BTreeNode leftChild = new BTreeNode(magnitude);
+		BTreeNode rightChild = new BTreeNode(magnitude);
+
+		// fill the nodes
+		for(int i = 0, k = magnitude+1; i < magnitude && k <= magnitude*2;) {
+			leftChild.setValues(values[i], i);
+			rightChild.setValues(values[k], i);
+			values[i] = null;
+			values[k] = null;
+		}
+
+		// set new references on root
+		children[0] = leftChild;
+		children[1] = rightChild;
+	}
+
 	private boolean criteriaCheck(BTreeNode pointer){
 		Integer [] values = pointer.getValues();
 		
@@ -173,8 +281,8 @@ public class BTree implements BTreeInterface{
 	private boolean leafCheck(BTreeNode pointer){
 		Integer [] values = pointer.getValues();
 		
-		// check last array element
-		if (values[values.length-1] == null && values[values.length-1] == null)
+		// check two last array elements
+		if (values[values.length-1] == null && values[values.length-2] == null)
 			return true;
 		return false;
 	}
