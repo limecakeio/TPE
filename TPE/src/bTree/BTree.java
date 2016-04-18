@@ -251,23 +251,7 @@ public class BTree implements BTreeInterface{
 		return success;
 	}
 	
-	private void burstTree(int magnitude, Integer[] values, BTreeNode[] children) {
-
-		// split the root - create 2 new nodes and populate
-		BTreeNode leftChild = new BTreeNode(magnitude);
-		BTreeNode rightChild = new BTreeNode(magnitude);
-
-		// fill the nodes
-		for(int i = 0, k = magnitude+1; i < magnitude && k <= magnitude*2;) {
-			leftChild.setValues(values[i], i);
-			rightChild.setValues(values[k], i);
-			values[i] = null;
-			values[k] = null;
-		}
-
-		// set new references on root
-		children[0] = leftChild;
-		children[1] = rightChild;
+	private void burstTree(int magnitude, Integer[] values, BTreeNode[] children){
 	}
 
 	private boolean criteriaCheck(BTreeNode pointer){
