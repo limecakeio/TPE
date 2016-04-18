@@ -13,11 +13,14 @@ public class BTreeRichard {
 			rightChild.setValues(values[i+magnitude+1], i+magnitude+1);
 		}
 		
-		//Set new references on root
+		//Move root's element to the front
+				Integer.insertionSort(values);
+		//Delete all references from root
+		for(int i = 0; i < children.length; i++)
+			children[i] = null;
+		//Set new references
 		children[0] = leftChild;
 		children[1] = rightChild;
-		
-		
 		}
 		
 	}
