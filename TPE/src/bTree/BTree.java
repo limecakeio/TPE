@@ -321,7 +321,7 @@ public class BTree implements BTreeInterface{
 		}
 		return -1;
 	}
-
+	
 	private void rebalance(BTreeNode pointer, BTreeNode parent, int child, int neighbourLeaf){
 
 		for (int i = neighbourLeaf; i <= child; i++){
