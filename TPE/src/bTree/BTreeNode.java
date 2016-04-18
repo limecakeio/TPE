@@ -44,10 +44,6 @@ public class BTreeNode {
 		return children;
 	}
 	
-	public void setChild(BTreeNode reference, int index) {
-		children[index] = reference;
-	}
-	
 	// SPECIAL
 	public void printnode(){
 		Integer[] storage = values;
