@@ -10,6 +10,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class BTreeRichardTest {
+	
+	BTree t1;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -18,9 +20,10 @@ public class BTreeRichardTest {
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 	}
-
+	
 	@Before
 	public void setUp() throws Exception {
+	t1 = new BTree(2);
 	}
 
 	@After
@@ -48,12 +51,24 @@ public class BTreeRichardTest {
 	
 	@Test
 	public void burstTreeTest() {
-		BTree t1 = new BTree(2);
 		System.out.println(t1.insert(new Integer(1)));
 		System.out.println(t1.insert(new Integer(3)));
 		System.out.println(t1.insert(new Integer(8)));
 		System.out.println(t1.insert(new Integer(19)));
 		System.out.println(t1.insert(new Integer(23)));	
+	}
+	@Test
+	public void leafCheckTest() {
+		BTree t2 = new BTree(2);
+		t2.insert(new Integer(10));
+		t2.insert(new Integer(20));
+		t2.insert(new Integer(30));
+		t2.insert(new Integer(40));
+		t2.insert(new Integer(50));
+		t2.insert(new Integer(60));
+		t2.insert(new Integer(70));
+		t2.insert(new Integer(80));
+		
 	}
 
 }
