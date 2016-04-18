@@ -8,6 +8,11 @@ public class Integer {
 	}
 	
 	public int compareTo(Integer val) {
+		
+		if(val == null) {
+			return 1; //Regard a null as the largest values.
+		}
+		else {
 		int a = transformInteger(this);
 		int b = transformInteger(val);
 		
@@ -16,6 +21,7 @@ public class Integer {
 		else if (b > a)
 			return -1;	
 		return 0;
+		}
 	}
 	
 	public static int transformInteger(Integer value) {
@@ -30,6 +36,8 @@ public class Integer {
 		for(int i = 1; i < establishRange(toSort); i++){
 			Integer m = toSort[i];
 			int j = i;
+			
+			
 			while(j > 0 && toSort[j-1].compareTo(m) == 1) {
 				if(toSort[j-1].compareTo(m) == 1) {
 					toSort[j] = toSort[j-1];
