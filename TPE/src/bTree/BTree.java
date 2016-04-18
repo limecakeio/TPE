@@ -219,7 +219,7 @@ public class BTree implements BTreeInterface{
 							}
 							// neighbor leaves are full: burst the leaf
 							else {
-								// BOOOOM!!!
+								burstTreeLeaf(magnitude, parent, pointer);
 							}
 						}
 					}
@@ -311,7 +311,7 @@ public class BTree implements BTreeInterface{
 		int i = child-1;
 		BTreeNode[] children = parent.getChildren();
 
-		while (i > 0){
+		while (i >= 0){
 			// get values: current child
 			Integer[] values = children[i].getValues();
 			// check: neighbor leaf can take further elements
@@ -360,27 +360,36 @@ private void burstTreeLeaf(int magnitude, BTreeNode parent, BTreeNode brokenLeaf
 		BTreeNode newLeaf = new BTreeNode(magnitude);
 		
 		//Insert elements into the new node and remove from source
-		for(int i = magnitude+1; i < magnitude*2; i++) {
+		for(int i = magnitude+1; i <= magnitude*2; i++) {
 			newLeaf.setValues(brokenLeaf.getValue(i), i-magnitude+1);
 			brokenLeaf.setValues(null, i);
 		}
 		
 		//Placing middle-value into parent-node
 		Integer mValue = brokenLeaf.getValue(magnitude);
-		brokenLeaf.setValues(null, magnitude); // Reset middle-value
+		brokenLeaf.setValues(null, magnitude); // Remove middle-value
 		
 		int pos = 0;
-		for(int i = 0; i < magnitude; i++) {
-			if(parent.getChild(i) != null)
+		for(int i = 0; i <= magnitude*2; i++) {
+			if(parent.getValue(i) != null) {
 				pos += i++;
+			}
 		}
 		parent.setValues(mValue, pos);
-		
 		Integer.insertionSort(parent.getValues());
 		
-		criteriaCheck(parent);
+		//Point the reference to the new leaf via its corresponding value
+		pos = 0;
+		boolean found = false;
+		while(pos <= magnitude*2 && !found) {
+			if(parent.getValue(pos) != mValue) {
+				pos++;
+			}
+		found = true;
+		}
 		
+		parent.setChild(newLeaf, pos+1);
+		
+		criteriaCheck(parent);
 	}
-
-
 }

@@ -60,6 +60,7 @@ public class BTreeRichardTest {
 	}
 	@Test
 	public void leafCheckTest() {
+		System.out.println("BEGIN LEAF CHECK");
 		t1.insert(new Integer(10));
 		t1.insert(new Integer(20));
 		t1.insert(new Integer(30));
@@ -68,6 +69,7 @@ public class BTreeRichardTest {
 		t1.insert(new Integer(60));
 		t1.insert(new Integer(70));
 		t1.insert(new Integer(80));
+		System.out.println("END LEAF CHECK");
 	}
 
 }
