@@ -53,7 +53,7 @@ public class BTreeRichardTest {
 		System.out.println(t1.insert(new Integer(3)));
 		System.out.println(t1.insert(new Integer(8)));
 		System.out.println(t1.insert(new Integer(19)));
-		System.out.println(t1.insert(new Integer(2)));	
+		System.out.println(t1.insert(new Integer(23)));	
 	}
 
 }
