@@ -225,7 +225,7 @@ public class BTree implements BTreeInterface{
 					}
 				}
 				// check stored value: o > value[i]
-				else if ((pointer.getValue(i)).compareTo(o) == 1){
+				else if ((pointer.getValue(i)).compareTo(o) == -1){
 
 					// check right child: not present
 					if (pointer.getChild(i+1) == null){
@@ -235,12 +235,12 @@ public class BTree implements BTreeInterface{
 					else {
 						parent = pointer;
 						pointer = pointer.getChild(i+1);
-						child = i;
+						child = i+1;
 						i = 0;
 					}
 				}
 				// check stored value: o < value[i]
-				else if ((pointer.getValue(i)).compareTo(o) == -1){
+				else if ((pointer.getValue(i)).compareTo(o) == 1){
 
 					// check left child: not present
 					if (pointer.getChild(i) == null){
@@ -272,6 +272,7 @@ public class BTree implements BTreeInterface{
 	}
 
 	private void burstTree(int magnitude, BTreeNode node){
+		
 		//Split the root - create 2 new nodes and populate
 		BTreeNode newRoot = new BTreeNode(magnitude);
 		BTreeNode rightChild = new BTreeNode(magnitude);
@@ -281,7 +282,7 @@ public class BTree implements BTreeInterface{
 		node.setValues(null, magnitude);
 
 		//Fill the right node
-		for(int i = magnitude+1; i < node.getValues().length; i++) {
+		for (int i = magnitude+1; i < node.getValues().length; i++){
 			rightChild.setValues(node.getValue(i), i-magnitude+1);
 			System.out.println("R: " + Integer.toString(rightChild.getValue(i-magnitude+1)));
 			node.setValues(null, i);
