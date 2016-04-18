@@ -7,10 +7,12 @@ public class BTreeRichard {
 		BTreeNode leftChild = new BTreeNode(magnitude);
 		BTreeNode rightChild = new BTreeNode(magnitude);
 		
-		//Fill the nodes
+		//Fill the nodes and reset the root
 		for(int i = 0; i < magnitude; i++) {
 			leftChild.setValues(values[i], i);
+			values[i] = null;
 			rightChild.setValues(values[i+magnitude+1], i+magnitude+1);
+			values[i+magnitude+1] = null;
 		}
 		
 		//Move root's element to the front
