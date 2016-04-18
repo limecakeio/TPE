@@ -179,6 +179,8 @@ public class BTree implements BTreeInterface{
 	public boolean preinsert(Integer o){
 		
 		int i = 0;
+		int child = 0;
+		int neighborLeaf = -1;
 		boolean success = false;
 		BTreeNode parent = null;
 		BTreeNode pointer = root;
@@ -202,8 +204,14 @@ public class BTree implements BTreeInterface{
 					else {
 						// case: root
 						if (parent == null){
-							 burstTree(magnitude, pointer.getValues(), pointer.getChildren());
+							 burstTree(magnitude, pointer);
 							 success = true;
+						}
+						// case: leaf
+						else {
+							// first step: check neighbor leaf
+							neighborLeaf = leafCheck(parent, child);
+							
 						}
 
 					}
@@ -217,7 +225,9 @@ public class BTree implements BTreeInterface{
 					}
 					// check right child: descend
 					else {
+						parent = pointer;
 						pointer = pointer.getChild(i+1);
+						child = i;
 						i = 0;
 					}
 				}
@@ -230,7 +240,9 @@ public class BTree implements BTreeInterface{
 					}
 					// check left child: descend
 					else {
+						parent = pointer;
 						pointer = pointer.getChild(i);
+						child = i;
 						i = 0;
 					}
 				}
@@ -284,12 +296,21 @@ public class BTree implements BTreeInterface{
 		return false;
 	}
 	
-	private boolean leafCheck(BTreeNode pointer){
-		Integer [] values = pointer.getValues();
+	private int leafCheck(BTreeNode parent, int child){
 		
-		// check two last array elements
-		if (values[values.length-1] == null && values[values.length-2] == null)
-			return true;
-		return false;
+		int i = child-1;
+		BTreeNode[] children = parent.getChildren();
+		
+		while (i > 0){
+			// get values: current child
+			Integer[] values = children[i].getValues();
+			// check: neighbor leaf can take further elements
+			if (values[values.length-1] == null && values[values.length-2] == null){
+				return i;
+			}
+			i--;
+		}
+		return -1;
+		
 	}
 }
