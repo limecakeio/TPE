@@ -203,6 +203,7 @@ public class BTree implements BTreeInterface{
 						// case: root
 						if (parent == null){
 							 burstTree(magnitude, pointer.getValues(), pointer.getChildren());
+							 success = true;
 						}
 
 					}
