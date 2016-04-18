@@ -36,6 +36,10 @@ public class BTreeNode {
 		return values;
 	}
 	
+	public void setChild (BTreeNode reference, int index){
+		children[index] = reference;
+	}
+	
 	public BTreeNode getChild(int index){
 		return children[index];
 	}

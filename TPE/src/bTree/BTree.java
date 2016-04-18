@@ -263,29 +263,30 @@ public class BTree implements BTreeInterface{
 		return success;
 	}
 	
-	private void burstTree(int magnitude, Integer[] values, BTreeNode[] children){
+	private void burstTree(int magnitude, BTreeNode node){
 		//Split the root - create 2 new nodes and populate
-				BTreeNode leftChild = new BTreeNode(magnitude);
+				BTreeNode newRoot = new BTreeNode(magnitude);
 				BTreeNode rightChild = new BTreeNode(magnitude);
 				
-				//Fill the nodes and reset the root
-				for(int i = 0; i < magnitude; i++) {
-					leftChild.setValues(values[i], i);
-					System.out.println("L: " + Integer.toString(leftChild.getValue(i)));
-					values[i] = null;
-					rightChild.setValues(values[i+magnitude+1], i);
-					System.out.println("R: " + Integer.toString(rightChild.getValue(i)));
-					values[i+magnitude+1] = null;
-				}
+				//Set new root
+				newRoot.setValues(node.getValue(magnitude), 0);
+				node.setValues(null, magnitude);
 				
-				//Move root's element to the front
-				values[0] = values[magnitude];
-				values[magnitude] = null;
+				//Fill the right node
+				for(int i = magnitude+1; i < node.getValues().length; i++) {
+					rightChild.setValues(node.getValue(i), magnitude+1-i);
+					System.out.println("R: " + Integer.toString(rightChild.getValue(magnitude+1-i)));
+					node.setValues(null, i);
+				}
 
 				//Set new references
-				children[0] = leftChild;
-				children[1] = rightChild;
+				newRoot.setChild(node, 0);
+				newRoot.setChild(rightChild, 1);
+				
+				// set newroot as actual root (duuuh)
+				root = newRoot;
 	}
+	
 
 	private boolean criteriaCheck(BTreeNode pointer){
 		Integer [] values = pointer.getValues();
