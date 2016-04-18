@@ -274,8 +274,8 @@ public class BTree implements BTreeInterface{
 				
 				//Fill the right node
 				for(int i = magnitude+1; i < node.getValues().length; i++) {
-					rightChild.setValues(node.getValue(i), magnitude+1-i);
-					System.out.println("R: " + Integer.toString(rightChild.getValue(magnitude+1-i)));
+					rightChild.setValues(node.getValue(i), i-magnitude+1);
+					System.out.println("R: " + Integer.toString(rightChild.getValue(i-magnitude+1)));
 					node.setValues(null, i);
 				}
 
