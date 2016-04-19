@@ -24,7 +24,7 @@ public class BTreeNode {
 	}
 
 	// BTREE NODE MTHODS
-	public void setValues(Integer value, int index){
+	public void setValue(Integer value, int index){
 		values[index] = value;
 	}
 
