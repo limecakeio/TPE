@@ -325,7 +325,7 @@ public class BTree implements BTreeInterface{
 					else {
 						// case: root
 						if (parent == null){
-							burstRoot(magnitude, pointer);
+							burstRoot();
 							success = true;
 						}
 						// case: leaf
@@ -399,24 +399,18 @@ public class BTree implements BTreeInterface{
 		return success;
 	}
 
-	private void burstRoot(int magnitude, BTreeNode node){
+	private void burstRoot(){
 		
 		// split the root: create 2 new nodes and populate
 		BTreeNode newRoot = new BTreeNode(magnitude);
-		BTreeNode rightChild = new BTreeNode(magnitude);
+		BTreeNode rightChild = splitNode(root);
 
 		// set new root
-		newRoot.setValue(node.getValue(magnitude), 0);
-		node.setValue(null, magnitude);
-
-		// fill the right node
-		for (int i = magnitude+1; i < node.getValues().length; i++){
-			rightChild.setValue(node.getValue(i), i-(magnitude+1));
-			node.setValue(null, i);
-		}
+		newRoot.setValue(root.getValue(magnitude), 0);
+		root.setValue(null, magnitude);
 
 		// set new references
-		newRoot.setChild(node, 0);
+		newRoot.setChild(root, 0);
 		newRoot.setChild(rightChild, 1);
 
 		// set newroot as actual new root (pun slighly intended)
@@ -486,13 +480,7 @@ public class BTree implements BTreeInterface{
 private void burstTreeLeaf(int magnitude, BTreeNode parent, BTreeNode brokenLeaf) {
 		
 		//Arrange a new node for all elements > magnitude
-		BTreeNode newLeaf = new BTreeNode(magnitude);
-		
-		//Insert elements into the new node and remove from source
-		for(int i = magnitude+1; i <= magnitude*2; i++) {
-			newLeaf.setValue(brokenLeaf.getValue(i), i-(magnitude+1));
-			brokenLeaf.setValue(null, i);
-		}
+		BTreeNode newLeaf = splitNode(brokenLeaf);
 		
 		//Placing middle-value into parent-node
 		Integer mValue = brokenLeaf.getValue(magnitude);
@@ -540,6 +528,66 @@ private void burstTreeLeaf(int magnitude, BTreeNode parent, BTreeNode brokenLeaf
 				System.out.print("NoRef ");				
 		}
 		
-		//criteriaCheck(parent);
+//		while(!criteriaCheck(parent)) {
+//			int currentLevel = height()-1;
+//			//Get the middle value
+//			mValue = parent.getValue(magnitude);
+//			//Locate and set the new parent node
+//			parent = locateParentNode(mValue);
+//		}
 	}
+/**THE FOLLOWING METHODS ASSIST ALL BURST METHODS*/
+public BTreeNode locateParentNode(Integer query) {
+	//Enter the tree
+	BTreeNode newParent = root;
+	
+	int result = 0;
+	int i = 0;
+	boolean found = false;
+	boolean nullNext = false;
+	do {
+		result = query.compareTo(newParent.getValue(i));
+		
+		if (newParent.getValue(i+1) == null) {
+			nullNext = true;
+		}
+			
+		if(result == -1) {
+			for(int j = 0; j < magnitude*2; j++) {
+				if(query.compareTo(newParent.getChild(i).getValue(j)) == 0);
+				found = true;
+			}
+			if(!found)
+				newParent = newParent.getChild(i);
+			i = 0;
+		}
+		
+		else if(result == 1 && nullNext) {
+			for(int j = 0; j < magnitude*2; j++) {
+				if(query.compareTo(newParent.getChild(i+1).getValue(j)) == 0);
+				found = true;
+			}
+			if(!found)
+				newParent = newParent.getChild(i+1);
+			i = 0;
+		}
+
+		else if(!nullNext) {
+		i++;
+		};
+	}
+	while(i < magnitude*2 && !found); //Value we seek can never be in a temporary node.
+	
+	return newParent;
+}
+
+private BTreeNode splitNode(BTreeNode brokenLeaf) {
+	BTreeNode newLeaf = new BTreeNode(magnitude);
+	
+	for(int i = magnitude+1; i <= magnitude*2; i++) {
+		newLeaf.setValue(brokenLeaf.getValue(i), i-(magnitude+1));
+		brokenLeaf.setValue(null, i);
+	}
+	return newLeaf;
+}
 }

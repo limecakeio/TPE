@@ -11,6 +11,7 @@ import org.junit.Test;
 
 public class BTreeRichardTest {
 	BTree t1 = new BTree(2);
+	BTree t2 = new BTree(2);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -23,6 +24,7 @@ public class BTreeRichardTest {
 	@Before
 	public void setUp() throws Exception {
 		t1 = new BTree(2);
+		t2 = new BTree(2);
 	}
 
 	@After
@@ -88,7 +90,6 @@ public class BTreeRichardTest {
 		t1.insert(new Integer(110));
 		t1.insert(new Integer(120));
 		
-		
 		System.out.println("\nInorder-Strategy");
 		t1.printInorder();
 		System.out.println("\nPreorder-Startegy");
@@ -105,5 +106,30 @@ public class BTreeRichardTest {
 		
 		System.out.println("\nThe tree contains the value 10: " + t1.contains(new Integer(10)));
 		System.out.println("The tree contains the value 100: " + t1.contains(new Integer(100)));
+	}
+	
+	@Test
+	public void locateParentNodeTest() {
+		t1.insert(new Integer(10));
+		t1.insert(new Integer(20));
+		t1.insert(new Integer(30));
+		t1.insert(new Integer(40));
+		t1.insert(new Integer(50));
+		t1.insert(new Integer(60));
+		t1.insert(new Integer(70));
+		t1.insert(new Integer(80));
+		t1.insert(new Integer(90));
+		t1.insert(new Integer(100));
+		t1.insert(new Integer(110));
+		t1.insert(new Integer(120));
+		
+		Integer testVal = new Integer(30);
+		BTreeNode testNode = t1.locateParentNode(testVal);
+		
+		System.out.println("\nTEST LOCATE PARENT - Parent contains:");
+		for(int i = 0; i <= 4; i++) {
+			System.out.println(Integer.transformInteger(testNode.getValue(i)));
+		}
+		testNode.printnode();
 	}
 }
