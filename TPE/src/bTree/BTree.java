@@ -31,8 +31,13 @@ public class BTree implements BTreeInterface{
 		return false;
 	}
 
-	public boolean contains(Integer o) {
-		// TODO Auto-generated method stub
+	public boolean contains(Integer o){
+		BTreeNode pointer = root;
+		
+		// pass values for recursion
+		return contains(pointer, o);
+	}
+	private boolean contains(BTreeNode pointer, Integer value){
 		return false;
 	}
 
@@ -88,14 +93,37 @@ public class BTree implements BTreeInterface{
 		return height;
 	}
 
-	public Integer getMax() {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer getMax(){
+		
+		int i = 0;
+		BTreeNode pointer = root;
+		Integer maxValue = new Integer(-1);
+		
+		// check: node is empty
+		while (pointer != null){
+			
+			// check: find max value
+			while (pointer.getValue(i) != null && i != magnitude*2){
+				maxValue = pointer.getValue(i);
+				i++;
+			}
+			pointer = pointer.getChild(i);
+			i = 0;
+		}
+		return maxValue;
 	}
 
-	public Integer getMin() {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer getMin(){
+
+		BTreeNode pointer = root;
+		Integer minValue = new Integer(-1);
+
+		// check: node is empty
+		while (pointer != null){
+			minValue = pointer.getValue(0);
+			pointer = pointer.getChild(0);
+		}
+		return minValue;
 	}
 
 	public boolean isEmpty(){
