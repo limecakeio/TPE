@@ -348,17 +348,23 @@ public class BTree implements BTreeInterface{
 				}
 				// check stored value: o > value[i]
 				else if ((pointer.getValue(i)).compareTo(o) == -1){
-
-					// check right child: not present
-					if (pointer.getChild(i+1) == null){
+					
+					// check stored value: o > value[i+1]
+					if (pointer.getValue(i+1) != null){
 						i++;
 					}
-					// check right child: descend
 					else {
-						parent = pointer;
-						pointer = pointer.getChild(i+1);
-						child = i+1;
-						i = 0;
+						// check right child: not present
+						if (pointer.getChild(i+1) == null){
+							i++;
+						}
+						// check right child: descend
+						else {
+							parent = pointer;
+							pointer = pointer.getChild(i+1);
+							child = i+1;
+							i = 0;
+						}
 					}
 				}
 				// check stored value: o < value[i]
