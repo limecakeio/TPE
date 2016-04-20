@@ -9,6 +9,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class BTreeInterfaceTest {
+	BTree t1 = new BTree(1);
+	BTree t2 = new BTree(2);
+	BTree t3 = new BTree(3);
+	BTree t20 = new BTree(20);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -20,6 +24,10 @@ public class BTreeInterfaceTest {
 
 	@Before
 	public void setUp() throws Exception {
+		t1 = new BTree(1);
+		t2 = new BTree(2);
+		t3 = new BTree(3);
+		t20 = new BTree(20);
 	}
 
 	@After
@@ -28,12 +36,13 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testInsertInteger() {
-		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testInsertString() {
-		fail("Not yet implemented");
+		t1.insert("btree50.txt");
+		t2.insert("btree50.txt");
+		
 	}
 
 	@Test
