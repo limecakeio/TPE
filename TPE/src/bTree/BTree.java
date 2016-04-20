@@ -285,6 +285,9 @@ public class BTree implements BTreeInterface{
 					}
 				}
 					}
+				else {
+					System.out.print("XX, ");
+				}
 				}
 				skip = false;// here
 			}
@@ -338,6 +341,7 @@ public class BTree implements BTreeInterface{
 							// neighbor leaves are full: burst the leaf
 							else {
 								burstTreeLeaf(magnitude, parent, pointer);
+								success = true;
 							}
 						}
 					}
@@ -480,7 +484,7 @@ private void burstTreeLeaf(int magnitude, BTreeNode parent, BTreeNode brokenLeaf
 		
 		//Insert elements into the new node and remove from source
 		for(int i = magnitude+1; i <= magnitude*2; i++) {
-			newLeaf.setValue(brokenLeaf.getValue(i), i-magnitude+1);
+			newLeaf.setValue(brokenLeaf.getValue(i), i-(magnitude+1));
 			brokenLeaf.setValue(null, i);
 		}
 		
@@ -489,10 +493,8 @@ private void burstTreeLeaf(int magnitude, BTreeNode parent, BTreeNode brokenLeaf
 		brokenLeaf.setValue(null, magnitude); // Remove middle-value
 		
 		int pos = 0;
-		for(int i = 0; i <= magnitude*2; i++) {
-			if(parent.getValue(i) != null) {
-				pos += i++;
-			}
+		while(parent.getValue(pos) != null) {
+				pos++;
 		}
 		parent.setValue(mValue, pos);
 		Integer.insertionSort(parent.getValues());
@@ -500,15 +502,38 @@ private void burstTreeLeaf(int magnitude, BTreeNode parent, BTreeNode brokenLeaf
 		//Point the reference to the new leaf via its corresponding value
 		pos = 0;
 		boolean found = false;
-		while(pos <= magnitude*2 && !found) {
-			if(parent.getValue(pos) != mValue) {
+		while(!found) {
+			if(parent.getValue(pos) != mValue)
 				pos++;
-			}
-		found = true;
+			else 
+				found = true;
 		}
 		
-		parent.setChild(newLeaf, pos+1);
+		int pointer = pos+1;
 		
-		criteriaCheck(parent);
+		// Check that reference-field is not already occupied
+		if(parent.getChild(pointer) != null) {
+			while (parent.getChild(pointer) != null) {
+				pointer++;
+			}
+			
+			while(pointer > pos+1) {
+				BTreeNode a = parent.getChild(pointer);
+				BTreeNode b = parent.getChild(pointer-1);
+				parent.setChild(a, pointer-1);
+				parent.setChild(b,pointer);
+				pointer--;
+			}	
+		}
+		System.out.println("CHILDREN ARRAY POST BURST & FIX: ");
+		parent.setChild(newLeaf, pointer);
+		for(int i = 0; i <= magnitude*2; i++) {
+			if(parent.getChild(i) != null)
+				System.out.print("X ");
+			else
+				System.out.print("NoRef ");				
+		}
+		
+		//criteriaCheck(parent);
 	}
 }
