@@ -40,64 +40,63 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testInsertString() {
-		t1.insert("btree50.txt");
 		t2.insert("btree50.txt");
-		
+		t2.printLevelorder();
 	}
 
-	@Test
-	public void testContains() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testSize() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testHeight() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetMax() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetMin() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsEmpty() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testAddAll() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testPrintPreorder() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testPrintInorder() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testPrintPostorder() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testPrintLevelorder() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testContains() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testSize() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testHeight() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testGetMax() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testGetMin() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testIsEmpty() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testAddAll() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testPrintPreorder() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testPrintInorder() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testPrintPostorder() {
+//		fail("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testPrintLevelorder() {
+//		fail("Not yet implemented");
+//	}
 
 }

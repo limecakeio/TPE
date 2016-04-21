@@ -1,5 +1,7 @@
 package bTree;
 
+import static gdi.MakeItSimple.*;
+
 public class BTree implements BTreeInterface{
 
 	private int magnitude;
@@ -19,16 +21,131 @@ public class BTree implements BTreeInterface{
 
 	// CORE INTERFACE METHODS
 	public boolean insert(Integer o){
+		int i = 0;
+		int child = 0;
+		int neighbourLeaf = -1;
+		boolean success = false;
+		BTreeNode parent = null;
+		BTreeNode pointer = root;
 
-		// -- 1 -- 
-		preinsert(o);
+		// tree contains elements
+		if (pointer != null){
 
-		return false;
+			// search and insert
+			while (!success){
+
+				// check stored value: empty
+				if (pointer.getValue(i) == null){
+					pointer.setValue(o, i);
+					Integer.insertionSort(pointer.getValues());
+
+					// check node: healthy
+					if (criteriaCheck(pointer)){
+						success = true;
+					}
+					// check node: overload
+					else {
+						// case: root
+						if (parent == null){
+							burstRoot();
+							success = true;
+						}
+						// case: leaf
+						else {
+							// first step: check neighbor leaf
+							neighbourLeaf = leafCheck(parent, child);
+
+							// neighbour leaves have free storage: re-arrange values 
+							if (neighbourLeaf != -1){
+								rebalance(pointer, parent, child, neighbourLeaf);
+								success = true;
+							}
+							// neighbor leaves are full: burst the leaf
+							else {
+								burstTreeLeaf(magnitude, parent, pointer);
+								success = true;
+							}
+						}
+					}
+				}
+				// check stored value: o > value[i]
+				else if ((pointer.getValue(i)).compareTo(o) == -1){
+					
+					// check stored value: o > value[i+1]
+					if (pointer.getValue(i+1) != null){
+						i++;
+					}
+					else {
+						// check right child: not present
+						if (pointer.getChild(i+1) == null){
+							i++;
+						}
+						// check right child: descend
+						else {
+							parent = pointer;
+							pointer = pointer.getChild(i+1);
+							child = i+1;
+							i = 0;
+						}
+					}
+				}
+				// check stored value: o < value[i]
+				else if ((pointer.getValue(i)).compareTo(o) == 1){
+
+					// check left child: not present
+					if (pointer.getChild(i) == null){
+						i++;
+					}
+					// check left child: descend
+					else {
+						parent = pointer;
+						pointer = pointer.getChild(i);
+						child = i;
+						i = 0;
+					}
+				}
+				// check stored value: o == value[i]
+				else if ((pointer.getValue(i)).compareTo(o) == 0){
+					// we do something here... println?
+				}
+			}
+		}
+		// tree is empty
+		else {
+			pointer = new BTreeNode(o, magnitude);
+			root = pointer;
+		}	
+		return success;
 	}
 
 	public boolean insert(String filename) {
-		// TODO Auto-generated method stub
-		return false;
+		Integer value = new Integer(0);
+
+		// check: file is present & readable
+		if (isFilePresent(filename) && (isFileReadable(filename))){
+			Object inputFile = openInputFile(filename);
+
+			while (!isEndOfInputFile(inputFile)){
+				value = new Integer(readInt(inputFile));
+
+				// attempt to insert value into tree
+				if(insert(value) == true)
+					println("Inserted: " + Integer.transformInteger(value) + ".");
+				else
+					println("Failed to insert: " + Integer.transformInteger(value) + ".");
+
+				// check: read-away delimiter characters
+				if (!isEndOfInputFile(inputFile)){
+					readChar(inputFile);
+				}
+			}
+			closeInputFile(inputFile);
+			return true;
+		}
+		else {
+			println("Error: Input file \"" + filename +  "\" is either unreadable or does not exist.");
+			return false;
+		}
 	}
 
 	public boolean contains(Integer o){
@@ -295,110 +412,6 @@ public class BTree implements BTreeInterface{
 	}
 
 	// SPECIAL METHODS
-
-	// public for testing
-	public boolean preinsert(Integer o){
-
-		int i = 0;
-		int child = 0;
-		int neighbourLeaf = -1;
-		boolean success = false;
-		BTreeNode parent = null;
-		BTreeNode pointer = root;
-
-		// tree contains elements
-		if (pointer != null){
-
-			// search and insert
-			while (!success){
-
-				// check stored value: empty
-				if (pointer.getValue(i) == null){
-					pointer.setValue(o, i);
-					Integer.insertionSort(pointer.getValues());
-
-					// check node: healthy
-					if (criteriaCheck(pointer)){
-						success = true;
-					}
-					// check node: overload
-					else {
-						// case: root
-						if (parent == null){
-							burstRoot();
-							success = true;
-						}
-						// case: leaf
-						else {
-							// first step: check neighbor leaf
-							neighbourLeaf = leafCheck(parent, child);
-
-							// neighbour leaves have free storage: re-arrange values 
-							if (neighbourLeaf != -1){
-								rebalance(pointer, parent, child, neighbourLeaf);
-								success = true;
-							}
-							// neighbor leaves are full: burst the leaf
-							else {
-								burstTreeLeaf(magnitude, parent, pointer);
-								success = true;
-							}
-						}
-					}
-				}
-				// check stored value: o > value[i]
-				else if ((pointer.getValue(i)).compareTo(o) == -1){
-					
-					// check stored value: o > value[i+1]
-					if (pointer.getValue(i+1) != null){
-						i++;
-					}
-					else {
-						// check right child: not present
-						if (pointer.getChild(i+1) == null){
-							i++;
-						}
-						// check right child: descend
-						else {
-							parent = pointer;
-							pointer = pointer.getChild(i+1);
-							child = i+1;
-							i = 0;
-						}
-					}
-				}
-				// check stored value: o < value[i]
-				else if ((pointer.getValue(i)).compareTo(o) == 1){
-
-					// check left child: not present
-					if (pointer.getChild(i) == null){
-						i++;
-					}
-					// check left child: descend
-					else {
-						parent = pointer;
-						pointer = pointer.getChild(i);
-						child = i;
-						i = 0;
-					}
-				}
-				// check stored value: o == value[i]
-				else if ((pointer.getValue(i)).compareTo(o) == 0){
-					// we do something here... println?
-				}
-			}
-		}
-		// tree is empty
-		else {
-			pointer = new BTreeNode(o, magnitude);
-			root = pointer;
-		}	
-		// testing
-		pointer.printnode();
-		// testing
-		return success;
-	}
-
 	private void burstRoot(){
 		
 		// split the root: create 2 new nodes and populate
@@ -415,6 +428,12 @@ public class BTree implements BTreeInterface{
 
 		// set newroot as actual new root (pun slighly intended)
 		root = newRoot;
+		
+		//Update child's references to grandchildren
+		for(int i = magnitude+1; i <= (magnitude*2)+1; i++) {
+			rightChild.setChild(root.getChild(0).getChild(i), i-(magnitude+1));
+			root.getChild(0).setChild(null, i);
+		}
 	}
 
 
@@ -479,62 +498,42 @@ public class BTree implements BTreeInterface{
 	
 private void burstTreeLeaf(int magnitude, BTreeNode parent, BTreeNode brokenLeaf) {
 		
-		//Arrange a new node for all elements > magnitude
-		BTreeNode newLeaf = splitNode(brokenLeaf);
+	//Arrange a new node for all elements > magnitude
+	BTreeNode newLeaf = splitNode(brokenLeaf);
+	
+	//Placing middle-value into parent-node
+	Integer mValue = brokenLeaf.getValue(magnitude);
+	brokenLeaf.setValue(null, magnitude); // Remove middle-value
+	
+	//Insert middle value into parent
+	popValue(parent, newLeaf, mValue);		
 		
-		//Placing middle-value into parent-node
-		Integer mValue = brokenLeaf.getValue(magnitude);
-		brokenLeaf.setValue(null, magnitude); // Remove middle-value
-		
-		int pos = 0;
-		while(parent.getValue(pos) != null) {
-				pos++;
-		}
-		parent.setValue(mValue, pos);
-		Integer.insertionSort(parent.getValues());
-		
-		//Point the reference to the new leaf via its corresponding value
-		pos = 0;
-		boolean found = false;
-		while(!found) {
-			if(parent.getValue(pos) != mValue)
-				pos++;
-			else 
-				found = true;
-		}
-		
-		int pointer = pos+1;
-		
-		// Check that reference-field is not already occupied
-		if(parent.getChild(pointer) != null) {
-			while (parent.getChild(pointer) != null) {
-				pointer++;
-			}
+		while(!criteriaCheck(parent)) {
 			
-			while(pointer > pos+1) {
-				BTreeNode a = parent.getChild(pointer);
-				BTreeNode b = parent.getChild(pointer-1);
-				parent.setChild(a, pointer-1);
-				parent.setChild(b,pointer);
-				pointer--;
-			}	
+			if(!criteriaCheck(root)){
+				burstRoot();
+			}
+			else {
+			// Split the parent
+			newLeaf = splitNode(brokenLeaf);
+			
+			//Get the middle value
+			mValue = parent.getValue(magnitude);
+			parent.setValue(null, magnitude); // Remove middle-value
+			
+			//Locate and set the new parent node
+			parent = locateParentNode(mValue);
+			
+			//Insert middle value into parent
+			int childPointer = popValue(parent, newLeaf, mValue);
+			
+			//Update child's references to grandchildren
+			for(int i = magnitude; i <= (magnitude*2)+1; i++) {
+				newLeaf.setChild(parent.getChild(childPointer).getChild(i), i-magnitude);
+				parent.getChild(childPointer).setChild(null, i);
+			}
 		}
-		System.out.println("CHILDREN ARRAY POST BURST & FIX: ");
-		parent.setChild(newLeaf, pointer);
-		for(int i = 0; i <= magnitude*2; i++) {
-			if(parent.getChild(i) != null)
-				System.out.print("X ");
-			else
-				System.out.print("NoRef ");				
 		}
-		
-//		while(!criteriaCheck(parent)) {
-//			int currentLevel = height()-1;
-//			//Get the middle value
-//			mValue = parent.getValue(magnitude);
-//			//Locate and set the new parent node
-//			parent = locateParentNode(mValue);
-//		}
 	}
 /**THE FOLLOWING METHODS ASSIST ALL BURST METHODS*/
 public BTreeNode locateParentNode(Integer query) {
@@ -574,7 +573,7 @@ public BTreeNode locateParentNode(Integer query) {
 
 		else if(!nullNext) {
 		i++;
-		};
+		}
 	}
 	while(i < magnitude*2 && !found); //Value we seek can never be in a temporary node.
 	
@@ -589,5 +588,44 @@ private BTreeNode splitNode(BTreeNode brokenLeaf) {
 		brokenLeaf.setValue(null, i);
 	}
 	return newLeaf;
+}
+
+private int popValue(BTreeNode parent, BTreeNode newLeaf, Integer mValue) {
+	int pos = 0;
+	while(parent.getValue(pos) != null) {
+			pos++;
+	}
+	parent.setValue(mValue, pos);
+	Integer.insertionSort(parent.getValues());
+	
+	//Point the reference to the new leaf via its corresponding value
+	pos = 0;
+	boolean found = false;
+	while(!found) {
+		if(parent.getValue(pos) != mValue)
+			pos++;
+		else 
+			found = true;
+	}
+	
+	int pointer = pos+1;
+	
+	// Check that reference-field is not already occupied
+	if(parent.getChild(pointer) != null) {
+		while (parent.getChild(pointer) != null) {
+			pointer++;
+		}
+		
+		while(pointer > pos+1) {
+			BTreeNode a = parent.getChild(pointer);
+			BTreeNode b = parent.getChild(pointer-1);
+			parent.setChild(a, pointer-1);
+			parent.setChild(b,pointer);
+			pointer--;
+		}
+		
+	}
+	parent.setChild(newLeaf, pointer);
+	return pointer;
 }
 }

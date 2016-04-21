@@ -89,6 +89,19 @@ public class BTreeRichardTest {
 		t1.insert(new Integer(100));
 		t1.insert(new Integer(110));
 		t1.insert(new Integer(120));
+		t1.insert(new Integer(130));
+		t1.insert(new Integer(140));
+		t1.insert(new Integer(150));
+		t1.insert(new Integer(160));
+		t1.insert(new Integer(170));
+		t1.insert(new Integer(180));
+		t1.insert(new Integer(190));
+		t1.insert(new Integer(200));
+		t1.insert(new Integer(210));
+		t1.insert(new Integer(220));
+		t1.insert(new Integer(230));
+		t1.insert(new Integer(240));
+		t1.insert(new Integer(250));
 		
 		System.out.println("\nInorder-Strategy");
 		t1.printInorder();
