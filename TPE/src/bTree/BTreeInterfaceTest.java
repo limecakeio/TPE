@@ -40,7 +40,7 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testInsertString() {
-		t2.insert("btree50.txt");
+		t2.insert("btree500.txt");
 		t2.printLevelorder();
 	}
 
