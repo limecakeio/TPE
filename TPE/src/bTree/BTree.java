@@ -116,7 +116,6 @@ public class BTree implements BTreeInterface{
 			pointer = new BTreeNode(o, magnitude);
 			root = pointer;
 		}
-		pointer.printnode();
 		return success;
 	}
 
@@ -131,9 +130,7 @@ public class BTree implements BTreeInterface{
 				value = new Integer(readInt(inputFile));
 
 				// attempt to insert value into tree
-				if(insert(value) == true)
-					println("Inserted: " + Integer.transformInteger(value) + ".");
-				else
+				if(insert(value) == false)
 					println("Failed to insert: " + Integer.transformInteger(value) + ".");
 
 				// check: read-away delimiter characters
@@ -156,21 +153,24 @@ public class BTree implements BTreeInterface{
 		
 		int result = 0;
 		int i = 0;
+		int validRange = 0;
 		boolean found = false;
-		boolean nullNext = false;
 		boolean end = false;
 		
 		do {
+			boolean nullNext = false;
 			result = o.compareTo(parent.getValue(i));
-
+			
 			if (parent.getValue(i+1) == null) {
 				nullNext = true;
 			}
 
 			if(result == -1) {
-				for(int j = 0; j < magnitude*2; j++) {
-					if(o.compareTo(parent.getChild(i).getValue(j)) == 0);
+				validRange = Integer.establishRange(parent.getChild(i).getValues());
+				for(int j = 0; j < validRange; j++) {
+					if(o.compareTo(parent.getChild(i).getValue(j)) == 0) {
 					found = true;
+				}
 				}
 				if(!found)
 					parent = parent.getChild(i);
@@ -178,10 +178,13 @@ public class BTree implements BTreeInterface{
 			}
 
 			else if(result == 1 && nullNext) {
-				for(int j = 0; j < magnitude*2; j++) {
-					if(o.compareTo(parent.getChild(i+1).getValue(j)) == 0);
+				validRange = Integer.establishRange(parent.getChild(i+1).getValues());
+				for(int j = 0; j < validRange; j++) {
+					if(o.compareTo(parent.getChild(i+1).getValue(j)) == 0) {
 					found = true;
+					}
 				}
+				
 				if(!found)
 					parent = parent.getChild(i+1);
 				i = 0;
@@ -191,23 +194,23 @@ public class BTree implements BTreeInterface{
 				i++;
 			}
 			
-			if(parent.getChild(0) == null) //We are in leaf, element is not in tree
+			if(parent.getChild(0) == null) //If we reached a leaf, element is not in tree.
 				end = true;
 		}
-		while(i < magnitude*2 && !found && !end); //Value we seek can never be in a temporary node.
+		while(i < magnitude*2 && !found && !end);
 		
 		return found;
 	}
 
-	public int size(){
+	private int nodeCount(){
 
 		BTreeNode pointer = root;
 		int nodes = 0;
 
 		// return total nodes by recursion
-		return size(pointer, nodes);
+		return nodeCount(pointer, nodes);
 	}
-	private int size(BTreeNode pointer, int nodes){
+	private int nodeCount(BTreeNode pointer, int nodes){
 
 		// check: tree contains elements
 		if (pointer != null){
@@ -215,12 +218,66 @@ public class BTree implements BTreeInterface{
 
 			// repeat process: visit each child
 			for (int i = 0; i != pointer.getValues().length; i++){
-				nodes = size(pointer.getChild(i), nodes);
+				nodes = nodeCount(pointer.getChild(i), nodes);
 			}
 		}
 		return nodes;
 	}
+	
+	public int size(){
 
+		BTreeNode pointer = root;
+		BTreeNode[] storage = new BTreeNode[nodeCount()];
+		return size(pointer, storage);
+	}
+	private int size(BTreeNode pointer, BTreeNode[] storage){
+
+		int i = 0;
+		int j = 0;
+		int k = 0;
+		int size = 0;
+		Integer target;
+		boolean skip = false;
+
+		// add first node: root
+		if (pointer != null){	
+			storage[0] = pointer;
+
+			// queue functionality
+			for (i = 0; i != storage.length; i++){
+				for (j = 0; j != magnitude*2; j++){
+
+					// for each target-element print...
+					if (storage[i].getValue(j) != null){
+						target = storage[i].getValue(j);
+						size++;
+
+						// ... its children are added to the storage.
+						if (k != (storage.length)*(magnitude*2)){
+
+							// check: left child of the target	
+							if (storage[i].getChild(j) != null && !skip){	
+								k++;
+								storage[k] = storage[i].getChild(j);
+								skip = true;
+							}
+
+							// check: target has a right child	
+							if (storage[i].getChild(j+1) != null){	
+								k++;
+								storage[k] = storage[i].getChild(j+1);
+							}
+						}
+					}
+				}
+				skip = false;// here
+			}
+		}
+		return size;
+	}
+
+	
+	
 	public int height(){
 
 		int height = 0;
@@ -234,7 +291,7 @@ public class BTree implements BTreeInterface{
 
 				// search the 'biggest' child
 				for (int i = 0; i != pointer.getValues().length-1; i++){
-					if (size(pointer.getChild(i+1),0) > size(pointer.getChild(i),0)){
+					if (nodeCount(pointer.getChild(i+1),0) > nodeCount(pointer.getChild(i),0)){
 						counter = i+1;
 					}
 				}
@@ -310,64 +367,6 @@ public class BTree implements BTreeInterface{
 			println("The tree you're trying to add from is empty.");
 		}
 	}
-	
-	public BTreeInterface clone(){
-
-		int i = 0;
-		int j = 0;
-		int k = 0;
-		Integer target;
-		boolean skip = false;
-		BTreeNode pointer = root;
-		BTree clone = new BTree(magnitude);
-		BTreeNode[] storage = new BTreeNode[size()];
-
-		// add first node: root
-		if (pointer != null){	
-			storage[0] = pointer;
-
-			// queue functionality
-			for (i = 0; i != storage.length; i++){
-				for (j = 0; j != magnitude*2; j++){
-
-					// for each target-element print...
-					if (storage[i].getValue(j) != null){
-						target = storage[i].getValue(j);
-
-						// ... its children are added to the storage.
-						if (k != (storage.length)*(magnitude*2)){
-
-							// check: left child of the target	
-							if (storage[i].getChild(j) != null && !skip){	
-								k++;
-								storage[k] = storage[i].getChild(j);
-								skip = true;
-							}
-
-							// check: target has a right child	
-							if (storage[i].getChild(j+1) != null){	
-								k++;
-								storage[k] = storage[i].getChild(j+1);
-							}
-						}
-					}
-				}
-				skip = false;
-			}
-			// convert storage: create a clone
-			for (i = 0; i != storage.length; i++){
-				for (j = 0; j != magnitude*2+1; j++){
-					if (storage[i].getValue(j)!= null){
-						
-					println(Integer.transformInteger(storage[i].getValue(j))+ " added");
-					target = storage[i].getValue(j);
-					clone.insert(target);
-					}
-				}
-			}
-		}
-		return clone;
-	}
 
 	/* There is no defined convention for pre-, in- or postorder transversion strategy 
 	 * for working with a B-Tree. We define them as following:
@@ -432,7 +431,7 @@ public class BTree implements BTreeInterface{
 
 			// second: visit smallest parent node value
 			if (values[0] != null){
-				System.out.print(Integer.toString(values[0]) + ", ");
+				print(Integer.toString(values[0]) + ", ");
 			}
 
 			// third: repeat strategy for bigger elements
@@ -440,7 +439,7 @@ public class BTree implements BTreeInterface{
 
 				// get remaining values of the node
 				if (values[i] != null){
-					System.out.print(Integer.toString(values[i]) + ", ");
+					print(Integer.toString(values[i]) + ", ");
 				}
 				// get remaining children of the node
 				printInorder(pointer.getChild(i));
@@ -476,7 +475,7 @@ public class BTree implements BTreeInterface{
 
 		// get data: root & future storage
 		BTreeNode pointer = root;
-		BTreeNode[] storage = new BTreeNode[size()]; 
+		BTreeNode[] storage = new BTreeNode[nodeCount()]; 
 
 		// baton-pass values
 		printLevelorder(pointer, storage);
@@ -537,7 +536,6 @@ public class BTree implements BTreeInterface{
 
 		// set new root
 		newRoot.setValue(root.getValue(magnitude), 0);
-		println(Integer.toString(root.getValue(magnitude)) + " Rootpop!");
 		root.setValue(null, magnitude);
 
 		// set new references
@@ -550,9 +548,6 @@ public class BTree implements BTreeInterface{
 		//Update child's references to grandchildren
 		for(int i = magnitude+1; i <= (magnitude*2)+1; i++) {
 			rightChild.setChild(root.getChild(0).getChild(i), i-(magnitude+1));
-			println("ASSIGNING REFERENCES FOR GRANDCHILDREN: ");
-			if(height() > 2)
-				root.getChild(0).getChild(i).printnode();
 			root.getChild(0).setChild(null, i);
 		}
 	}
@@ -602,7 +597,7 @@ public class BTree implements BTreeInterface{
 
 		// check: rabalance to the left
 		if (neighbourLeaf < child){
-			println("REBALACING LEFT");
+			
 			for (int i = neighbourLeaf; i < child; i++){
 
 				boolean set = false;
@@ -634,7 +629,7 @@ public class BTree implements BTreeInterface{
 			}
 		}
 		else {
-			println("REBALACING RIGHT");
+
 			for (int i = neighbourLeaf; i > child; i--){
 
 				boolean set = false;
@@ -675,7 +670,7 @@ public class BTree implements BTreeInterface{
 
 		//Placing middle-value into parent-node
 		Integer mValue = brokenLeaf.getValue(magnitude);
-		println(Integer.toString(mValue) + " Leafpop!");
+
 		brokenLeaf.setValue(null, magnitude); // Remove middle-value
 
 		//Insert middle value into parent
@@ -692,8 +687,6 @@ public class BTree implements BTreeInterface{
 
 				//Get the middle value
 				mValue = parent.getValue(magnitude);
-				println(Integer.toString(mValue) + " Nodepop!");
-				parent.setValue(null, magnitude); // Remove middle-value
 
 				//Locate and set the new parent node
 				parent = locateParentNode(mValue);
@@ -704,23 +697,24 @@ public class BTree implements BTreeInterface{
 				//Update child's references to grandchildren
 				for (int i = magnitude+1; i <= (magnitude*2)+1; i++) {
 					newLeaf.setChild(parent.getChild(childPointer).getChild(i), i-(magnitude+1));
-					println("ASSIGNING REFERENCES FOR GRANDCHILDREN: ");
-					parent.getChild(childPointer).getChild(i).printnode();
 					parent.getChild(childPointer).setChild(null, i);
 				}
 			}
 		}
 	}
+	
 	/**THE FOLLOWING METHODS ASSIST ALL BURST METHODS*/
 	public BTreeNode locateParentNode(Integer query) {
 		//Enter the tree
 		BTreeNode newParent = root;
 
 		int result = 0;
+		int validRange = 0;
 		int i = 0;
 		boolean found = false;
-		boolean nullNext = false;
+	
 		do {
+			boolean nullNext = false;
 			result = query.compareTo(newParent.getValue(i));
 
 			if (newParent.getValue(i+1) == null) {
@@ -728,9 +722,12 @@ public class BTree implements BTreeInterface{
 			}
 
 			if(result == -1) {
-				for(int j = 0; j < magnitude*2; j++) {
-					if(query.compareTo(newParent.getChild(i).getValue(j)) == 0);
-					found = true;
+				validRange = Integer.establishRange(newParent.getChild(i+1).getValues());
+				for(int j = 0; j < validRange; j++) {
+					if(query.compareTo(newParent.getChild(i).getValue(j)) == 0) {
+						newParent.getChild(i).setValue(null, j); // Remove located value
+						found = true;
+					}
 				}
 				if(!found)
 					newParent = newParent.getChild(i);
@@ -738,10 +735,14 @@ public class BTree implements BTreeInterface{
 			}
 
 			else if(result == 1 && nullNext) {
-				for(int j = 0; j < magnitude*2; j++) {
-					if(query.compareTo(newParent.getChild(i+1).getValue(j)) == 0);
-					found = true;
+				validRange = Integer.establishRange(newParent.getChild(i+1).getValues());
+				for(int j = 0; j < validRange; j++) {
+					if(query.compareTo(newParent.getChild(i+1).getValue(j)) == 0) {
+						newParent.getChild(i+1).setValue(null, j); // Remove located value
+						found = true;
+					}
 				}
+
 				if(!found)
 					newParent = newParent.getChild(i+1);
 				i = 0;

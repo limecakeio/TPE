@@ -1,6 +1,7 @@
 package bTree;
 
 import static org.junit.Assert.*;
+import static gdi.MakeItSimple.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -9,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class BTreeInterfaceTest {
+	BTree t0 = new BTree(0);
 	BTree t1 = new BTree(1);
 	BTree t2 = new BTree(2);
 
@@ -22,7 +24,7 @@ public class BTreeInterfaceTest {
 
 	@Before
 	public void setUp() throws Exception {
-//		t0 = new BTree(0);
+		t0 = new BTree(0);
 		t1 = new BTree(1);
 		t2 = new BTree(2);
 	}
@@ -51,22 +53,24 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testContains() {
-		t1.insert("btree.txt");
-		assertTrue(t1.contains(new Integer(23)));
-		assertFalse(t1.contains(new Integer(112)));		
+		t2.insert("btree.txt");
+		assertTrue(t2.contains(new Integer(23)));
+		assertFalse(t2.contains(new Integer(112)));		
 	}
 
 	@Test
-	public void testSize() {
-		assertEquals(t1.size(), 0);
-		t1.insert("btree.txt");
-		assertEquals(t1.size(), 26);
+	public void testSize(){
+		assertEquals(t2.size(), 0);
+		t2.insert("btree.txt");
+		println("FUCKING SIZE: " + t2.size());
+		assertEquals(t2.size(), 26);
 		
 	}
 	
 	@Test
 	public void testHeight() {
-		//assertEquals(t0.height(), 0);
+		assertEquals(t2.height(), 0);
+		
 		assertEquals(t2.height(), 3);
 	}
 	@Test
@@ -89,30 +93,35 @@ public class BTreeInterfaceTest {
 		//assertTrue(t0.isEmpty());
 		assertFalse(t1.isEmpty());
 	}
-//
-//	@Test
-//	public void testAddAll() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testPrintPreorder() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testPrintInorder() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testPrintPostorder() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testPrintLevelorder() {
-//		fail("Not yet implemented");
-//	}
+
+	@Test
+	public void testAddAll() {
+		t1.insert("btree.txt");
+		t2.insert("btreemini.txt");	
+	}
+
+	@Test
+	public void testPrintPreorder() {
+		t2.insert("btree.txt");
+		//t2.printPreorder();
+	}
+
+	@Test
+	public void testPrintInorder() {
+		t2.insert("btree.txt");
+		//t2.printInorder();
+	}
+
+	@Test
+	public void testPrintPostorder() {
+		t2.insert("btree.txt");
+		//t2.printPostorder();
+	}
+
+	@Test
+	public void testPrintLevelorder() {
+		t2.insert("btree.txt");
+		//t2.printLevelorder();
+	}
 
 }

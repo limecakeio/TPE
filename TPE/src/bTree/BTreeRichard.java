@@ -11,7 +11,7 @@ public class BTreeRichard {
 		Integer target;
 		boolean skip = false;
 		BTreeNode pointer = root;
-		BTreeNode[] storage = new BTreeNode[size()];
+		BTreeNode[] storage = new BTreeNode[nodeCount()];
 
 		// add first node: root
 		if (pointer != null){	
