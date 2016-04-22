@@ -8,7 +8,6 @@ public class BTree implements BTreeInterface{
 	private BTreeNode root;
 
 	// B-TREE SET UP
-
 	public BTree(int magnitude){
 		root = null;
 		this.magnitude = magnitude;
@@ -541,8 +540,6 @@ public class BTree implements BTreeInterface{
 		// set new references
 		newRoot.setChild(root, 0);
 		newRoot.setChild(rightChild, 1);
-
-		// set newroot as actual new root (pun slighly intended)
 		root = newRoot;
 
 		//Update child's references to grandchildren
@@ -651,14 +648,6 @@ public class BTree implements BTreeInterface{
 				}
 				// place child value inside parent node (from the left to the top)
 				parent.setValue(childValue, i-1);
-
-				// sort away: first 'null' value
-//				for (int k = 0; k < pointer.getValues().length-1; k++){
-//					Integer x = parent.getChild(i).getValue(k);
-//					Integer y = parent.getChild(i).getValue(k+1);
-//					parent.getChild(i).setValue(y, k);
-//					parent.getChild(i).setValue(x, k+1);
-//				}
 			}
 		}
 	}
