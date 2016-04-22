@@ -11,7 +11,6 @@ import org.junit.Test;
 public class BTreeInterfaceTest {
 	BTree t1 = new BTree(1);
 	BTree t2 = new BTree(2);
-	BTree t3 = new BTree(3);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -23,9 +22,9 @@ public class BTreeInterfaceTest {
 
 	@Before
 	public void setUp() throws Exception {
+//		t0 = new BTree(0);
 		t1 = new BTree(1);
 		t2 = new BTree(2);
-		t3 = new BTree(3);
 	}
 
 	@After
@@ -34,12 +33,10 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testInsertInteger() {
-		assertNull(t1);
 		assertTrue(t1.insert(new Integer(0)));
 		assertTrue(t1.insert(new Integer(1)));
 		assertTrue(t1.insert(new Integer(2)));
 		assertTrue(t1.insert(new Integer(3)));
-		
 		assertNotNull(t1);
 		assertFalse(t1.insert(new Integer(2))); // Element already in tree
 		
@@ -48,47 +45,50 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testInsertString() {
-		t1.insert("btree.txt");
-		t2.insert("btree.txt");
-		t3.insert("btree.txt");
-		
-		//Physical state tests
-		//assertEquals(t1.height(), 3);
-		assertEquals(t2.height(), 3);
-		//assertEquals(t3.height(), 3);
-		
-		t2.printLevelorder();
+		assertTrue(t1.insert("btree.txt"));
+		assertFalse(t2.insert("btree-fail"));
 	}
 
-//	@Test
-//	public void testContains() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testSize() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testHeight() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testGetMax() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testGetMin() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testIsEmpty() {
-//		fail("Not yet implemented");
-//	}
+	@Test
+	public void testContains() {
+		t1.insert("btree.txt");
+		assertTrue(t1.contains(new Integer(23)));
+		assertFalse(t1.contains(new Integer(112)));		
+	}
+
+	@Test
+	public void testSize() {
+		assertEquals(t1.size(), 0);
+		t1.insert("btree.txt");
+		assertEquals(t1.size(), 26);
+		
+	}
+	
+	@Test
+	public void testHeight() {
+		//assertEquals(t0.height(), 0);
+		assertEquals(t2.height(), 3);
+	}
+	@Test
+	public void testGetMax() {
+		t1.insert("btree.txt");
+		//assertEquals(t0.getMax(), -1);
+		assertEquals(Integer.transformInteger(t1.getMax()), 168);
+		assertNotEquals(Integer.transformInteger(t1.getMax()), 101);
+	}
+
+	@Test
+	public void testGetMin() {
+		//assertEquals(t0.getMin(), -1);
+		assertEquals(t1.getMin(), 1);
+		assertNotEquals(t2.getMin(), 3);
+	}
+
+	@Test
+	public void testIsEmpty() {
+		//assertTrue(t0.isEmpty());
+		assertFalse(t1.isEmpty());
+	}
 //
 //	@Test
 //	public void testAddAll() {

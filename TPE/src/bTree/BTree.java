@@ -106,7 +106,8 @@ public class BTree implements BTreeInterface{
 				}
 				// check stored value: o == value[i]
 				else if ((pointer.getValue(i)).compareTo(o) == 0){
-					// we do something here... println?
+					println("Error: Value already present.");
+					return false;
 				}
 			}
 		}
@@ -149,13 +150,52 @@ public class BTree implements BTreeInterface{
 	}
 
 	public boolean contains(Integer o){
-		BTreeNode pointer = root;
+		
+		BTreeNode parent = root;
+		
+		int result = 0;
+		int i = 0;
+		boolean found = false;
+		boolean nullNext = false;
+		boolean end = false;
+		
+		do {
+			result = o.compareTo(parent.getValue(i));
 
-		// pass values for recursion
-		return contains(pointer, o);
-	}
-	private boolean contains(BTreeNode pointer, Integer value){
-		return false;
+			if (parent.getValue(i+1) == null) {
+				nullNext = true;
+			}
+
+			if(result == -1) {
+				for(int j = 0; j < magnitude*2; j++) {
+					if(o.compareTo(parent.getChild(i).getValue(j)) == 0);
+					found = true;
+				}
+				if(!found)
+					parent = parent.getChild(i);
+				i = 0;
+			}
+
+			else if(result == 1 && nullNext) {
+				for(int j = 0; j < magnitude*2; j++) {
+					if(o.compareTo(parent.getChild(i+1).getValue(j)) == 0);
+					found = true;
+				}
+				if(!found)
+					parent = parent.getChild(i+1);
+				i = 0;
+			}
+
+			else if(!nullNext) {
+				i++;
+			}
+			
+			if(parent.getChild(0) == null) //We are in leaf, element is not in tree
+				end = true;
+		}
+		while(i < magnitude*2 && !found && !end); //Value we seek can never be in a temporary node.
+		
+		return found;
 	}
 
 	public int size(){
@@ -247,9 +287,27 @@ public class BTree implements BTreeInterface{
 		return root == null;
 	}
 
-	public boolean addAll(BTree otherTree) {
-		// TODO Auto-generated method stub
-		return false;
+	public void addAll(BTree otherTree) {
+		BTreeNode pointer = otherTree.root;
+		if (pointer != null){
+
+			// get data: current node
+			Integer[] values = pointer.getValues();
+			BTreeNode[] children = pointer.getChildren();
+
+			// first: get all current node values 
+			for (int i = 0; i < values.length -1; i++){
+				if (values[i] != null) 
+					insert(values[i]);
+			}
+			// second: repeat for each child of the node
+			for (int i = 0; i < children.length -1; i++){
+				printPreorder(pointer.getChild(i));
+			}
+		}
+		else {
+			println("The tree you're trying to add from is empty.");
+		}
 	}
 
 	/* There is no defined convention for pre-, in- or postorder transversion strategy 
@@ -433,6 +491,9 @@ public class BTree implements BTreeInterface{
 		//Update child's references to grandchildren
 		for(int i = magnitude+1; i <= (magnitude*2)+1; i++) {
 			rightChild.setChild(root.getChild(0).getChild(i), i-(magnitude+1));
+			println("ASSIGNING REFERENCES FOR GRANDCHILDREN: ");
+			if(height() > 2)
+				root.getChild(0).getChild(i).printnode();
 			root.getChild(0).setChild(null, i);
 		}
 	}
@@ -482,6 +543,7 @@ public class BTree implements BTreeInterface{
 
 		// check: rabalance to the left
 		if (neighbourLeaf < child){
+			println("REBALACING LEFT");
 			for (int i = neighbourLeaf; i < child; i++){
 
 				boolean set = false;
@@ -513,6 +575,7 @@ public class BTree implements BTreeInterface{
 			}
 		}
 		else {
+			println("REBALACING RIGHT");
 			for (int i = neighbourLeaf; i > child; i--){
 
 				boolean set = false;
@@ -580,8 +643,10 @@ public class BTree implements BTreeInterface{
 				int childPointer = popValue(parent, newLeaf, mValue);
 
 				//Update child's references to grandchildren
-				for (int i = magnitude; i <= (magnitude*2)+1; i++) {
-					newLeaf.setChild(parent.getChild(childPointer).getChild(i), i-magnitude);
+				for (int i = magnitude+1; i <= (magnitude*2)+1; i++) {
+					newLeaf.setChild(parent.getChild(childPointer).getChild(i), i-(magnitude+1));
+					println("ASSIGNING REFERENCES FOR GRANDCHILDREN: ");
+					parent.getChild(childPointer).getChild(i).printnode();
 					parent.getChild(childPointer).setChild(null, i);
 				}
 			}
@@ -678,6 +743,6 @@ public class BTree implements BTreeInterface{
 
 		}
 		parent.setChild(newLeaf, pointer);
-		return pointer;
+		return pointer-1;
 	}
 }

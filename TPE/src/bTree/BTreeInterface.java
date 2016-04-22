@@ -49,10 +49,9 @@ public interface BTreeInterface {
 	boolean isEmpty();
 	
 	/** Adds all Integer values from 'otherTree' to the current B-Tree.
-	 * @param otherTree - The name of the B-Tree to be added.
-	 * @return Returns 'true' of all elements have been successfully added.
+	 * @param otherTree - The name of the B-Tree to be added from.
 	 */
-	boolean addAll(BTree otherTree);
+	void addAll(BTree otherTree);
 	
 	/** Prints all Integer values contained within the B-Tree by using the preorder transversion tactic. 
 	 */
