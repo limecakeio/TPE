@@ -420,6 +420,7 @@ public class BTree implements BTreeInterface{
 
 		// set new root
 		newRoot.setValue(root.getValue(magnitude), 0);
+		println(Integer.toString(root.getValue(magnitude)) + " Rootpop!");
 		root.setValue(null, magnitude);
 
 		// set new references
@@ -465,7 +466,7 @@ public class BTree implements BTreeInterface{
 		i = child+1;
 
 		// check: right sister leaves
-		while (i > (magnitude*2)+1){
+		while (i != magnitude*2 && children[i] != null){
 			// get values: current child
 			Integer[] values = children[i].getValues();
 			// check: neighbor leaf can take further elements
@@ -515,31 +516,32 @@ public class BTree implements BTreeInterface{
 			for (int i = neighbourLeaf; i > child; i--){
 
 				boolean set = false;
-				Integer parentValue = parent.getValue(i);
-				Integer childValue = parent.getChild(i-1).getValue(0);
+				Integer parentValue = parent.getValue(i-1);
+				Integer childValue = parent.getChild(i-1).getValue((magnitude*2)-1);
 
 				// set values to 'null' before swapping
-				parent.setValue(null, i);
-				parent.getChild(i-1).setValue(null, 0);
+				parent.setValue(null, i-1);
+				parent.getChild(i-1).setValue(null, (magnitude*2)-1);
 
 				for (int j = 0; j < pointer.getValues().length-1 && !set; j++){
 					if (parent.getChild(i).getValue(j) == null){
 
 						// search and set position for parent value (from the top to the left) 
 						parent.getChild(i).setValue(parentValue, j);
+						Integer.insertionSort(parent.getChild(i).getValues());
 						set = true;
 					}
 				}
 				// place child value inside parent node (from the left to the top)
-				parent.setValue(childValue, i);
+				parent.setValue(childValue, i-1);
 
 				// sort away: first 'null' value
-				for (int k = 0; k < pointer.getValues().length-1; k++){
-					Integer x = parent.getChild(i+1).getValue(k);
-					Integer y = parent.getChild(i+1).getValue(k+1);
-					parent.getChild(i+1).setValue(y, k);
-					parent.getChild(i+1).setValue(x, k+1);
-				}
+//				for (int k = 0; k < pointer.getValues().length-1; k++){
+//					Integer x = parent.getChild(i).getValue(k);
+//					Integer y = parent.getChild(i).getValue(k+1);
+//					parent.getChild(i).setValue(y, k);
+//					parent.getChild(i).setValue(x, k+1);
+//				}
 			}
 		}
 	}
@@ -551,6 +553,7 @@ public class BTree implements BTreeInterface{
 
 		//Placing middle-value into parent-node
 		Integer mValue = brokenLeaf.getValue(magnitude);
+		println(Integer.toString(mValue) + " Leafpop!");
 		brokenLeaf.setValue(null, magnitude); // Remove middle-value
 
 		//Insert middle value into parent
@@ -567,6 +570,7 @@ public class BTree implements BTreeInterface{
 
 				//Get the middle value
 				mValue = parent.getValue(magnitude);
+				println(Integer.toString(mValue) + " Nodepop!");
 				parent.setValue(null, magnitude); // Remove middle-value
 
 				//Locate and set the new parent node
@@ -576,7 +580,7 @@ public class BTree implements BTreeInterface{
 				int childPointer = popValue(parent, newLeaf, mValue);
 
 				//Update child's references to grandchildren
-				for(int i = magnitude; i <= (magnitude*2)+1; i++) {
+				for (int i = magnitude; i <= (magnitude*2)+1; i++) {
 					newLeaf.setChild(parent.getChild(childPointer).getChild(i), i-magnitude);
 					parent.getChild(childPointer).setChild(null, i);
 				}
