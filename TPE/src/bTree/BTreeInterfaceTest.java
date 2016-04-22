@@ -60,7 +60,6 @@ public class BTreeInterfaceTest {
 	public void testSize(){
 		assertEquals(t1.size(), 0);
 		t1.insert("btree.txt");
-		println("FUCKING SIZE: " + t1.size());
 		assertEquals(t1.size(), 26);
 		
 	}
