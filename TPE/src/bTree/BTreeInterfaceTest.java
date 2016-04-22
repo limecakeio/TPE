@@ -1,8 +1,6 @@
 package bTree;
 
 import static org.junit.Assert.*;
-import static gdi.MakeItSimple.*;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
