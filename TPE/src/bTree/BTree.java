@@ -70,7 +70,7 @@ public class BTree implements BTreeInterface{
 				}
 				// check stored value: o > value[i]
 				else if ((pointer.getValue(i)).compareTo(o) == -1){
-					
+
 					// check stored value: o > value[i+1]
 					if (pointer.getValue(i+1) != null){
 						i++;
@@ -150,7 +150,7 @@ public class BTree implements BTreeInterface{
 
 	public boolean contains(Integer o){
 		BTreeNode pointer = root;
-		
+
 		// pass values for recursion
 		return contains(pointer, o);
 	}
@@ -159,19 +159,19 @@ public class BTree implements BTreeInterface{
 	}
 
 	public int size(){
-		
+
 		BTreeNode pointer = root;
 		int nodes = 0;
-		
+
 		// return total nodes by recursion
 		return size(pointer, nodes);
 	}
 	private int size(BTreeNode pointer, int nodes){
-		
+
 		// check: tree contains elements
 		if (pointer != null){
 			nodes++;
-			
+
 			// repeat process: visit each child
 			for (int i = 0; i != pointer.getValues().length; i++){
 				nodes = size(pointer.getChild(i), nodes);
@@ -181,11 +181,11 @@ public class BTree implements BTreeInterface{
 	}
 
 	public int height(){
-		
+
 		int height = 0;
 		int counter = 0;
 		BTreeNode pointer = root;
-		
+
 		// check: tree contains elements
 		if (pointer != null){
 			height++;
@@ -199,26 +199,26 @@ public class BTree implements BTreeInterface{
 				}
 				pointer = pointer.getChild(counter);
 				counter = 0;
-				
+
 				// avoid counting: child == null
 				if (pointer != null){
-				height++;
+					height++;
 				}
 			}
-			
+
 		}
 		return height;
 	}
 
 	public Integer getMax(){
-		
+
 		int i = 0;
 		BTreeNode pointer = root;
 		Integer maxValue = new Integer(-1);
-		
+
 		// check: node is empty
 		while (pointer != null){
-			
+
 			// check: find max value
 			while (pointer.getValue(i) != null && i != magnitude*2){
 				maxValue = pointer.getValue(i);
@@ -299,7 +299,7 @@ public class BTree implements BTreeInterface{
 	}
 
 	public void printInorder(){
-		
+
 		BTreeNode pointer = root;
 		printInorder(pointer);
 	}
@@ -356,7 +356,7 @@ public class BTree implements BTreeInterface{
 	}
 
 	public void printLevelorder(){
-		
+
 		// get data: root & future storage
 		BTreeNode pointer = root;
 		BTreeNode[] storage = new BTreeNode[size()]; 
@@ -365,7 +365,7 @@ public class BTree implements BTreeInterface{
 		printLevelorder(pointer, storage);
 	}
 	private void printLevelorder(BTreeNode pointer, BTreeNode[] storage){
-		
+
 		int i = 0;
 		int j = 0;
 		int k = 0;
@@ -379,32 +379,32 @@ public class BTree implements BTreeInterface{
 			// queue functionality
 			for (i = 0; i != storage.length; i++){
 				for (j = 0; j != magnitude*2; j++){
-				
-				// for each target-element print...
-				if (storage[i].getValue(j) != null){
-				target = storage[i].getValue(j);
-				System.out.print(Integer.toString(target) + ", ");
 
-				// ... its children are added to the storage.
-				if (k != (storage.length)*(magnitude*2)){
+					// for each target-element print...
+					if (storage[i].getValue(j) != null){
+						target = storage[i].getValue(j);
+						System.out.print(Integer.toString(target) + ", ");
 
-					// check: left child of the target	
-					if (storage[i].getChild(j) != null && !skip){	
-						k++;
-						storage[k] = storage[i].getChild(j);
-						skip = true;
-					}
+						// ... its children are added to the storage.
+						if (k != (storage.length)*(magnitude*2)){
 
-					// check: target has a right child	
-					if (storage[i].getChild(j+1) != null){	
-						k++;
-						storage[k] = storage[i].getChild(j+1);
+							// check: left child of the target	
+							if (storage[i].getChild(j) != null && !skip){	
+								k++;
+								storage[k] = storage[i].getChild(j);
+								skip = true;
+							}
+
+							// check: target has a right child	
+							if (storage[i].getChild(j+1) != null){	
+								k++;
+								storage[k] = storage[i].getChild(j+1);
+							}
+						}
 					}
-				}
+					else {
+						System.out.print("XX, ");
 					}
-				else {
-					System.out.print("XX, ");
-				}
 				}
 				skip = false;// here
 			}
@@ -413,7 +413,7 @@ public class BTree implements BTreeInterface{
 
 	// SPECIAL METHODS
 	private void burstRoot(){
-		
+
 		// split the root: create 2 new nodes and populate
 		BTreeNode newRoot = new BTreeNode(magnitude);
 		BTreeNode rightChild = splitNode(root);
@@ -428,7 +428,7 @@ public class BTree implements BTreeInterface{
 
 		// set newroot as actual new root (pun slighly intended)
 		root = newRoot;
-		
+
 		//Update child's references to grandchildren
 		for(int i = magnitude+1; i <= (magnitude*2)+1; i++) {
 			rightChild.setChild(root.getChild(0).getChild(i), i-(magnitude+1));
@@ -451,6 +451,7 @@ public class BTree implements BTreeInterface{
 		int i = child-1;
 		BTreeNode[] children = parent.getChildren();
 
+		// check: left sister leaves
 		while (i >= 0){
 			// get values: current child
 			Integer[] values = children[i].getValues();
@@ -460,172 +461,219 @@ public class BTree implements BTreeInterface{
 			}
 			i--;
 		}
+
+		i = child+1;
+
+		// check: right sister leaves
+		while (i > (magnitude*2)+1){
+			// get values: current child
+			Integer[] values = children[i].getValues();
+			// check: neighbor leaf can take further elements
+			if (values[values.length-1] == null && values[values.length-2] == null){
+				return i;
+			}
+			i++;
+		}
 		return -1;
 	}
-	
+
 	private void rebalance(BTreeNode pointer, BTreeNode parent, int child, int neighbourLeaf){
-		
-		for (int i = neighbourLeaf; i < child; i++){
 
-			boolean set = false;
-			Integer parentValue = parent.getValue(i);
-			Integer childValue = parent.getChild(i+1).getValue(0);
-			
-			// set values to 'null' before swapping
-			parent.setValue(null, i);
-			parent.getChild(i+1).setValue(null, 0);
+		// check: rabalance to the left
+		if (neighbourLeaf < child){
+			for (int i = neighbourLeaf; i < child; i++){
 
-			for (int j = 0; j < pointer.getValues().length-1 && !set; j++){
-				if (parent.getChild(i).getValue(j) == null){
+				boolean set = false;
+				Integer parentValue = parent.getValue(i);
+				Integer childValue = parent.getChild(i+1).getValue(0);
 
-					// search and set position for parent value (from the top to the left) 
-					parent.getChild(i).setValue(parentValue, j);
-					set = true;
+				// set values to 'null' before swapping
+				parent.setValue(null, i);
+				parent.getChild(i+1).setValue(null, 0);
+
+				for (int j = 0; j < pointer.getValues().length-1 && !set; j++){
+					if (parent.getChild(i).getValue(j) == null){
+
+						// search and set position for parent value (from the top to the left) 
+						parent.getChild(i).setValue(parentValue, j);
+						set = true;
+					}
+				}
+				// place child value inside parent node (from the left to the top)
+				parent.setValue(childValue, i);
+
+				// sort away: first 'null' value
+				for (int k = 0; k < pointer.getValues().length-1; k++){
+					Integer x = parent.getChild(i+1).getValue(k);
+					Integer y = parent.getChild(i+1).getValue(k+1);
+					parent.getChild(i+1).setValue(y, k);
+					parent.getChild(i+1).setValue(x, k+1);
 				}
 			}
-			// place child value inside parent node (from the left to the top)
-			parent.setValue(childValue, i);
-			
-			// sort away: first 'null' value
-			for (int k = 0; k < pointer.getValues().length-1; k++){
-				Integer x = parent.getChild(i+1).getValue(k);
-				Integer y = parent.getChild(i+1).getValue(k+1);
-				parent.getChild(i+1).setValue(y, k);
-				parent.getChild(i+1).setValue(x, k+1);
+		}
+		else {
+			for (int i = neighbourLeaf; i > child; i--){
+
+				boolean set = false;
+				Integer parentValue = parent.getValue(i);
+				Integer childValue = parent.getChild(i-1).getValue(0);
+
+				// set values to 'null' before swapping
+				parent.setValue(null, i);
+				parent.getChild(i-1).setValue(null, 0);
+
+				for (int j = 0; j < pointer.getValues().length-1 && !set; j++){
+					if (parent.getChild(i).getValue(j) == null){
+
+						// search and set position for parent value (from the top to the left) 
+						parent.getChild(i).setValue(parentValue, j);
+						set = true;
+					}
+				}
+				// place child value inside parent node (from the left to the top)
+				parent.setValue(childValue, i);
+
+				// sort away: first 'null' value
+				for (int k = 0; k < pointer.getValues().length-1; k++){
+					Integer x = parent.getChild(i+1).getValue(k);
+					Integer y = parent.getChild(i+1).getValue(k+1);
+					parent.getChild(i+1).setValue(y, k);
+					parent.getChild(i+1).setValue(x, k+1);
+				}
 			}
 		}
 	}
-	
-private void burstTreeLeaf(int magnitude, BTreeNode parent, BTreeNode brokenLeaf) {
-		
-	//Arrange a new node for all elements > magnitude
-	BTreeNode newLeaf = splitNode(brokenLeaf);
-	
-	//Placing middle-value into parent-node
-	Integer mValue = brokenLeaf.getValue(magnitude);
-	brokenLeaf.setValue(null, magnitude); // Remove middle-value
-	
-	//Insert middle value into parent
-	popValue(parent, newLeaf, mValue);		
-		
+
+	private void burstTreeLeaf(int magnitude, BTreeNode parent, BTreeNode brokenLeaf) {
+
+		//Arrange a new node for all elements > magnitude
+		BTreeNode newLeaf = splitNode(brokenLeaf);
+
+		//Placing middle-value into parent-node
+		Integer mValue = brokenLeaf.getValue(magnitude);
+		brokenLeaf.setValue(null, magnitude); // Remove middle-value
+
+		//Insert middle value into parent
+		popValue(parent, newLeaf, mValue);		
+
 		while(!criteriaCheck(parent)) {
-			
+
 			if(!criteriaCheck(root)){
 				burstRoot();
 			}
 			else {
-			// Split the parent
-			newLeaf = splitNode(brokenLeaf);
-			
-			//Get the middle value
-			mValue = parent.getValue(magnitude);
-			parent.setValue(null, magnitude); // Remove middle-value
-			
-			//Locate and set the new parent node
-			parent = locateParentNode(mValue);
-			
-			//Insert middle value into parent
-			int childPointer = popValue(parent, newLeaf, mValue);
-			
-			//Update child's references to grandchildren
-			for(int i = magnitude; i <= (magnitude*2)+1; i++) {
-				newLeaf.setChild(parent.getChild(childPointer).getChild(i), i-magnitude);
-				parent.getChild(childPointer).setChild(null, i);
+				// Split the parent
+				newLeaf = splitNode(brokenLeaf);
+
+				//Get the middle value
+				mValue = parent.getValue(magnitude);
+				parent.setValue(null, magnitude); // Remove middle-value
+
+				//Locate and set the new parent node
+				parent = locateParentNode(mValue);
+
+				//Insert middle value into parent
+				int childPointer = popValue(parent, newLeaf, mValue);
+
+				//Update child's references to grandchildren
+				for(int i = magnitude; i <= (magnitude*2)+1; i++) {
+					newLeaf.setChild(parent.getChild(childPointer).getChild(i), i-magnitude);
+					parent.getChild(childPointer).setChild(null, i);
+				}
 			}
 		}
-		}
 	}
-/**THE FOLLOWING METHODS ASSIST ALL BURST METHODS*/
-public BTreeNode locateParentNode(Integer query) {
-	//Enter the tree
-	BTreeNode newParent = root;
-	
-	int result = 0;
-	int i = 0;
-	boolean found = false;
-	boolean nullNext = false;
-	do {
-		result = query.compareTo(newParent.getValue(i));
-		
-		if (newParent.getValue(i+1) == null) {
-			nullNext = true;
-		}
-			
-		if(result == -1) {
-			for(int j = 0; j < magnitude*2; j++) {
-				if(query.compareTo(newParent.getChild(i).getValue(j)) == 0);
-				found = true;
+	/**THE FOLLOWING METHODS ASSIST ALL BURST METHODS*/
+	public BTreeNode locateParentNode(Integer query) {
+		//Enter the tree
+		BTreeNode newParent = root;
+
+		int result = 0;
+		int i = 0;
+		boolean found = false;
+		boolean nullNext = false;
+		do {
+			result = query.compareTo(newParent.getValue(i));
+
+			if (newParent.getValue(i+1) == null) {
+				nullNext = true;
 			}
-			if(!found)
-				newParent = newParent.getChild(i);
-			i = 0;
-		}
-		
-		else if(result == 1 && nullNext) {
-			for(int j = 0; j < magnitude*2; j++) {
-				if(query.compareTo(newParent.getChild(i+1).getValue(j)) == 0);
-				found = true;
+
+			if(result == -1) {
+				for(int j = 0; j < magnitude*2; j++) {
+					if(query.compareTo(newParent.getChild(i).getValue(j)) == 0);
+					found = true;
+				}
+				if(!found)
+					newParent = newParent.getChild(i);
+				i = 0;
 			}
-			if(!found)
-				newParent = newParent.getChild(i+1);
-			i = 0;
+
+			else if(result == 1 && nullNext) {
+				for(int j = 0; j < magnitude*2; j++) {
+					if(query.compareTo(newParent.getChild(i+1).getValue(j)) == 0);
+					found = true;
+				}
+				if(!found)
+					newParent = newParent.getChild(i+1);
+				i = 0;
+			}
+
+			else if(!nullNext) {
+				i++;
+			}
 		}
+		while(i < magnitude*2 && !found); //Value we seek can never be in a temporary node.
 
-		else if(!nullNext) {
-		i++;
+		return newParent;
+	}
+
+	private BTreeNode splitNode(BTreeNode brokenLeaf) {
+		BTreeNode newLeaf = new BTreeNode(magnitude);
+
+		for(int i = magnitude+1; i <= magnitude*2; i++) {
+			newLeaf.setValue(brokenLeaf.getValue(i), i-(magnitude+1));
+			brokenLeaf.setValue(null, i);
 		}
+		return newLeaf;
 	}
-	while(i < magnitude*2 && !found); //Value we seek can never be in a temporary node.
-	
-	return newParent;
-}
 
-private BTreeNode splitNode(BTreeNode brokenLeaf) {
-	BTreeNode newLeaf = new BTreeNode(magnitude);
-	
-	for(int i = magnitude+1; i <= magnitude*2; i++) {
-		newLeaf.setValue(brokenLeaf.getValue(i), i-(magnitude+1));
-		brokenLeaf.setValue(null, i);
-	}
-	return newLeaf;
-}
-
-private int popValue(BTreeNode parent, BTreeNode newLeaf, Integer mValue) {
-	int pos = 0;
-	while(parent.getValue(pos) != null) {
+	private int popValue(BTreeNode parent, BTreeNode newLeaf, Integer mValue) {
+		int pos = 0;
+		while(parent.getValue(pos) != null) {
 			pos++;
-	}
-	parent.setValue(mValue, pos);
-	Integer.insertionSort(parent.getValues());
-	
-	//Point the reference to the new leaf via its corresponding value
-	pos = 0;
-	boolean found = false;
-	while(!found) {
-		if(parent.getValue(pos) != mValue)
-			pos++;
-		else 
-			found = true;
-	}
-	
-	int pointer = pos+1;
-	
-	// Check that reference-field is not already occupied
-	if(parent.getChild(pointer) != null) {
-		while (parent.getChild(pointer) != null) {
-			pointer++;
 		}
-		
-		while(pointer > pos+1) {
-			BTreeNode a = parent.getChild(pointer);
-			BTreeNode b = parent.getChild(pointer-1);
-			parent.setChild(a, pointer-1);
-			parent.setChild(b,pointer);
-			pointer--;
+		parent.setValue(mValue, pos);
+		Integer.insertionSort(parent.getValues());
+
+		//Point the reference to the new leaf via its corresponding value
+		pos = 0;
+		boolean found = false;
+		while(!found) {
+			if(parent.getValue(pos) != mValue)
+				pos++;
+			else 
+				found = true;
 		}
-		
+
+		int pointer = pos+1;
+
+		// Check that reference-field is not already occupied
+		if(parent.getChild(pointer) != null) {
+			while (parent.getChild(pointer) != null) {
+				pointer++;
+			}
+
+			while(pointer > pos+1) {
+				BTreeNode a = parent.getChild(pointer);
+				BTreeNode b = parent.getChild(pointer-1);
+				parent.setChild(a, pointer-1);
+				parent.setChild(b,pointer);
+				pointer--;
+			}
+
+		}
+		parent.setChild(newLeaf, pointer);
+		return pointer;
 	}
-	parent.setChild(newLeaf, pointer);
-	return pointer;
-}
 }
