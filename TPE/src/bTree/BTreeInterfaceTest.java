@@ -41,8 +41,6 @@ public class BTreeInterfaceTest {
 		assertTrue(t1.insert(new Integer(3)));
 		assertNotNull(t1);
 		assertFalse(t1.insert(new Integer(2))); // Element already in tree
-		
-		
 	}
 
 	@Test
@@ -60,17 +58,17 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testSize(){
-		assertEquals(t2.size(), 0);
-		t2.insert("btree.txt");
-		println("FUCKING SIZE: " + t2.size());
-		assertEquals(t2.size(), 26);
+		assertEquals(t1.size(), 0);
+		t1.insert("btree.txt");
+		println("FUCKING SIZE: " + t1.size());
+		assertEquals(t1.size(), 26);
 		
 	}
 	
 	@Test
 	public void testHeight() {
 		assertEquals(t2.height(), 0);
-		
+		t2.insert("btree.txt");
 		assertEquals(t2.height(), 3);
 	}
 	@Test
@@ -83,27 +81,31 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testGetMin() {
-		//assertEquals(t0.getMin(), -1);
-		assertEquals(t1.getMin(), 1);
-		assertNotEquals(t2.getMin(), 3);
+		assertEquals(Integer.transformInteger(t2.getMin()), -1);
+		t2.insert("btree.txt");
+		assertEquals(Integer.transformInteger(t2.getMin()), 1);
+		assertNotEquals(Integer.transformInteger(t2.getMin()), 3);
 	}
 
 	@Test
 	public void testIsEmpty() {
-		//assertTrue(t0.isEmpty());
+		assertTrue(t1.isEmpty());
+		t1.insert("btree.txt");
 		assertFalse(t1.isEmpty());
 	}
 
 	@Test
 	public void testAddAll() {
 		t1.insert("btree.txt");
-		t2.insert("btreemini.txt");	
+		t2.insert("btreemini.txt");
+		t1.addAll(t2);
+		assertEquals(t1.size(), 29);
 	}
 
 	@Test
 	public void testPrintPreorder() {
 		t2.insert("btree.txt");
-		//t2.printPreorder();
+		t2.printPreorder();
 	}
 
 	@Test
@@ -114,14 +116,14 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testPrintPostorder() {
-		t2.insert("btree.txt");
+		//t2.insert("btree.txt");
 		//t2.printPostorder();
 	}
 
 	@Test
 	public void testPrintLevelorder() {
 		t2.insert("btree.txt");
-		//t2.printLevelorder();
+		t2.printLevelorder();
 	}
 
 }
