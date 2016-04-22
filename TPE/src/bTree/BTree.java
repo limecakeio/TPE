@@ -115,13 +115,15 @@ public class BTree implements BTreeInterface{
 		else {
 			pointer = new BTreeNode(o, magnitude);
 			root = pointer;
+			success = true;
 		}
 		return success;
 	}
 
 	public boolean insert(String filename) {
+		
 		Integer value = new Integer(0);
-
+		
 		// check: file is present & readable
 		if (isFilePresent(filename) && (isFileReadable(filename))){
 			Object inputFile = openInputFile(filename);
@@ -130,9 +132,9 @@ public class BTree implements BTreeInterface{
 				value = new Integer(readInt(inputFile));
 
 				// attempt to insert value into tree
-				if(insert(value) == false)
+				if (insert(value) == false){
 					println("Failed to insert: " + Integer.transformInteger(value) + ".");
-
+				}
 				// check: read-away delimiter characters
 				if (!isEndOfInputFile(inputFile)){
 					readChar(inputFile);
