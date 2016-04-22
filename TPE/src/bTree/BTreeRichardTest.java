@@ -10,8 +10,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class BTreeRichardTest {
-	BTree t1 = new BTree(1);
-	BTree t2 = new BTree(2);
+	BTreeInterface t1 = new BTree(1);
+	BTreeInterface t2 = new BTree(2);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -23,8 +23,8 @@ public class BTreeRichardTest {
 
 	@Before
 	public void setUp() throws Exception {
-		t1 = new BTree(1);
-		t2 = new BTree(2);
+		BTreeInterface t1 = new BTree(1);
+		BTreeInterface t2 = new BTree(2);
 	}
 
 	@After
@@ -119,8 +119,26 @@ public class BTreeRichardTest {
 		System.out.println("Minimal value contained within the tree: " + Integer.transformInteger(t1.getMin()));
 		System.out.println("Maximal value contained within the tree: " + Integer.transformInteger(t1.getMax()));
 		
-		System.out.println("\nThe tree contains the value 10: " + t1.contains(new Integer(10)));
-		System.out.println("The tree contains the value 100: " + t1.contains(new Integer(100)));
+//		System.out.println("\nThe tree contains the value 10: " + t1.contains(new Integer(10)));
+//		System.out.println("The tree contains the value 100: " + t1.contains(new Integer(100)));
+		t1 = t2.clone();
+
+		System.out.println("\nInorder-Strategy");
+		t1.printInorder();
+		System.out.println("\nPreorder-Startegy");
+		t1.printPreorder();
+		System.out.println("\nPostorder-Strategy");
+		t1.printPostorder();
+		System.out.println("\nLevelorder-Strategy");
+		t1.printLevelorder();
+
+		System.out.println("\n\nThe tree has a height of: " + t1.height());
+		System.out.println("The tree contains: " + t1.size() + " nodes. ");
+		System.out.println("Minimal value contained within the tree: " + Integer.transformInteger(t1.getMin()));
+		System.out.println("Maximal value contained within the tree: " + Integer.transformInteger(t1.getMax()));
+		
+		
+		
 	}}
 	
 //	@Test

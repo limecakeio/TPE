@@ -309,6 +309,64 @@ public class BTree implements BTreeInterface{
 			println("The tree you're trying to add from is empty.");
 		}
 	}
+	
+	public BTreeInterface clone(){
+
+		int i = 0;
+		int j = 0;
+		int k = 0;
+		Integer target;
+		boolean skip = false;
+		BTreeNode pointer = root;
+		BTree clone = new BTree(magnitude);
+		BTreeNode[] storage = new BTreeNode[size()];
+
+		// add first node: root
+		if (pointer != null){	
+			storage[0] = pointer;
+
+			// queue functionality
+			for (i = 0; i != storage.length; i++){
+				for (j = 0; j != magnitude*2; j++){
+
+					// for each target-element print...
+					if (storage[i].getValue(j) != null){
+						target = storage[i].getValue(j);
+
+						// ... its children are added to the storage.
+						if (k != (storage.length)*(magnitude*2)){
+
+							// check: left child of the target	
+							if (storage[i].getChild(j) != null && !skip){	
+								k++;
+								storage[k] = storage[i].getChild(j);
+								skip = true;
+							}
+
+							// check: target has a right child	
+							if (storage[i].getChild(j+1) != null){	
+								k++;
+								storage[k] = storage[i].getChild(j+1);
+							}
+						}
+					}
+				}
+				skip = false;
+			}
+			// convert storage: create a clone
+			for (i = 0; i != storage.length; i++){
+				for (j = 0; j != magnitude*2+1; j++){
+					if (storage[i].getValue(j)!= null){
+						
+					println(Integer.transformInteger(storage[i].getValue(j))+ " added");
+					target = storage[i].getValue(j);
+					clone.insert(target);
+					}
+				}
+			}
+		}
+		return clone;
+	}
 
 	/* There is no defined convention for pre-, in- or postorder transversion strategy 
 	 * for working with a B-Tree. We define them as following:

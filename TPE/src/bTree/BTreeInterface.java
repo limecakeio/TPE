@@ -53,6 +53,11 @@ public interface BTreeInterface {
 	 */
 	void addAll(BTree otherTree);
 	
+	/**
+	 *  TODO
+	 */
+	BTreeInterface clone();
+	
 	/** Prints all Integer values contained within the B-Tree by using the preorder transversion tactic. 
 	 */
 	void printPreorder();
