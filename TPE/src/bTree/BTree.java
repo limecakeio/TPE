@@ -201,28 +201,6 @@ public class BTree implements BTreeInterface{
 		
 		return found;
 	}
-
-	private int nodeCount(){
-
-		BTreeNode pointer = root;
-		int nodes = 0;
-
-		// return total nodes by recursion
-		return nodeCount(pointer, nodes);
-	}
-	private int nodeCount(BTreeNode pointer, int nodes){
-
-		// check: tree contains elements
-		if (pointer != null){
-			nodes++;
-
-			// repeat process: visit each child
-			for (int i = 0; i != pointer.getValues().length; i++){
-				nodes = nodeCount(pointer.getChild(i), nodes);
-			}
-		}
-		return nodes;
-	}
 	
 	public int size(){
 
@@ -236,7 +214,6 @@ public class BTree implements BTreeInterface{
 		int j = 0;
 		int k = 0;
 		int size = 0;
-		Integer target;
 		boolean skip = false;
 
 		// add first node: root
@@ -249,7 +226,7 @@ public class BTree implements BTreeInterface{
 
 					// for each target-element print...
 					if (storage[i].getValue(j) != null){
-						target = storage[i].getValue(j);
+						storage[i].getValue(j);
 						size++;
 
 						// ... its children are added to the storage.
@@ -528,6 +505,27 @@ public class BTree implements BTreeInterface{
 	}
 
 	// SPECIAL METHODS
+	private int nodeCount(){
+
+		BTreeNode pointer = root;
+		int nodes = 0;
+
+		// return total nodes by recursion
+		return nodeCount(pointer, nodes);
+	}
+	private int nodeCount(BTreeNode pointer, int nodes){
+
+		// check: tree contains elements
+		if (pointer != null){
+			nodes++;
+
+			// repeat process: visit each child
+			for (int i = 0; i != pointer.getValues().length; i++){
+				nodes = nodeCount(pointer.getChild(i), nodes);
+			}
+		}
+		return nodes;
+	}
 	private void burstRoot(){
 
 		// split the root: create 2 new nodes and populate
