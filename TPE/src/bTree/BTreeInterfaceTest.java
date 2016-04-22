@@ -12,7 +12,6 @@ public class BTreeInterfaceTest {
 	BTree t1 = new BTree(1);
 	BTree t2 = new BTree(2);
 	BTree t3 = new BTree(3);
-	BTree t20 = new BTree(20);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -27,7 +26,6 @@ public class BTreeInterfaceTest {
 		t1 = new BTree(1);
 		t2 = new BTree(2);
 		t3 = new BTree(3);
-		t20 = new BTree(20);
 	}
 
 	@After
@@ -36,17 +34,30 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testInsertInteger() {
+		assertNull(t1);
+		assertTrue(t1.insert(new Integer(0)));
+		assertTrue(t1.insert(new Integer(1)));
+		assertTrue(t1.insert(new Integer(2)));
+		assertTrue(t1.insert(new Integer(3)));
+		
+		assertNotNull(t1);
+		assertFalse(t1.insert(new Integer(2))); // Element already in tree
+		
+		
 	}
 
 	@Test
 	public void testInsertString() {
-		t2.insert("btree50.txt");
-		t2.printLevelorder();
-		System.out.println("\n\nThe tree has a height of: " + t2.height());
-		System.out.println("The tree contains: " + t2.size() + " nodes. ");
-		System.out.println("Minimal value contained within the tree: " + Integer.transformInteger(t2.getMin()));
-		System.out.println("Maximal value contained within the tree: " + Integer.transformInteger(t2.getMax()));
+		t1.insert("btree.txt");
+		t2.insert("btree.txt");
+		t3.insert("btree.txt");
 		
+		//Physical state tests
+		//assertEquals(t1.height(), 3);
+		assertEquals(t2.height(), 3);
+		//assertEquals(t3.height(), 3);
+		
+		t2.printLevelorder();
 	}
 
 //	@Test
