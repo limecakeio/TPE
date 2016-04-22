@@ -40,8 +40,13 @@ public class BTreeInterfaceTest {
 
 	@Test
 	public void testInsertString() {
-		t2.insert("btree500.txt");
+		t2.insert("btree50.txt");
 		t2.printLevelorder();
+		System.out.println("\n\nThe tree has a height of: " + t2.height());
+		System.out.println("The tree contains: " + t2.size() + " nodes. ");
+		System.out.println("Minimal value contained within the tree: " + Integer.transformInteger(t2.getMin()));
+		System.out.println("Maximal value contained within the tree: " + Integer.transformInteger(t2.getMax()));
+		
 	}
 
 //	@Test
