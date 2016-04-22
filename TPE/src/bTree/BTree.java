@@ -115,7 +115,8 @@ public class BTree implements BTreeInterface{
 		else {
 			pointer = new BTreeNode(o, magnitude);
 			root = pointer;
-		}	
+		}
+		pointer.printnode();
 		return success;
 	}
 
@@ -687,7 +688,7 @@ public class BTree implements BTreeInterface{
 			}
 			else {
 				// Split the parent
-				newLeaf = splitNode(brokenLeaf);
+				newLeaf = splitNode(parent);
 
 				//Get the middle value
 				mValue = parent.getValue(magnitude);

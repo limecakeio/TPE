@@ -103,7 +103,7 @@ public class BTreeRichardTest {
 //		t1.insert(new Integer(240));
 //		t1.insert(new Integer(250));
 //		
-		t2.insert("btree.txt");
+		t2.insert("btree50.txt");
 
 		System.out.println("\nInorder-Strategy");
 		t2.printInorder();
