@@ -28,7 +28,8 @@ public class BTreeMenu {
 		// collection of printed messages
 		String empty = "Error: The B-tree is empty.";
 		String invalid = "Error: Invalid input line. Please try again.";
-		String loop = "Would you like to insert other values?\nEnter: [1] for 'yes', [2] for 'no'.";
+		String loopInsert = "Would you like to insert other values?\nEnter: [1] for 'yes', [2] for 'no'.";
+		String loopRemove = "Would you like to remove other values?\nEnter: [1] for 'yes', [2] for 'no'.";
 
 
 		println("Welcome to the B-tree menu!");
@@ -106,7 +107,7 @@ public class BTreeMenu {
 					// insert: success
 					if (storage[active].insert(new Integer(value))){
 						println("Value: [" + value + "] has been successfully added.");
-						println(loop);
+						println(loopInsert);
 						command = readInt();
 
 						if (command != 1){
@@ -127,7 +128,24 @@ public class BTreeMenu {
 						println("Values from the file '" + file + "' have been added.");
 					}
 				}
+				
+				// Command XX: remove value
+				while (command == 10000){
+					println("Please enter a value you would like to remove.");
+					value = readInt();
 
+					// remove: success
+					if (storage[active].delete(new Integer(value))){
+						println("Value: [" + value + "] has been successfully removed.");
+						println(loopRemove);
+						command = readInt();
+
+						if (command != 10000){
+							command = 0;
+						}
+					}
+				}
+				
 				// Command 3: check if empty
 				if (command == 3){
 					command = 0;
@@ -170,7 +188,7 @@ public class BTreeMenu {
 				// Command 6: get min-value
 				if (command == 6){
 					command = 0;
-					value = Integer.transformInteger(storage[active].getMax());
+					value = Integer.transformInteger(storage[active].getMin());
 
 					if (value != -1){
 						println("Min value contained within the B-tree is [" + value + "].");

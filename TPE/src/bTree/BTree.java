@@ -147,6 +147,11 @@ public class BTree implements BTreeInterface{
 			return false;
 		}
 	}
+	
+	public boolean delete(Integer o){
+		// IMPLEMENTATION GOES HERE
+		return false;
+	}
 
 	public boolean contains(Integer o){
 		
@@ -631,11 +636,11 @@ public class BTree implements BTreeInterface{
 
 				boolean set = false;
 				Integer parentValue = parent.getValue(i-1);
-				Integer childValue = parent.getChild(i-1).getValue((magnitude*2)-1);
+				Integer childValue = parent.getChild(i-1).getValue((magnitude*2));
 
 				// set values to 'null' before swapping
 				parent.setValue(null, i-1);
-				parent.getChild(i-1).setValue(null, (magnitude*2)-1);
+				parent.getChild(i-1).setValue(null, (magnitude*2));
 
 				for (int j = 0; j < pointer.getValues().length-1 && !set; j++){
 					if (parent.getChild(i).getValue(j) == null){
@@ -794,4 +799,5 @@ public class BTree implements BTreeInterface{
 		parent.setChild(newLeaf, pointer);
 		return pointer-1;
 	}
+	
 }
