@@ -329,7 +329,11 @@ public class BTree implements BTreeInterface{
 	}
 
 	public void addAll(BTree otherTree) {
-		BTreeNode pointer = otherTree.root;
+	BTreeNode pointer = otherTree.root;
+	addAll(pointer);
+	}
+	
+	public void addAll(BTreeNode pointer) {
 		if (pointer != null){
 
 			// get data: current node
@@ -343,11 +347,8 @@ public class BTree implements BTreeInterface{
 			}
 			// second: repeat for each child of the node
 			for (int i = 0; i < children.length -1; i++){
-				printPreorder(pointer.getChild(i));
+				addAll(pointer.getChild(i));
 			}
-		}
-		else {
-			println("The tree you're trying to add from is empty.");
 		}
 	}
 
