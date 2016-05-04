@@ -20,7 +20,7 @@ public class ICP_Hochdeutsch extends IceCreamParlor {
 		}
 
 		public void greet(){
-			println("Hallo und herzlich willkommen in der Eisdiele Hochdeutsch!");
+			println("\nHallo und herzlich willkommen in der Eisdiele Hochdeutsch!");
 		}
 
 		public void cashier(double price){

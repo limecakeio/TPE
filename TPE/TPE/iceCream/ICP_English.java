@@ -2,37 +2,38 @@ package iceCream;
 
 import static gdi.MakeItSimple.*;
 
-public class ICP_Mannheim extends IceCreamParlor {
+public class ICP_English extends IceCreamParlor {
 	
-	public ICP_Mannheim(){
+	public ICP_English(){
 	}
 	
-	// constructor: mannheim ice-cream variant
+	// constructor: hochdeutsch ice-cream variants
 		public IceCream create(String type){
 
 			IceCream order = null;
 
 			// check: ice-cream available
 			if (available(type)){
-				order = new IC_Mannheim(type);
+				order = new IC_English(type);
 			}
 			return order;
 		}
 
 		public void greet(){
-			println("\nDu has dich in die Monnemer Eisdiel verloffe!");
+			println("\nWelcome to our english-speaking ice-cream parlor!");
 		}
 
 		public void cashier(double price){
-			println("\nLass ma " + price + " € rüwawachse.");
+			println("\nThat makes " + price + " €, please.");
 		}
 
 		public void farewell(String type){
-			println("Alla hopp! Lecker-specker dei " + type + "!");
+			println("See you! Enjoy your " + type + "!");
 		}
 
 		public void apologize(String type){
-			println("Nee jezz, " + type + " gibts bei uns net.");
+			println("We are terribly sorry. " + type + " is not on our menu.");
+			println("Please come again!");
 		}
 
 		// AXILIARY METHODS
@@ -45,7 +46,7 @@ public class ICP_Mannheim extends IceCreamParlor {
 
 			// local menu: all available ice cream variants go here.
 			String[] menu = new String[]{
-					"Spageddiais","Bananesplitt","Nussbecher"};
+					"Spaghetti-formed ice-cream","Bananasplit","Nut-cup"};
 
 			// lookup the ice-cream in question
 			for (int i = 0; i != menu.length; i++){
@@ -57,3 +58,5 @@ public class ICP_Mannheim extends IceCreamParlor {
 		}
 
 }
+
+
