@@ -24,7 +24,7 @@ public class IC_Mannheim extends IceCream {
 			setPrice(getPrice() +0.05 + 0.50*3);
 		}
 		// Option III - 'Nussbecher'
-		else if (getName().equals("Nussbecher")){
+		else if (getName().equals("Nussbescha")){
 			setFashion("normal");
 			setSorts(new String[]{
 					"Vanilleeis","Waldnusseis","Schokoladeneis"});
@@ -47,7 +47,7 @@ public class IC_Mannheim extends IceCream {
 			setPrice(0.40);
 		}
 		// Option III - 'Nussbecher'
-		else if (getName().equals("Nussbecher")){
+		else if (getName().equals("Nussbescha")){
 			setContainer("Bescha");
 			setPrice(0.35);
 		}
@@ -71,7 +71,7 @@ public class IC_Mannheim extends IceCream {
 			setPrice(getPrice() +0.15 + 0.50 + 0.30);
 		}
 		// Option III - 'Nussbecher'
-		else if (getName().equals("Nussbecher")){
+		else if (getName().equals("Nussbescha")){
 			setExtras(new String[]{
 					"Schokosoß","Wallnüss","Keks"});
 			setPrice(getPrice()+0.15 + 0.50 + 0.30);

@@ -32,7 +32,7 @@ public class ICP_English extends IceCreamParlor {
 		}
 
 		public void apologize(String type){
-			println("We are terribly sorry. " + type + " is not on our menu.");
+			println("We are terribly sorry, " + type + " is not on our menu.");
 			println("Please come again!");
 		}
 

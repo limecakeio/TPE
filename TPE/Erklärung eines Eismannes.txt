@@ -1,0 +1,12 @@
+Die Lösung der Aufgabe #2 bietet einige Vorteile gegenüber der Lösung aus Aufgabe #1.
+Da die Implementierung der Methoden verlagert und von erbenden Klassen übernommen wird,
+kann man mehrere und komplett unabhängige Implementierungsvarianten realisieren.
+
+Falls beispielsweise in der Eisdiele in London entschieden wird, dass "Spaghettieis" 
+nicht mehr auf dem Menü stehen sollte, kann es schnell geändert werden - ohne andere Eisdielen/
+Eisklassen etwas von der Änderung mitbekommen zu lassen oder das gesamte Programm umgestalten zu müssen.
+
+Obwohl man keine direkten Instanzierungen einer abstrakten Klasse erzeugen kann, so hat man dennoch die
+Möglichkeit ein Array von "abstrakten Objekten" anzulegen, um dort die vielen Variationen der Eisdielen speichern
+und aufrufen zu können. Jede dieser Eisdielen besitzt dabei ihre eigene "Eisimplementierung", die prinzipiell
+die selben Funktionalitäten aufweisen und dennoch komplett unterschiedlich sind.  

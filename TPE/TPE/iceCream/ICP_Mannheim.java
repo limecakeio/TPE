@@ -45,7 +45,7 @@ public class ICP_Mannheim extends IceCreamParlor {
 
 			// local menu: all available ice cream variants go here.
 			String[] menu = new String[]{
-					"Spageddiais","Bananesplitt","Nussbecher"};
+					"Spageddiais","Bananesplitt","Nussbescha"};
 
 			// lookup the ice-cream in question
 			for (int i = 0; i != menu.length; i++){

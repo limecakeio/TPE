@@ -3,7 +3,14 @@ package iceCream;
 import static gdi.MakeItSimple.*;
 
 public class IceCreamParlorMain {
-
+	
+	/* TPE EXCERSICE-SHEET #2
+	 * EXCERSICE #2
+	 * 
+	 * Richard Vladimirskij (1527079)
+	 * Konstantin Pelevin   (1525950)
+	 */
+	
 	public static void main(String[] args){
 
 		// set up: different ice-cream parlor locations
@@ -33,7 +40,7 @@ public class IceCreamParlorMain {
 			// pick your active ice-cream parlor
 			if (!activeSet){
 				println("Please pick your favourite ice-cream parlor!");
-				println("Enter: [1] to choose the Mannheim Parlor.");
+				println("Enter: [1] to choose the 'Mannheim Parlor'.");
 				println("Enter: [2] to choose the English Parlor.");
 				println("Enter: [3] to choose the Hochdeutsch Parlor.");
 
@@ -52,8 +59,15 @@ public class IceCreamParlorMain {
 
 			// active ice-cream parlor is set, provide commands
 			if (activeSet && !shutdown && command == 0){
-				println("\nCurrent ice-cream parlor: #" + (active+1));
-
+				if (active == 0){
+					println("\nCurrent ice-cream parlor: #" + (active+1) + " | Parlor Mannheim");
+				}
+				else if (active == 1){
+					println("\nCurrent ice-cream parlor: #" + (active+1) + " | Parlor English");
+				}
+				else if (active == 2){
+					println("\nCurrent ice-cream parlor: #" + (active+1) + " | Parlor Hochdeutsch");
+				}
 				println("Enter: [1] to order an ice-cream.");
 				println("Enter: [2] to visit to another ice-cream parlor.");
 				println("Enter: [3] to shutdown the program.\n");
@@ -79,7 +93,6 @@ public class IceCreamParlorMain {
 					else {
 						localParlor[active].order(input);
 					}
-
 				}
 
 				// Option 2: pick another ice-cream parlor
@@ -102,7 +115,6 @@ public class IceCreamParlorMain {
 				}	
 			}	
 		}
-
 	}
 
 	// AUXILIARY METHODS
