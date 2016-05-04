@@ -147,11 +147,6 @@ public class BTree implements BTreeInterface{
 			return false;
 		}
 	}
-	
-	public boolean delete(Integer o){
-		// IMPLEMENTATION GOES HERE
-		return false;
-	}
 
 	public boolean contains(Integer o){
 		
@@ -799,6 +794,77 @@ public class BTree implements BTreeInterface{
 		}
 		parent.setChild(newLeaf, pointer);
 		return pointer-1;
+	}
+	
+	public boolean delete(Integer o){
+		if(contains(o)) {
+			BTreeNode pointer = root;
+			if(!delete(pointer, o)) {
+				println("Delete screwed up!");
+				return false;
+			}
+			return true;
+		}
+			
+		return false;
+	}
+	private boolean delete(BTreeNode pointer, Integer o) {
+		boolean brokenNode = true;
+		do {
+			pointer = locateParentNode(o);
+			//Delete from root
+			if(pointer == root) {
+				//Check if deleting the next value will cause a branch merge
+				if (mergeCheck(this)) {
+					mergeBranches(pointer);
+				}
+				else {
+					o = deleteFromRoot(o);
+				}
+				
+			}
+			//Delete from node
+			else if(pointer.getChild(0) != null) {
+				o = deleteFromNode(o);
+			}
+			//Delete from leaf
+			else {
+				o = deleteFromLeaf(o);
+				
+			}
+			if(minCheck(pointer)) {
+				brokenNode = false;
+				eraseDuplicate(o);
+			}
+		}
+		while(brokenNode);
+		return true;
+	}
+	
+	/**HELPFUL METHODS TO REALISE DELETE*/
+	
+	private Integer deleteFromRoot(Integer o) {
+		return o;
+	}
+	
+	private Integer deleteFromNode(Integer o) {
+		return o;
+	}
+	
+	private Integer deleteFromLeaf(Integer o) {
+		return o;
+	}
+	
+	private void eraseDuplicate(Integer o){};
+	
+	private boolean mergeCheck(BTree tree) {
+		return false;
+	}
+	
+	private void mergeBranches(BTreeNode pointer){}
+	
+	private boolean minCheck(BTreeNode pointer) {
+		return false;
 	}
 	
 }
