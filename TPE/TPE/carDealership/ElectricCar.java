@@ -1,17 +1,21 @@
 package carDealership;
 
-/**
- * @author Richard Vladimirskij
- * @author Konstantin Pelevin
- * */
+public class ElectricCar extends Car implements Electric {
 
-public interface ElectricCar {
-	public final int HIGH_VOLTAGE = 600;
-	public final int LOW_VOLTAGE = 480;
+	/** data: electric car */
+	private int voltage;
 	
-	/**
-	 * @return Returns the car's voltage as a primitive integer.
-	 * */
-	public int getVoltage();
-
+	/** constructor: electric car */
+	public ElectricCar(int id, String brand, int price, int constructionYear, int voltage) {
+		super(id, brand, price, constructionYear);
+		this.voltage = voltage;
+	}
+	
+	// GETTER & SETTER METHODS
+	public int getVoltage(){
+		return voltage;
+	}
+	public void setVoltage(int voltage){
+		this.voltage = voltage;
+	}
 }

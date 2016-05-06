@@ -1,4 +1,4 @@
-package iceCream;
+package iceCreamAbstract;
 
 import static gdi.MakeItSimple.*;
 
