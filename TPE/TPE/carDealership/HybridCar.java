@@ -1,20 +1,31 @@
 package carDealership;
 
-/**
- * @author Richard Vladimirskij
- * @author Konstantin Pelevin
- * */
+public class HybridCar extends Car implements Electric, Gasoline {
 
-public interface HybridCar {
+	/** data: hybrid car */
+	int voltage;
+	int emissionTier;
 	
-	/**
-	 * @return Returns the car's voltage as a primitive integer.
-	 * */
-	public int getVoltage();
-	
-	/**
-	 * @return Returns the car's emission tier for as a primitive integer;
-	 * */
-	public int getEmissionTier();
+	/** constructor: hybrid car */
+	public HybridCar(int id, String brand, int price, int constructionYear, int emissionTier, int voltage){
+		super(id, brand, price, constructionYear);
+		this.voltage = voltage;
+		this.emissionTier = emissionTier;
+		
+	}
+
+	// GETTER & SETTER
+	public int getVoltage(){
+		return voltage;
+	}
+	public int getEmissionTier(){
+		return emissionTier;
+	}
+	public void setVoltage(int voltage){
+		this.voltage = voltage;
+	}
+	public void setEmissionTier(int emissionTier){
+		this.emissionTier = emissionTier;
+	}
 
 }
