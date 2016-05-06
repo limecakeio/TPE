@@ -1,4 +1,4 @@
-package iceCream;
+package iceCreamAbstract;
 
 public abstract class IceCreamParlor {
 
