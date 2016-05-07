@@ -1533,6 +1533,7 @@ public class BTree implements BTreeInterface{
 					i--;
 					j--;
 				}
+				i -= magnitude;
 			}		
 		}
 		return -1;
