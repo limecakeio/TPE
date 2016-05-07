@@ -2,7 +2,6 @@ package bTree;
 
 import static gdi.MakeItSimple.*;
 
-
 public class BTree implements BTreeInterface{
 
 	private int magnitude;
@@ -828,6 +827,8 @@ public class BTree implements BTreeInterface{
 			fixed = childrenCheck(parent);
 		else
 			fixed = minCheck(child.getValues());
+		println("FIXED IS: " +fixed);
+		println("THE FIRST VALUE OF CHILD IS: " + Integer.transformInteger(child.getValue(0)));
 
 		if(!fixed)
 			restructureTree(parent);
@@ -843,12 +844,12 @@ public class BTree implements BTreeInterface{
 			}
 			else {
 				//Child is a node
-				if(parent.getChild(0) != null) {
-					treatNode(root);
+				if(parent.getChild(0).getChild(0) != null) {
+					treatNode(parent);
 				}
 				//Child is a leaf
 				else {
-					treatLeaf(root);	
+					treatLeaf(parent);	
 				}	
 			}	
 		}
@@ -865,8 +866,8 @@ public class BTree implements BTreeInterface{
 	private void treatRoot(BTreeNode parent) {
 		println("Treating the root");
 		int oPos = getOffendingPosition(parent.getValues());
-		Integer leafVal = leafEquivalentValue(oPos);
-		BTreeNode leaf = leafEquivalentNode(oPos);
+		Integer leafVal = leafEquivalentValue(parent, oPos);
+		BTreeNode leaf = leafEquivalentNode(parent, oPos);
 		
 		//Change parent to leaf parent for later processing
 		parent = getParent(leafVal);
@@ -878,7 +879,7 @@ public class BTree implements BTreeInterface{
 		erase(leaf, leafVal);
 		shiftValues(leaf.getValues());
 		
-		//Check the leaf
+		//Check the leaf we took from
 		if(!minCheck(leaf.getValues()))
 			restructureTree(parent);
 	}
@@ -888,9 +889,11 @@ public class BTree implements BTreeInterface{
 		
 		BTreeNode child = parent.getChild(getOffendingChildPosition(parent));
 		int oPos = getOffendingPosition(child.getValues());
+		println("   -> Offending child is: " + oPos);
 		
 		//See if the child is a leaf-parent so it can try to take largest value from smaller child
 		if(child.getChild(0).getChild(0) == null) {
+			println("  -> Child is a leaf parent");
 			if(abundanceCheck(child.getChild(oPos).getValues())) {
 				Integer[] grandChildValues = child.getChild(oPos).getValues();
 				//Fill the void
@@ -901,16 +904,19 @@ public class BTree implements BTreeInterface{
 					treatLeaf(child);
 				return;
 			}
+			println("  -> AbundanceCheck failed");
 		}
 			
-		Integer leafVal = leafEquivalentValue(oPos);
-		BTreeNode leaf = leafEquivalentNode(oPos);
+		Integer leafVal = leafEquivalentValue(parent.getChild(oPos), oPos);
+		println("   -> Node will be fixed with: " + Integer.transformInteger(leafVal));
+		BTreeNode leaf = leafEquivalentNode(parent.getChild(oPos), oPos);
 		
 		//Change parent to leaf parent for later processing
 		parent = getParent(leafVal);
 		
 		//Fill the gap with its leaf equivalent
 		child.setValue(leafVal, oPos);
+		println("   -> The node has been fixed with the value: " + Integer.transformInteger(child.getValue(oPos)));
 		
 		//Delete the value from its leaf
 		erase(leaf, leafVal);
@@ -925,15 +931,30 @@ public class BTree implements BTreeInterface{
 		println("Treating via leaf parent");
 		
 		if(!rebalanceLeafs(parent)) {
+			println("Failed rebalance.");
+			println("We have a childcount of: " +childCount(parent));
+			println("And a value count of: " + valueCount(parent.getValues()));
 			
 			//Attempt to merge the last two children together
 			if(childCount(parent) > magnitude+1) {
+				println("Attempting to merge children");
 				int largeChild = childCount(parent)-1;
 				int smallChild = largeChild-1;
 				Integer[] sChild, lChild;
 				sChild = parent.getChild(smallChild).getValues();
 				lChild = parent.getChild(largeChild).getValues();
 				int valCount = valueCount(parent.getChild(largeChild).getValues());
+				
+				//Last child has no values, remove it and push largest parent value into previous leaf
+				if(lChild[0] == null) {
+					//Get the parent's largest value
+					Integer lastElement = lastElement(parent.getValues());
+					int elementPos = getElementPosition(parent.getValues(), lastElement);
+					parent.getChild(elementPos).setValue(lastElement, freeSpot(parent.getChild(elementPos).getValues()));
+					erase(parent, lastElement);
+					parent.setChild(null, largeChild);
+					return;
+				}
 				
 				//Copy the corresponding parent's value into smaller child and remove it
 				sChild[freeSpot(sChild)] = parent.getValue(smallChild);
@@ -955,6 +976,7 @@ public class BTree implements BTreeInterface{
 			
 			//Try to replace with immediate parent
 			int cPos = getOffendingChildPosition(parent);
+			println("Attempting to swap leaf value in child: " + cPos + " for direct parent value");
 			BTreeNode child = parent.getChild(cPos);
 			
 			if(parent.getValue(cPos) != null) {
@@ -962,21 +984,32 @@ public class BTree implements BTreeInterface{
 				
 				//Place parent value into child
 				child.setValue(replacementVal, freeSpot(child.getValues()));
-		
+				println("The child has received the value" + Integer.transformInteger(child.getValue(freeSpot(child.getValues())-1)));
+				
+				println("About to delete parent value: " + Integer.transformInteger(parent.getValue(cPos)));
+				if(parent == root) {
+					erase(root, replacementVal);
+					println("Root now has the value: " + Integer.transformInteger(parent.getValue(cPos)));
+				}
 				//Set new parent a level above previous one
+				else {
 				parent = getParent(replacementVal);
 				deepErase(parent, replacementVal);
+				}
 				
 				if(!childrenCheck(parent))
 					restructureTree(parent);
+				
 				return;
+				
+				
 			}
 			
 			//Leaf is the largest in its branch
 			else {
 				//Ensure we are not in the tree's last leaf and 
 				//replace the value with it's corresponding root value
-				if(!containsMax(child.getValues())) {
+				if(parent.getValue(0).compareTo(lastElement(root.getValues())) == -1) {
 					
 					int rPos = rootEquivalent(lastElement(child.getValues()));
 					
@@ -994,6 +1027,7 @@ public class BTree implements BTreeInterface{
 				else {
 					int abundantValue = abundantSearch();
 					BTreeNode target = getParent(getMax());
+					println("We have an abundant value of: " + abundantValue);
 					
 					if(abundantValue != -1) {
 						int cAmount, pos;
@@ -1042,7 +1076,7 @@ public class BTree implements BTreeInterface{
 						while(!minCheck(target.getValues()));
 					}
 					else{
-						println("CUT THE TREE!!!!");
+						cutBranch();
 					}		
 				}
 			}
@@ -1113,11 +1147,16 @@ public class BTree implements BTreeInterface{
 	/**Checks a node's children for an underflow*/
 	private boolean childrenCheck(BTreeNode parent) {
 			int i = 0;
-			while(i < magnitude*2 && parent.getChild(i) != null) {
+			
+			if(parent == root)
+				if(!minCheck(root.getValues()))
+					return false;
+			
+			while(i <= magnitude*2 && parent.getChild(i) != null) {	
 				if(!minCheck(parent.getChild(i).getValues())){
 					return false;
 					}
-			i++;
+				i++;
 		}
 		return true;
 	}
@@ -1244,8 +1283,8 @@ public class BTree implements BTreeInterface{
 	/**Returns the position of an offending child-node in a parent-node*/
 	private int getOffendingChildPosition(BTreeNode parent) {
 		int i = 0;
-		while(i < magnitude*2) {
-			if(!minCheck(parent.getChild(i).getValues()) || parent.getChild(i) == null){
+		while(i <= magnitude*2) {
+			if(parent.getChild(i) == null || !minCheck(parent.getChild(i).getValues())){
 				return i;
 			}
 			i++;
@@ -1285,8 +1324,8 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the leaf equivalent value of a root value*/
-	private Integer leafEquivalentValue(int oPos){
-		BTreeNode leaf = root.getChild(oPos+1);
+	private Integer leafEquivalentValue(BTreeNode node, int oPos){
+		BTreeNode leaf = node.getChild(oPos+1);
 		while(leaf.getChild(0) != null) {
 			leaf = leaf.getChild(0);
 		}
@@ -1294,8 +1333,8 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the leaf equivalent node of a root value*/
-	private BTreeNode leafEquivalentNode(int oPos) {
-		BTreeNode leaf = root.getChild(oPos+1);
+	private BTreeNode leafEquivalentNode(BTreeNode node, int oPos) {
+		BTreeNode leaf = node.getChild(oPos+1);
 		while(leaf.getChild(0) != null) {
 			leaf = leaf.getChild(0);
 		}
@@ -1303,11 +1342,11 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Checks if a value array contains more than "m" values*/
+	
 	private boolean abundanceCheck(Integer[] values) {
 		if(values[magnitude] != null)
 			return true;
-		return false;
-		
+		return false;	
 	}
 	
 	/**Checks if a value array contain's the trees max-value*/
@@ -1354,6 +1393,7 @@ public class BTree implements BTreeInterface{
 	/**Attempts to correct an underflow in a leaf with a value from a neighbor*/
 	private boolean rebalanceLeafs(BTreeNode parent) {
 		int cPosition = getOffendingChildPosition(parent);
+		println("The offending child is: " +cPosition);
 		
 		//Look at the right neighbors
 		for(int i = cPosition-1; i >= 0; i--) {
@@ -1364,8 +1404,11 @@ public class BTree implements BTreeInterface{
 		}
 		
 		//Look at the left neighbors
-		for(int i = cPosition + 1; i < magnitude*2; i++) {
-			if(abundanceCheck(parent.getChild(i).getValues())){
+		for(int i = cPosition + 1; i <= magnitude*2; i++) {
+			if(parent.getChild(i) == null){
+				return false;
+			}
+			else if(abundanceCheck(parent.getChild(i).getValues())){
 				rotateLeft(parent, i, cPosition);
 				return true;
 			}
@@ -1495,7 +1538,72 @@ public class BTree implements BTreeInterface{
 		return -1;
 	}
 	
-	private void collapseTree(BTree tree){}
+
+	private void cutBranch(){
+		
+		// get: essential data
+		int counter = 0; 
+		boolean found = false;
+		BTreeNode parent = root;
+		BTreeNode pointer = root;
+		Integer[] storage = new Integer[nodeCount()*(magnitude*2)];
+
+		// check: root gets cut
+		if (pointer.getValue(1) != null){
+
+			// get: last root element (!= null)
+			for (int i = pointer.getValues().length -1; !found; i--){
+				if (pointer.getValue(i) != null){
+					
+					found = true;
+					storage[counter] = pointer.getValue(i);
+					pointer = pointer.getChild(i+1);
+					parent.setValue(null, i);
+					parent.setChild(null, i+1);
+					counter++;
+				}
+			}
+			// copy-cut: remaining children
+			chop(pointer, storage, counter);
+		}
+		// check: root gets cut away completely
+		else { 
+			// copy-cut: root and children
+			for (int i = 0; i <= magnitude*2; i++){
+				
+			storage[counter] = pointer.getValue(i);
+			counter++;
+			counter = chop(pointer.getChild(i+1), storage, counter);
+			}
+			// update root
+			root = parent.getChild(0);
+		}
+		// last step: insert chopped values
+		counter = 0;
+		while (storage[counter] != null){
+			insert(storage[counter]);
+			counter++;
+		}
+	}
 	
-	
+	private int chop(BTreeNode pointer, Object[] storage, int counter){
+		if (pointer != null){
+
+			// get data: current node
+			Integer[] values = pointer.getValues();
+
+			// first: get all current node values 
+			for (int i = 0; i < values.length -1; i++){
+				if (values[i] != null){
+					storage[counter] = values[i];
+					counter++;
+				}
+			}
+			// second: repeat for each child of the node
+			for (int i = 0; i <= magnitude*2; i++){
+				counter = chop(pointer.getChild(i), storage, counter);
+			}
+		}
+		return counter;
+	}
 }
