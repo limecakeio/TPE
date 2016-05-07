@@ -1281,6 +1281,7 @@ public class BTree implements BTreeInterface{
 			counter++;
 		}
 	}
+	
 	private int chop(BTreeNode pointer, Object[] storage, int counter){
 		if (pointer != null){
 
