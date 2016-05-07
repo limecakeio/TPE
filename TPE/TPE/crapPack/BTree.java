@@ -1234,4 +1234,71 @@ public class BTree implements BTreeInterface{
 		}
 		return -1;
 	}
+	
+	private void cutBranch(){
+		
+		// get: essential data
+		int counter = 0; 
+		boolean found = false;
+		BTreeNode parent = root;
+		BTreeNode pointer = root;
+		Integer[] storage = new Integer[nodeCount()*(magnitude*2)];
+
+		// check: root gets cut
+		if (pointer.getValue(1) != null){
+
+			// get: last root element (!= null)
+			for (int i = pointer.getValues().length -1; !found; i--){
+				if (pointer.getValue(i) != null){
+					
+					found = true;
+					storage[counter] = pointer.getValue(i);
+					pointer = pointer.getChild(i+1);
+					parent.setValue(null, i);
+					parent.setChild(null, i+1);
+					counter++;
+				}
+			}
+			// copy-cut: remaining children
+			chop(pointer, storage, counter);
+		}
+		// check: root gets cut away completely
+		else { 
+			// copy-cut: root and children
+			for (int i = 0; i <= magnitude*2; i++){
+				
+			storage[counter] = pointer.getValue(i);
+			counter++;
+			counter = chop(pointer.getChild(i+1), storage, counter);
+			}
+			// update root
+			root = parent.getChild(0);
+		}
+		// last step: insert chopped values
+		counter = 0;
+		while (storage[counter] != null){
+			insert(storage[counter]);
+			counter++;
+		}
+	}
+	private int chop(BTreeNode pointer, Object[] storage, int counter){
+		if (pointer != null){
+
+			// get data: current node
+			Integer[] values = pointer.getValues();
+
+			// first: get all current node values 
+			for (int i = 0; i < values.length -1; i++){
+				if (values[i] != null){
+					storage[counter] = values[i];
+					counter++;
+				}
+			}
+			// second: repeat for each child of the node
+			for (int i = 0; i <= magnitude*2; i++){
+				counter = chop(pointer.getChild(i), storage, counter);
+			}
+		}
+		return counter;
+	}
 }
