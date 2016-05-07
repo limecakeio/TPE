@@ -31,18 +31,19 @@ public class BTreeDeleteTests {
 		/**
 		 * Delete a value in a leaf which will cause no changes [Simplest case]
 		 */
-
+//
+//		println("Deleting 19 [SIMPLEST CASE]");
 //		t1.printLevelorder();
 //		t1.delete(new Integer(19));
 //		t1.printLevelorder();
-//
-//		/** Delete a value in a leaf which will cause a right-rebalance */
-//		println("\nTesting rebalance [Right rotation]:");
-//		t2.printLevelorder();
-//		println("\n Deleting 26");
-//		t2.delete(new Integer(26));
-//		println("Result:");
-//		t2.printLevelorder();
+
+		/** Delete a value in a leaf which will cause a right-rebalance */
+		println("\nTesting rebalance [Right rotation]:");
+		t1.printLevelorder();
+		println("\n Deleting 26");
+		t1.delete(new Integer(26));
+		println("Result:");
+		t1.printLevelorder();
 //
 //		/** Delete a value in a leaf which will cause a left-rebalance */
 //		println("\n\nInserting a value to manipulate a left-balance [25]");
@@ -52,15 +53,15 @@ public class BTreeDeleteTests {
 //		t2.delete(new Integer(19));
 //		t2.printLevelorder();
 		
-		/**Delete a leaf-value, causing two children to merge together*/
-		println("DELETE CAUSING A CHILD TO CONSUME ANOTHER");
-		t2 = new BTree(1);
-		t2.insert("btreedelete2.txt");
-		t2.printLevelorder();
-		t2.delete(new Integer(6));
-		t2.printLevelorder();
-		t2.delete(new Integer(4));
-		t2.printLevelorder();
+//		/**Delete a leaf-value, causing two children to merge together*/
+//		println("DELETE CAUSING A CHILD TO CONSUME ANOTHER");
+//		t2 = new BTree(1);
+//		t2.insert("btreedelete2.txt");
+//		t2.printLevelorder();
+//		t2.delete(new Integer(6));
+//		t2.printLevelorder();
+//		t2.delete(new Integer(4));
+//		t2.printLevelorder();
 		
 		
 		

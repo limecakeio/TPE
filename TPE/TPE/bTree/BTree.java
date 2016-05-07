@@ -2,6 +2,7 @@ package bTree;
 
 import static gdi.MakeItSimple.*;
 
+
 public class BTree implements BTreeInterface{
 
 	private int magnitude;
@@ -816,23 +817,12 @@ public class BTree implements BTreeInterface{
 		parent = getParent(o);
 		BTreeNode child = getChild(parent, o);
 		boolean fixed = false;
-		//Delete from root
-		if(child == root) {
-			println("Entered delete FROM ROOT");
-			parent = deleteFromRoot(parent, o);
-			child = null;
-		}
-
-		//Delete from node
-		else if(child.getChild(0) != null) {
-			println("Entered DELETE FROM NODE");
-			parent = deleteFromNode(parent, o);
-		}
-
+		
+		erase(child, o);
+		
 		//Delete from leaf
-		else {
-			parent = deleteFromLeaf(parent, child, o);
-		}
+		if(child.getChild(0) == null)
+			shiftValues(child.getValues());
 
 		if(child != root)
 			fixed = childrenCheck(parent);
@@ -844,35 +834,97 @@ public class BTree implements BTreeInterface{
 		return true;
 	}
 	
-	private BTreeNode deleteFromRoot(BTreeNode parent, Integer o) {
-		BTreeNode leafParent = getParent(leafEquivalent(o));
-		Integer newVal = leafEquivalent(o);
+	private void restructureTree (BTreeNode parent) {
 		
-		//Replace the value to be deleted with its leaf equivalent
-		parent.setValue(newVal, getElementPosition(root.getValues(), o));
-		
-		//Remove the leaf equivalent from its leaf and shift the values
-		erase(leafParent.getChild(0), newVal);
-		shiftValues(leafParent.getChild(0).getValues());
-		
-		return leafParent;
-	}
-	
-	private BTreeNode deleteFromNode(BTreeNode parent, Integer o) {
-		println("Successfully found duplicate");
-		return parent;
-	}
-	
-	private BTreeNode deleteFromLeaf(BTreeNode parent, BTreeNode child, Integer o) {
-		println("ENTERED DELETE FROM LEAF");
-		
-		//Check if value can be deleted without causing harm
-		if(preDeleteMinCheck(child)) {
-			erase(child, o);
-			shiftValues(child.getValues());
+		if(parent == root) {
+			//Check if root and child are the same
+			if(!minCheck(parent.getValues())) {
+				treatRoot(root);
+			}
+			else {
+				//Child is a node
+				if(parent.getChild(0) != null) {
+					treatNode(root);
+				}
+				//Child is a leaf
+				else {
+					treatLeaf(root);	
+				}	
+			}	
 		}
-		//Try to get a neighbor value as a replacement
-		else if(!rebalanceLeafs(parent, child, o)) {
+		//Parent of node
+		else {
+			if(parent.getChild(0).getChild(0) != null)
+				treatNode(parent);
+			//Parent of leaf
+			else
+				treatLeaf(parent);
+		}
+	}
+	
+	private void treatRoot(BTreeNode parent) {
+		println("Treating the root");
+		int oPos = getOffendingPosition(parent.getValues());
+		Integer leafVal = leafEquivalentValue(oPos);
+		BTreeNode leaf = leafEquivalentNode(oPos);
+		
+		//Change parent to leaf parent for later processing
+		parent = getParent(leafVal);
+		
+		//Fill the gap with its leaf equivalent
+		root.setValue(leafVal, oPos);
+		
+		//Delete the value from its leaf
+		erase(leaf, leafVal);
+		shiftValues(leaf.getValues());
+		
+		//Check the leaf
+		if(!minCheck(leaf.getValues()))
+			restructureTree(parent);
+	}
+	
+	private void treatNode(BTreeNode parent) {
+		println("Treating via a node parent");
+		
+		BTreeNode child = parent.getChild(getOffendingChildPosition(parent));
+		int oPos = getOffendingPosition(child.getValues());
+		
+		//See if the child is a leaf-parent so it can try to take largest value from smaller child
+		if(child.getChild(0).getChild(0) == null) {
+			if(abundanceCheck(child.getChild(oPos).getValues())) {
+				Integer[] grandChildValues = child.getChild(oPos).getValues();
+				//Fill the void
+				child.setValue(lastElement(grandChildValues), oPos);
+				//Remove the duplicate
+				erase(child.getChild(oPos), lastElement(grandChildValues));
+				if(!childrenCheck(child))
+					treatLeaf(child);
+				return;
+			}
+		}
+			
+		Integer leafVal = leafEquivalentValue(oPos);
+		BTreeNode leaf = leafEquivalentNode(oPos);
+		
+		//Change parent to leaf parent for later processing
+		parent = getParent(leafVal);
+		
+		//Fill the gap with its leaf equivalent
+		child.setValue(leafVal, oPos);
+		
+		//Delete the value from its leaf
+		erase(leaf, leafVal);
+		shiftValues(leaf.getValues());
+		
+		//Check the leaf
+		if(!minCheck(leaf.getValues()))
+			restructureTree(parent);
+	}
+	
+	private void treatLeaf(BTreeNode parent) {
+		println("Treating via leaf parent");
+		
+		if(!rebalanceLeafs(parent)) {
 			
 			//Attempt to merge the last two children together
 			if(childCount(parent) > magnitude+1) {
@@ -896,54 +948,108 @@ public class BTree implements BTreeInterface{
 				parent.setChild(null, largeChild);
 				
 				//Attempt to rebalance
-				rebalanceLeafs(parent, child, o);
+				rebalanceLeafs(parent);
 				
-				return parent;
+				return;
 			}
 			
 			//Try to replace with immediate parent
-//			if(parent.getValue(getChildPosition(parent, o)) != null) {
-//				int cPos = getChildPosition(parent, o);
-//				Integer replacementVal = parent.getValue(cPos);
-//				
-//				child.setValue(replacementVal, freeSpot(child.getValues()));
-//				erase(child, o);
-//				shiftValues(child.getValues());
-//				
-//				//Set new parent a level above previous one
-//				parent = getParent(replacementVal);
-//				erase(getChildPosition(parent, replacementVal), parent.getValue(cPos));
-//			}
+			int cPos = getOffendingChildPosition(parent);
+			BTreeNode child = parent.getChild(cPos);
+			
+			if(parent.getValue(cPos) != null) {
+				Integer replacementVal = parent.getValue(cPos);
+				
+				//Place parent value into child
+				child.setValue(replacementVal, freeSpot(child.getValues()));
+		
+				//Set new parent a level above previous one
+				parent = getParent(replacementVal);
+				deepErase(parent, replacementVal);
+				
+				if(!childrenCheck(parent))
+					restructureTree(parent);
+				return;
+			}
 			
 			//Leaf is the largest in its branch
 			else {
-				//Ensure we are not in the tree's last leaf and replace the value with it's corresponding root value
+				//Ensure we are not in the tree's last leaf and 
+				//replace the value with it's corresponding root value
 				if(!containsMax(child.getValues())) {
-					int cPos = getChildPosition(parent, o);
-					int rPos = rootEquivalent(o);
-					parent.getChild(cPos).setValue(root.getValue(rPos), freeSpot(child.getValues()));
-					erase(child, o);
-					shiftValues(child.getValues());
+					
+					int rPos = rootEquivalent(lastElement(child.getValues()));
+					
+					//Take the root's corresponding value and add it to the end of the leaf
+					child.setValue(root.getValue(rPos), freeSpot(child.getValues()));
+					
+					//Remove the duplicate value from the root
 					erase(root, root.getValue(rPos));
+					
 					parent = root;
+					restructureTree(parent);
 				}
+					
 				// We are in the tree's largest leaf
 				else {
-					if(!collapseCheck(this)) {
+					int abundantValue = abundantSearch();
+					BTreeNode target = getParent(getMax());
+					
+					if(abundantValue != -1) {
+						int cAmount, pos;
+						Integer aVal = new Integer(abundantValue);
+						Integer highestVal;
 						
+						
+						do {
+						parent = getParent(aVal);
+						cAmount = childCount(parent);
+						cPos = getChildPosition(parent, aVal);
+						
+						//Ensure the abundance moves to a branches' last leaf
+						rotateRight(parent, cPos, cAmount-1);
+						child = parent.getChild(cAmount-1);
+						highestVal = lastElement(child.getValues());
+						
+						
+						//As long as we are not in the last branch we rotate the abundance to the next one
+						if(parent.getChild(cPos +1 ) != null) {
+							root.setValue(highestVal, freeSpot(root.getValues()));
+							Integer.insertionSort(root.getValues());
+							erase(child, highestVal);
+
+							//Place the next highest value, into its smaller branch
+							pos = getElementPosition(root.getValues(), highestVal)+1;
+							highestVal = root.getValue(pos);
+
+							//Climb down the tree to the required leaf
+							child = root.getChild(pos);
+							while(child.getChild(0) != null)
+								child = child.getChild(0);
+
+							//Place the value
+							child.setValue(highestVal, freeSpot(child.getValues()));
+							Integer.insertionSort(child.getValues());
+
+							//Remove the duplicate from the root and restore the order
+							erase(root, highestVal);
+							shiftValues(root.getValues());
+
+							aVal = highestVal;
+						}
+
+						}
+						while(!minCheck(target.getValues()));
 					}
 					else{
-						collapseTree(this);
-					}
+						println("CUT THE TREE!!!!");
+					}		
 				}
 			}
 			}
-		return parent;
 		}
 
-	private void restructureTree (BTreeNode parent) {
-		
-	}
+	
 	/**HELPFUL METHODS TO REALISE DELETE*/
 	
 	
@@ -951,15 +1057,30 @@ public class BTree implements BTreeInterface{
 		boolean removed = false;
 		int i = 0;
 		while(!removed) {
-			println("Comparing erase with: " + Integer.transformInteger(node.getValue(i)));
-			println("What the fuck is o?" + Integer.transformInteger(o));
 			if(node.getValue(i).compareTo(o) == 0) {
 				println("Succesfull compare");
 				node.setValue(null, i);
 				removed = true;
 			}
-
 			i++;
+		}
+	}
+	
+	/**Finds and erases a value within a node's direct child [do not use if child is a leaf]*/
+	private void deepErase(BTreeNode node, Integer o) {
+		boolean erased = false;
+		int i = 0;
+		while(!erased) {
+			if(node.getChild(i) != null) {
+				for(int j = 0; i < magnitude*2 && !erased && node.getChild(i).getValue(j) != null; j++) {
+					if(node.getChild(i).getValue(j).compareTo(o) == 0) {
+					node.getChild(i).setValue(null, j);
+					erased = true;
+				}
+			}
+				i++;
+			}
+			break;
 		}
 	}
 	
@@ -1004,7 +1125,7 @@ public class BTree implements BTreeInterface{
 	/**Checks if the amount of values in a node are within the required criteria*/
 	private boolean minCheck(Integer[] values) {
 		int i = 0;
-		while(i < magnitude-1) {
+		while(i < magnitude) {
 			if(values[i] == null)
 				return false;
 			i++;
@@ -1012,13 +1133,14 @@ public class BTree implements BTreeInterface{
 		return true;
 	}
 	
-	/**Checks if the amount of values in a node would be within the BTree criteria post-delete*/
+	/**Checks if deleting a value will cause the leaf to have an underflow*/
 	private boolean preDeleteMinCheck(BTreeNode node) {
 		if(node.getValue(magnitude) != null)
 			return true;
 		return false;
 	}
 	
+	/**Returns the parent-node of a child that contains the query value*/
 	private BTreeNode getParent(Integer query) {
 		BTreeNode newParent = root;
 		int result = 0;
@@ -1071,7 +1193,7 @@ public class BTree implements BTreeInterface{
 		return newParent;
 	}
 	
-	/**Returns the child node where the object we are seeking is located*/
+	/**Returns the child-node that contains the query-value*/
 	private BTreeNode getChild(BTreeNode parent, Integer o) {
 		BTreeNode child = root;
 		boolean found = false;
@@ -1098,7 +1220,7 @@ public class BTree implements BTreeInterface{
 		return child;
 	}
 	
-	/**Returns the child's array position in a node*/
+	/**Returns the child's array position in a node which contains a specific value*/
 	private int getChildPosition(BTreeNode parent, Integer o) {
 		int i = 0;
 		
@@ -1113,7 +1235,34 @@ public class BTree implements BTreeInterface{
 		return -1;
 	}
 
-	/**Returns the array position of a value in an array*/
+	/**Returns an offending child-node*/
+	private BTreeNode getOffendingChild(BTreeNode parent) {
+		BTreeNode child = parent.getChild(getOffendingChildPosition(parent));
+		return child;
+	}
+	
+	/**Returns the position of an offending child-node in a parent-node*/
+	private int getOffendingChildPosition(BTreeNode parent) {
+		int i = 0;
+		while(i < magnitude*2) {
+			if(!minCheck(parent.getChild(i).getValues()) || parent.getChild(i) == null){
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	}
+	
+	/**Returns the offending position in a value array [intended for nodes]*/
+	private int getOffendingPosition(Integer[] values) {
+		int i = 0;
+		while(values[i] != null) {
+			i++;
+		}
+		return i;
+	}
+	
+	/**Returns the array position of a specified value in an array*/
 	private int getElementPosition(Integer[] values, Integer o) {
 		int pos = 0;
 		while(values[pos] != null) {
@@ -1125,7 +1274,7 @@ public class BTree implements BTreeInterface{
 		return -1;
 	}
 	
-	/**Gets the equivalent root position of a leaf*/
+	/**Returns the corresponding root position of a leaf*/
 	private int rootEquivalent(Integer o) {
 		for(int i = 0; i < magnitude*2; i++) {
 			if(root.getValue(i).compareTo(o) == 1) {
@@ -1136,13 +1285,21 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the leaf equivalent value of a root value*/
-	private Integer leafEquivalent(Integer o){
-		int pathIndex = getElementPosition(root.getValues(), o)+1;
-		BTreeNode leaf = root.getChild(pathIndex);
+	private Integer leafEquivalentValue(int oPos){
+		BTreeNode leaf = root.getChild(oPos+1);
 		while(leaf.getChild(0) != null) {
 			leaf = leaf.getChild(0);
 		}
 		return leaf.getValue(0);
+	}
+	
+	/**Returns the leaf equivalent node of a root value*/
+	private BTreeNode leafEquivalentNode(int oPos) {
+		BTreeNode leaf = root.getChild(oPos+1);
+		while(leaf.getChild(0) != null) {
+			leaf = leaf.getChild(0);
+		}
+		return leaf;
 	}
 	
 	/**Checks if a value array contains more than "m" values*/
@@ -1195,19 +1352,13 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Attempts to correct an underflow in a leaf with a value from a neighbor*/
-	private boolean rebalanceLeafs(BTreeNode parent, BTreeNode child, Integer o) {
-		int cPosition;
-		if(parent.getChild(0) == null)
-			cPosition = 0;
-		else
-			cPosition = getChildPosition(parent, o);
+	private boolean rebalanceLeafs(BTreeNode parent) {
+		int cPosition = getOffendingChildPosition(parent);
 		
 		//Look at the right neighbors
-		for(int i = cPosition - 1; i >= 0; i--) {
+		for(int i = cPosition-1; i >= 0; i--) {
 			if(abundanceCheck(parent.getChild(i).getValues())){
 				rotateRight(parent, i, cPosition);
-				erase(child, o);
-				shiftValues(child.getValues());
 				return true;
 			}
 		}
@@ -1216,8 +1367,6 @@ public class BTree implements BTreeInterface{
 		for(int i = cPosition + 1; i < magnitude*2; i++) {
 			if(abundanceCheck(parent.getChild(i).getValues())){
 				rotateLeft(parent, i, cPosition);
-				erase(child, o);
-				shiftValues(child.getValues());
 				return true;
 			}
 		}
@@ -1225,7 +1374,7 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Performs a left-rotation for a given interval of iterations*/
-	public void rotateLeft(BTreeNode parent, int from, int to){
+	private void rotateLeft(BTreeNode parent, int from, int to){
 		Integer lValue, pValue = new Integer(0);
 		println("Attempting ROTATE LEFT: ");
 		for(int i = from; i > to; i--) {
@@ -1272,13 +1421,81 @@ public class BTree implements BTreeInterface{
 		}
 	}
 	
-	/**Check if the amount of values in the tree will be below the required minimum [m values per node] after we delete a value*/
-	private boolean collapseCheck(BTree tree) {
-		if(tree.size()-1 <= (tree.nodeCount()*magnitude))
-			return false;
-		return true;
+	/**Searches all leafs for an abundant value and returns it. Returns -1 if none found*/
+	private int abundantSearch(){
+
+		// get data: root & future storage
+		BTreeNode pointer = root;
+		BTreeNode[] storage = new BTreeNode[nodeCount()];
+		int[] storage_2 = new int[nodeCount()*(magnitude*2)];
+		int i = 0;
+		int j = 0;
+		int k = 0;
+		int l = 0;
+		Integer target;
+		boolean skip = false;
+
+		// add first node: root
+		if (pointer != null){	
+			storage[0] = pointer;
+
+			for (i = 0; i != storage.length; i++){
+				for (j = 0; j != magnitude*2; j++){
+
+					// for each target-element print...
+					if (storage[i].getValue(j) != null){
+						target = storage[i].getValue(j);
+						storage_2[l] = Integer.transformInteger(target);
+						l++;
+
+						// ... its children are added to the storage.
+						if (k != (storage.length)*(magnitude*2)){
+
+							// check: left child of the target	
+							if (storage[i].getChild(j) != null && !skip){	
+								k++;
+								storage[k] = storage[i].getChild(j);
+								skip = true;
+							}
+
+							// check: target has a right child	
+							if (storage[i].getChild(j+1) != null){	
+								k++;
+								storage[k] = storage[i].getChild(j+1);
+							}
+						}
+					}
+					else {
+						storage_2[l] = -1;
+						l++;
+					}
+				}
+				skip = false;// here
+			}
+			// reset
+			i = storage_2.length-(magnitude*2)-1;
+			j = 0;
+			k = 0;
+			l = 0;
+
+			// search: m+1
+			while (storage_2[i] != Integer.transformInteger(getMin())){
+				j = (magnitude*2)-1;
+				while (j != magnitude-1){
+
+					// check: find m+1 value
+					if (storage_2[i] != -1){
+						return storage_2[i];
+					}
+					i--;
+					j--;
+				}
+			}		
+		}
+		return -1;
 	}
 	
 	private void collapseTree(BTree tree){}
+	
 	
 }
