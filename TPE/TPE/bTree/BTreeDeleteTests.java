@@ -26,73 +26,73 @@ public class BTreeDeleteTests {
 		t2.insert("btree.txt");
 	}
 
-	@Test
-	public void deleteValueInLeafTest() {
-
-		/**
-		 * Delete a value in a leaf which will cause no changes [Simplest case]
-		 */
-
-		println("Deleting 19 [SIMPLEST CASE]");
-		t1.printLevelorder();
-		t1.delete(new Integer(19));
-		t1.printLevelorder();
-		println(divider);
-
-		/** Delete a value in a leaf which will cause a right-rebalance */
-		println("\nTesting rebalance [Right rotation]:");
-		t1.printLevelorder();
-		println("\n Deleting 26");
-		t1.delete(new Integer(26));
-		println("Result:");
-		t1.printLevelorder();
-		println(divider);
-
-		/** Delete a value in a leaf which will cause a left-rebalance */
-		println("\n\nInserting a value to manipulate a left-balance [25]");
-		t1.insert(new Integer(25));
-		t1.printLevelorder();
-		println("\n\n Deleting 3");
-		t1.delete(new Integer(3));
-		t1.printLevelorder();
-		println(divider);
-		
-		/**Delete a leaf-value, causing an excess parent value to be placed into its child */
-		println("DELETE CAUSING AN EXCESS PARENT VALUE TO BE PUT INTO ITS CHILD");
-		t1.printLevelorder();
-		println("\n\n Deleting 25");
-		t1.delete(new Integer(25));
-		t1.printLevelorder();
-		println(divider);
-		
-		/**Delete a leaf-value, causing 2 leafs to merge*/
-		t1 = new BTree(1);
-		t1.insert("btreedelete.txt");
-		println("DELETING LEAF VALUE CAUSING MERGE WITH NEW TREE");
-		t1.printLevelorder();
-		println("\n\nDeleting 19 and 4 to setup the case");
-		t1.delete(new Integer(19));
-		t1.delete(new Integer(4));
-		println("\n\nDeleting 3 to merge leafs");
-		t1.delete(new Integer(3));
-		t1.printLevelorder();
-		println(divider);
-		
-		
-		/**
-		 * Delete a value in a leaf which will cause the parent value to
-		 * replace it 
-		 */
-		println("\n\nUsing previous tree");
-		t1.printLevelorder();
-		println("\n\nDeleting 23 to setup the test.");
-		t1.delete(new Integer(23));
-		t1.printLevelorder();
-		println("\n\nDeleting 6 expecting -> 7, 26.");
-		t1.delete(new Integer(6));
-		t1.printLevelorder();
-		println(divider);
-		
+//	@Test
+//	public void deleteValueInLeafTest() {
+//
+//		/**
+//		 * Delete a value in a leaf which will cause no changes [Simplest case]
+//		 */
+//
+//		println("Deleting 19 [SIMPLEST CASE]");
+//		t1.printLevelorder();
+//		t1.delete(new Integer(19));
+//		t1.printLevelorder();
+//		println(divider);
+//
+//		/** Delete a value in a leaf which will cause a right-rebalance */
+//		println("\nTesting rebalance [Right rotation]:");
+//		t1.printLevelorder();
+//		println("\n Deleting 26");
+//		t1.delete(new Integer(26));
+//		println("Result:");
+//		t1.printLevelorder();
+//		println(divider);
+//
+//		/** Delete a value in a leaf which will cause a left-rebalance */
+//		println("\n\nInserting a value to manipulate a left-balance [25]");
+//		t1.insert(new Integer(25));
+//		t1.printLevelorder();
+//		println("\n\n Deleting 3");
+//		t1.delete(new Integer(3));
+//		t1.printLevelorder();
+//		println(divider);
+//		
+//		/**Delete a leaf-value, causing an excess parent value to be placed into its child */
+//		println("DELETE CAUSING AN EXCESS PARENT VALUE TO BE PUT INTO ITS CHILD");
+//		t1.printLevelorder();
+//		println("\n\n Deleting 25");
+//		t1.delete(new Integer(25));
+//		t1.printLevelorder();
+//		println(divider);
+//		
+//		/**Delete a leaf-value, causing 2 leafs to merge*/
+//		t1 = new BTree(1);
+//		t1.insert("btreedelete.txt");
+//		println("DELETING LEAF VALUE CAUSING MERGE WITH NEW TREE");
+//		t1.printLevelorder();
+//		println("\n\nDeleting 19 and 4 to setup the case");
+//		t1.delete(new Integer(19));
+//		t1.delete(new Integer(4));
+//		println("\n\nDeleting 3 to merge leafs");
+//		t1.delete(new Integer(3));
+//		t1.printLevelorder();
+//		println(divider);
+//		
+//		
+//		/**
+//		 * Delete a value in a leaf which will cause the parent value to
+//		 * replace it 
+//		 */
+//		println("\n\nUsing previous tree");
+//		t1.printLevelorder();
+//		println("\n\nDeleting 23 to setup the test.");
+//		t1.delete(new Integer(23));
+//		t1.printLevelorder();
+//		println("\n\nDeleting 6 expecting -> 7, 26.");
+//		t1.delete(new Integer(6));
+//		t1.printLevelorder();
+//		println(divider);
+//		
 
 //
 //		/**
@@ -103,7 +103,7 @@ public class BTreeDeleteTests {
 //		println("\n\nDeleting 6 to force root replacement");
 //		t2.delete(new Integer(6));
 //		// t2.printLevelorder();
-	}
+//	}
 
 //	@Test
 //	public void deleteValueInRootTest() {
