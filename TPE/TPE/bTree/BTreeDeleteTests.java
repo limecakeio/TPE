@@ -150,6 +150,18 @@ public class BTreeDeleteTests {
 		println("\n\nDeleting 66 to disrupt the balance and force the tree to take an abundant leaf-value from another branch");
 		t2.delete(new Integer(66));
 		t2.printLevelorder();
+		println(divider);
+		println("\n\nDeleting 64 to disrupt the balance and force the tree to take an abundant leaf-value from another branch");
+		t2.delete(new Integer(64));
+		t2.printLevelorder();
+		println(divider);
+		println("\n\nDeleting 58 to disrupt the balance and force the tree to take an abundant leaf-value from another branch");
+		t2.delete(new Integer(58));
+		t2.printLevelorder();
+		println(divider);
+		println("\n\nDeleting 56 to disrupt the balance and break the tree causing it to remove the last branch - since our root only has a single value a new root will be assigned.");
+		t2.delete(new Integer(56));
+		t2.printLevelorder();
 		
 
 		/**
