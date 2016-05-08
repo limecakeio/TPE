@@ -40,7 +40,7 @@ public class BTreeDeleteTests {
 	public void deleteValueInNodeTest() {
 		
 		println(divider);
-		println("\n\nSTART DELETE FROM ROOT WITH MAGNITUDE 2");
+		println("\n\nSTART DELETE FROM NODE WITH MAGNITUDE 2");
 		println("\n\nPRE DELETE:");
 		t3.printLevelorder();
 		println(divider);
@@ -66,16 +66,36 @@ public class BTreeDeleteTests {
 		t3.printLevelorder();
 		
 		println(divider);
-		println("\n\nSTART DELETE FROM ROOT WITH MAGNITUDE 1");
+		println("\n\nSTART DELETE FROM NODE WITH MAGNITUDE 1");
 		println("\n\nPRE DELETE:");
 		t2.printLevelorder();
 		println(divider);
-		println("\n\nDeleting 15, expecting replacement with 13 [Largest from Left]");
+		println("\n\nDeleting 15, expecting replacement with 19 [neighbour in same leaf // setup test]");
 		t2.delete(new Integer(15));
 		println("\n\nPOST DELETE:");
 		t2.printLevelorder();
-		println("\n\nDeleting 13, expecting replacement with 12 [Largest from Left]");
+		println("\n\nDeleting 13, expecting replacement with 19 [smallest from right] and 19 to wander into leaf next to 12");
 		t2.delete(new Integer(13));
+		println("\n\nPOST DELETE:");
+		t2.printLevelorder();
+		println("\n\nDeleting 4, expecting replacement with 3 [largest from left]");
+		t2.delete(new Integer(4));
+		println("\n\nPOST DELETE:");
+		t2.printLevelorder();
+		println("\n\nDeleting 3, expecting replacement with 7 [smallest from right] causing a leaf problem");
+		t2.delete(new Integer(3));
+		println("\n\nPOST DELETE:");
+		t2.printLevelorder();
+		println("\n\nDeleting 32");
+		t2.delete(new Integer(32));
+		println("\n\nPOST DELETE:");
+		t2.printLevelorder();
+		println("\n\nDeleting 55");
+		t2.delete(new Integer(55));
+		println("\n\nPOST DELETE:");
+		t2.printLevelorder();
+		println("\n\nDeleting 44");
+		t2.delete(new Integer(44));
 		println("\n\nPOST DELETE:");
 		t2.printLevelorder();
 	}
