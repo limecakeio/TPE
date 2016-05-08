@@ -16,6 +16,7 @@ import org.junit.Test;
 public class BTreeDeleteTests {
 	BTree t1;
 	BTree t2;
+	BTree t3;
 	public final String divider = "\n------------------------------------\n";
 
 	@Before
@@ -24,6 +25,59 @@ public class BTreeDeleteTests {
 		t1.insert("btreedelete.txt");
 		t2 = new BTree(1);
 		t2.insert("btree.txt");
+		t3 = new BTree(2);
+		t3.insert("btree.txt");
+	}
+	
+	@Test
+	public void deleteValueInRootTest() {
+		/**
+		 * Deleting value in root, causing one replacement from corresponding
+		 * leaf and ending in balanced condition
+		 */
+	}
+	@Test
+	public void deleteValueInNodeTest() {
+		
+		println(divider);
+		println("\n\nSTART DELETE FROM ROOT WITH MAGNITUDE 2");
+		println("\n\nPRE DELETE:");
+		t3.printLevelorder();
+		println(divider);
+		println("\n\nDeleting 15, expecting replacement with 13 [Largest from Left]");
+		t3.delete(new Integer(15));
+		println("\n\nPOST DELETE:");
+		t3.printLevelorder();
+		println("\n\nDeleting 13, expecting replacement with 12 [Largest from Left]");
+		t3.delete(new Integer(13));
+		println("\n\nPOST DELETE:");
+		t3.printLevelorder();
+		println("\n\nDeleting 12, expecting replacement with 19 [Smallest from Right]");
+		t3.delete(new Integer(12));
+		println("\n\nPOST DELETE:");
+		t3.printLevelorder();
+		println("\n\nDeleting 19, expecting replacement with 23 [Smallest from Right]");
+		t3.delete(new Integer(19));
+		println("\n\nPOST DELETE:");
+		t3.printLevelorder();
+		println("\n\nDeleting 23, expecting replacement with 27 [Smallest from Right] Plus a damaged leaf");
+		t3.delete(new Integer(23));
+		println("\n\nPOST DELETE:");
+		t3.printLevelorder();
+		
+		println(divider);
+		println("\n\nSTART DELETE FROM ROOT WITH MAGNITUDE 1");
+		println("\n\nPRE DELETE:");
+		t2.printLevelorder();
+		println(divider);
+		println("\n\nDeleting 15, expecting replacement with 13 [Largest from Left]");
+		t2.delete(new Integer(15));
+		println("\n\nPOST DELETE:");
+		t2.printLevelorder();
+		println("\n\nDeleting 13, expecting replacement with 12 [Largest from Left]");
+		t2.delete(new Integer(13));
+		println("\n\nPOST DELETE:");
+		t2.printLevelorder();
 	}
 
 //	@Test
@@ -105,69 +159,51 @@ public class BTreeDeleteTests {
 //		// t2.printLevelorder();
 //	}
 
+
+
 //	@Test
-//	public void deleteValueInRootTest() {
+//	public void deleteInKingLeafTest() {
 //		/**
-//		 * Deleting value in root, causing one replacement from corresponding
-//		 * leaf and ending in balanced condition
+//		 * CASE: Deleting a value from the largest leaf in the tree causing an
+//		 * underflow.
+//		 * 
+//		 * Test once with another value in the tree which is not part of the same branch and which
+//		 * will balance everything.
 //		 */
-//		println("\n\nSTART DELETE FROM ROOT");
-//		println("\n\n BEFORE DELETE");
-//		t1.insert(new Integer(20));
-//		t1.printLevelorder();
-//		println("\n\n POST DELETE");
-//		t1.delete(new Integer(7));
-//		t1.printLevelorder();
+//		println("Setup new large tree with multiple branches");
+//		t2.printLevelorder();
+//		println("\n\nDeleting 99, 168, 132, 101 to have all the leaves in the last branch balanced on m");
+//		t2.delete(new Integer(99));
+//		t2.delete(new Integer(168));
+//		t2.delete(new Integer(132));
+//		t2.delete(new Integer(101));
+//		t2.printLevelorder();
+//		println("\n\nDeleting 66 to disrupt the balance and force the tree to take an abundant leaf-value from another branch");
+//		t2.delete(new Integer(66));
+//		t2.printLevelorder();
+//		println(divider);
+//		println("\n\nDeleting 64 to disrupt the balance and force the tree to take an abundant leaf-value from another branch");
+//		t2.delete(new Integer(64));
+//		t2.printLevelorder();
+//		println(divider);
+//		println("\n\nDeleting 58 to disrupt the balance and force the tree to take an abundant leaf-value from another branch");
+//		t2.delete(new Integer(58));
+//		t2.printLevelorder();
+//		println(divider);
+//		println("\n\nDeleting 56 to disrupt the balance and break the tree causing it to remove the last branch - since our root only has a single value a new root will be assigned.");
+//		t2.delete(new Integer(56));
+//		t2.printLevelorder();
+//		println(divider);
+//		println(divider);
+//		println("Testing with a magnitude of 2");
+//		t3.printLevelorder();
+//		
+//		
 //
 //		/**
-//		 * Deleting value in root, causing one replacement from corresponding
-//		 * leaf and ending in a position where the leaf will have to be
-//		 * re-balanced
+//		 * Test once with causing an underflow throughout the tree causing a
+//		 * merge
 //		 */
-//		println("\n\nSTART DELETE FROM ROOT WITH SUBSEQUENT REBALANCE OF LEAF");
-//		t1.delete(new Integer(19));
-//		t1.printLevelorder();
-//		
 //	}
-
-	@Test
-	public void deleteInKingLeafTest() {
-		/**
-		 * CASE: Deleting a value from the largest leaf in the tree causing an
-		 * underflow.
-		 * 
-		 * Test once with another value in the tree which is not part of the same branch and which
-		 * will balance everything.
-		 */
-		println("Setup new large tree with multiple branches");
-		t2.printLevelorder();
-		println("\n\nDeleting 99, 168, 132, 101 to have all the leaves in the last branch balanced on m");
-		t2.delete(new Integer(99));
-		t2.delete(new Integer(168));
-		t2.delete(new Integer(132));
-		t2.delete(new Integer(101));
-		t2.printLevelorder();
-		println("\n\nDeleting 66 to disrupt the balance and force the tree to take an abundant leaf-value from another branch");
-		t2.delete(new Integer(66));
-		t2.printLevelorder();
-		println(divider);
-		println("\n\nDeleting 64 to disrupt the balance and force the tree to take an abundant leaf-value from another branch");
-		t2.delete(new Integer(64));
-		t2.printLevelorder();
-		println(divider);
-		println("\n\nDeleting 58 to disrupt the balance and force the tree to take an abundant leaf-value from another branch");
-		t2.delete(new Integer(58));
-		t2.printLevelorder();
-		println(divider);
-		println("\n\nDeleting 56 to disrupt the balance and break the tree causing it to remove the last branch - since our root only has a single value a new root will be assigned.");
-		t2.delete(new Integer(56));
-		t2.printLevelorder();
-		
-
-		/**
-		 * Test once with causing an underflow throughout the tree causing a
-		 * merge
-		 */
-	}
 
 }
