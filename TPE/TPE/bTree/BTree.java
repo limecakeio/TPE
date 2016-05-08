@@ -1026,8 +1026,6 @@ public class BTree implements BTreeInterface{
 				// We are in the tree's largest leaf
 				else {
 					int abundantValue = abundantSearch();
-					BTreeNode target = getParent(getMax());
-					println("We have an abundant value of: " + abundantValue);
 					
 					if(abundantValue != -1) {
 						int cAmount, pos;
@@ -1040,20 +1038,23 @@ public class BTree implements BTreeInterface{
 						cAmount = childCount(parent);
 						cPos = getChildPosition(parent, aVal);
 						
-						//Ensure the abundance moves to a branches' last leaf
+						//Ensure the abundance moves to a branch's last leaf
 						rotateRight(parent, cPos, cAmount-1);
 						child = parent.getChild(cAmount-1);
 						highestVal = lastElement(child.getValues());
 						
 						
-						//As long as we are not in the last branch we rotate the abundance to the next one
-						if(parent.getChild(cPos +1 ) != null) {
+						//Locate the node to cross into the next branch with
+						if(parent.getValue(0).compareTo(lastElement(root.getValues())) == -1) {
 							root.setValue(highestVal, freeSpot(root.getValues()));
 							Integer.insertionSort(root.getValues());
 							erase(child, highestVal);
 
 							//Place the next highest value, into its smaller branch
-							pos = getElementPosition(root.getValues(), highestVal)+1;
+							pos = getElementPosition(root.getValues(), highestVal);
+							if(pos != magnitude)
+								pos++;
+							
 							highestVal = root.getValue(pos);
 
 							//Climb down the tree to the required leaf
@@ -1071,7 +1072,6 @@ public class BTree implements BTreeInterface{
 
 							aVal = highestVal;
 						}
-
 						}
 						while(!minCheck(target.getValues()));
 					}
@@ -1389,6 +1389,7 @@ public class BTree implements BTreeInterface{
 		Integer element = values[lastElementPosition(values)];
 		return element;
 	}
+
 	
 	/**Attempts to correct an underflow in a leaf with a value from a neighbor*/
 	private boolean rebalanceLeafs(BTreeNode parent) {
