@@ -50,9 +50,8 @@ public class Integer implements Comparable {
 	}
 	
 	//Integer to String
-	public String toString(Object o) {
-		String output = "" + transformInteger(o);
-		return output;
+	public String toString() {
+		return value + "";
 	}
 	
 	//Integer Array to String (no space at end)

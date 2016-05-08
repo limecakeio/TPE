@@ -2,21 +2,21 @@ package bTree;
 
 public class BTreeNode {
 
-	private Integer [] values;
+	private Object [] values;
 	private BTreeNode [] children;
 
 	// SETUP BTREE NODE
 	BTreeNode(int magnitude){
 
 		// array length: (magnitude x2)+1
-		values = new Integer [(magnitude*2)+1];
+		values = new Object [(magnitude*2)+1];
 		children = new BTreeNode [(magnitude*2)+2];
 	}
 
-	BTreeNode(Integer value, int magnitude){
+	BTreeNode(Object value, int magnitude){
 
 		// array length: (magnitude x2)+1
-		values = new Integer [(magnitude*2)+1];
+		values = new Object [(magnitude*2)+1];
 		children = new BTreeNode [(magnitude*2)+2];
 		
 		// set values
@@ -24,15 +24,15 @@ public class BTreeNode {
 	}
 
 	// BTREE NODE MTHODS
-	public void setValue(Integer value, int index){
+	public void setValue(Object value, int index){
 		values[index] = value;
 	}
 
-	public Integer getValue(int index){
+	public Object getValue(int index){
 		return values[index];
 	}
 	
-	public Integer[] getValues(){
+	public Object[] getValues(){
 		return values;
 	}
 	
@@ -50,7 +50,7 @@ public class BTreeNode {
 	
 	// SPECIAL
 	public void printnode(){
-		Integer[] storage = values;
+		Object[] storage = values;
 		
 		for (int i = 0; i != storage.length; i++){
 			if (values[i] == null){

@@ -13,13 +13,14 @@ public class BTree implements BTreeInterface{
 		this.magnitude = magnitude;
 	}
 
-	public BTree(Integer o, int magnitude){
+	public BTree(Object o, int magnitude){
 		root = new BTreeNode(o, magnitude);
 		this.magnitude = magnitude;
 	}
 
 	// CORE INTERFACE METHODS
-	public boolean insert(Integer o){
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public boolean insert(Object o){
 		int i = 0;
 		int child = 0;
 		int neighbourLeaf = -1;
@@ -36,7 +37,7 @@ public class BTree implements BTreeInterface{
 				// check stored value: empty
 				if (pointer.getValue(i) == null){
 					pointer.setValue(o, i);
-					Integer.insertionSort(pointer.getValues());
+					insertionSort(pointer.getValues());
 
 					// check node: healthy
 					if (criteriaCheck(pointer)){
@@ -68,7 +69,7 @@ public class BTree implements BTreeInterface{
 					}
 				}
 				// check stored value: o > value[i]
-				else if ((pointer.getValue(i)).compareTo(o) == -1){
+				else if (((Comparable) pointer.getValue(i)).compareTo(o) == -1){
 
 					// check stored value: o > value[i+1]
 					if (pointer.getValue(i+1) != null){
@@ -89,7 +90,7 @@ public class BTree implements BTreeInterface{
 					}
 				}
 				// check stored value: o < value[i]
-				else if ((pointer.getValue(i)).compareTo(o) == 1){
+				else if (((Comparable) pointer.getValue(i)).compareTo(o) == 1){
 
 					// check left child: not present
 					if (pointer.getChild(i) == null){
@@ -104,7 +105,7 @@ public class BTree implements BTreeInterface{
 					}
 				}
 				// check stored value: o == value[i]
-				else if ((pointer.getValue(i)).compareTo(o) == 0){
+				else if (((Comparable) pointer.getValue(i)).compareTo(o) == 0){
 					println("Error: Value already present.");
 					return false;
 				}
@@ -119,36 +120,38 @@ public class BTree implements BTreeInterface{
 		return success;
 	}
 
-	public boolean insert(String filename) {
-		
-		Integer value = new Integer(0);
-		
-		// check: file is present & readable
-		if (isFilePresent(filename) && (isFileReadable(filename))){
-			Object inputFile = openInputFile(filename);
+	public boolean insert(String filename) {return true;}
+//	public boolean insert(String filename) {
+//		
+//		Object value = new Object();
+//		
+//		// check: file is present & readable
+//		if (isFilePresent(filename) && (isFileReadable(filename))){
+//			Object inputFile = openInputFile(filename);
+//
+//			while (!isEndOfInputFile(inputFile)){
+//				value = new Object(readInt(inputFile));
+//
+//				// attempt to insert value into tree
+//				if (insert(value) == false){
+//					println("Failed to insert: " + Integer.transformInteger(value) + ".");
+//				}
+//				// check: read-away delimiter characters
+//				if (!isEndOfInputFile(inputFile)){
+//					readChar(inputFile);
+//				}
+//			}
+//			closeInputFile(inputFile);
+//			return true;
+//		}
+//		else {
+//			println("Error: Input file \"" + filename +  "\" is either unreadable or does not exist.");
+//			return false;
+//		}
+//	}
 
-			while (!isEndOfInputFile(inputFile)){
-				value = new Integer(readInt(inputFile));
-
-				// attempt to insert value into tree
-				if (insert(value) == false){
-					println("Failed to insert: " + Integer.transformInteger(value) + ".");
-				}
-				// check: read-away delimiter characters
-				if (!isEndOfInputFile(inputFile)){
-					readChar(inputFile);
-				}
-			}
-			closeInputFile(inputFile);
-			return true;
-		}
-		else {
-			println("Error: Input file \"" + filename +  "\" is either unreadable or does not exist.");
-			return false;
-		}
-	}
-
-	public boolean contains(Integer o){
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public boolean contains(Object o){
 		
 		BTreeNode parent = root;
 		
@@ -160,7 +163,7 @@ public class BTree implements BTreeInterface{
 		
 		do {
 			boolean nullNext = false;
-			result = o.compareTo(parent.getValue(i));
+			result = ((Comparable)o).compareTo(parent.getValue(i));
 			
 			if (parent.getValue(i+1) == null) {
 				nullNext = true;
@@ -170,9 +173,9 @@ public class BTree implements BTreeInterface{
 				found = true;
 			
 			else if(result == -1) {
-				validRange = Integer.establishRange(parent.getChild(i).getValues());
+				validRange = BTree.establishRange(parent.getChild(i).getValues());
 				for(int j = 0; j < validRange; j++) {
-					if(o.compareTo(parent.getChild(i).getValue(j)) == 0) {
+					if(((Comparable)o).compareTo(parent.getChild(i).getValue(j)) == 0) {
 					found = true;
 				}
 				}
@@ -182,9 +185,9 @@ public class BTree implements BTreeInterface{
 			}
 
 			else if(result == 1 && nullNext) {
-				validRange = Integer.establishRange(parent.getChild(i+1).getValues());
+				validRange = BTree.establishRange(parent.getChild(i+1).getValues());
 				for(int j = 0; j < validRange; j++) {
-					if(o.compareTo(parent.getChild(i+1).getValue(j)) == 0) {
+					if(((Comparable)o).compareTo(parent.getChild(i+1).getValue(j)) == 0) {
 					found = true;
 					}
 				}
@@ -289,11 +292,11 @@ public class BTree implements BTreeInterface{
 		return height;
 	}
 
-	public Integer getMax(){
+	public Object getMax(){
 
 		int i = 0;
 		BTreeNode pointer = root;
-		Integer maxValue = new Integer(-1);
+		Object maxValue = new Integer(-1);
 
 		// check: node is empty
 		while (pointer != null){
@@ -309,10 +312,10 @@ public class BTree implements BTreeInterface{
 		return maxValue;
 	}
 
-	public Integer getMin(){
+	public Object getMin(){
 
 		BTreeNode pointer = root;
-		Integer minValue = new Integer(-1);
+		Object minValue = new Integer(-1);
 
 		// check: node is empty
 		while (pointer != null){
@@ -335,7 +338,7 @@ public class BTree implements BTreeInterface{
 		if (pointer != null){
 
 			// get data: current node
-			Integer[] values = pointer.getValues();
+			Object[] values = pointer.getValues();
 			BTreeNode[] children = pointer.getChildren();
 
 			// first: get all current node values 
@@ -381,13 +384,13 @@ public class BTree implements BTreeInterface{
 		if (pointer != null){
 
 			// get data: current node
-			Integer[] values = pointer.getValues();
+			Object[] values = pointer.getValues();
 			BTreeNode[] children = pointer.getChildren();
 
 			// first: get all current node values 
 			for (int i = 0; i < values.length -1; i++){
 				if (values[i] != null)
-					System.out.print(Integer.toString(values[i]) + ", ");
+					System.out.print((values[i]).toString() + ", ");
 			}
 			// second: repeat for each child of the node
 			for (int i = 0; i < children.length -1; i++){
@@ -405,7 +408,7 @@ public class BTree implements BTreeInterface{
 		if (pointer != null){
 
 			// get data: current node
-			Integer[] values = pointer.getValues();
+			Object[] values = pointer.getValues();
 			BTreeNode[] children = pointer.getChildren();
 
 			// first: visit left-most node
@@ -413,7 +416,7 @@ public class BTree implements BTreeInterface{
 
 			// second: visit smallest parent node value
 			if (values[0] != null){
-				print(Integer.toString(values[0]) + ", ");
+				print((values[0]).toString() + ", ");
 			}
 
 			// third: repeat strategy for bigger elements
@@ -421,7 +424,7 @@ public class BTree implements BTreeInterface{
 
 				// get remaining values of the node
 				if (values[i] != null){
-					print(Integer.toString(values[i]) + ", ");
+					print((values[i]).toString() + ", ");
 				}
 				// get remaining children of the node
 				printInorder(pointer.getChild(i));
@@ -438,7 +441,7 @@ public class BTree implements BTreeInterface{
 		if (pointer != null){
 
 			// get data: current node
-			Integer[] values = pointer.getValues();
+			Object[] values = pointer.getValues();
 			BTreeNode[] children = pointer.getChildren();
 
 			// first: try to enter all children nodes
@@ -448,7 +451,7 @@ public class BTree implements BTreeInterface{
 			// second: get all current node values
 			for (int i = 0; i < values.length -1; i++){
 				if (values[i] != null)
-					System.out.print(Integer.toString(values[i]) + ", ");
+					System.out.print((values[i]).toString() + ", ");
 			}
 		}
 	}
@@ -467,7 +470,7 @@ public class BTree implements BTreeInterface{
 		int i = 0;
 		int j = 0;
 		int k = 0;
-		Integer target;
+		Object target;
 		boolean skip = false;
 
 		// add first node: root
@@ -481,7 +484,7 @@ public class BTree implements BTreeInterface{
 					// for each target-element print...
 					if (storage[i].getValue(j) != null){
 						target = storage[i].getValue(j);
-						System.out.print(Integer.toString(target) + ", ");
+						System.out.print((target).toString() + ", ");
 
 						// ... its children are added to the storage.
 						if (k != (storage.length)*(magnitude*2)){
@@ -555,7 +558,7 @@ public class BTree implements BTreeInterface{
 
 
 	private boolean criteriaCheck(BTreeNode pointer){
-		Integer [] values = pointer.getValues();
+		Object [] values = pointer.getValues();
 
 		// check last array element
 		if (values[values.length-1] == null)
@@ -571,7 +574,7 @@ public class BTree implements BTreeInterface{
 		// check: left sister leaves
 		while (i >= 0){
 			// get values: current child
-			Integer[] values = children[i].getValues();
+			Object[] values = children[i].getValues();
 			// check: neighbor leaf can take further elements
 			if (values[values.length-1] == null && values[values.length-2] == null){
 				return i;
@@ -584,7 +587,7 @@ public class BTree implements BTreeInterface{
 		// check: right sister leaves
 		while (i != magnitude*2 && children[i] != null){
 			// get values: current child
-			Integer[] values = children[i].getValues();
+			Object[] values = children[i].getValues();
 			// check: neighbor leaf can take further elements
 			if (values[values.length-1] == null && values[values.length-2] == null){
 				return i;
@@ -602,8 +605,8 @@ public class BTree implements BTreeInterface{
 			for (int i = neighbourLeaf; i < child; i++){
 
 				boolean set = false;
-				Integer parentValue = parent.getValue(i);
-				Integer childValue = parent.getChild(i+1).getValue(0);
+				Object parentValue = parent.getValue(i);
+				Object childValue = parent.getChild(i+1).getValue(0);
 
 				// set values to 'null' before swapping
 				parent.setValue(null, i);
@@ -622,8 +625,8 @@ public class BTree implements BTreeInterface{
 
 				// sort away: first 'null' value
 				for (int k = 0; k < pointer.getValues().length-1; k++){
-					Integer x = parent.getChild(i+1).getValue(k);
-					Integer y = parent.getChild(i+1).getValue(k+1);
+					Object x = parent.getChild(i+1).getValue(k);
+					Object y = parent.getChild(i+1).getValue(k+1);
 					parent.getChild(i+1).setValue(y, k);
 					parent.getChild(i+1).setValue(x, k+1);
 				}
@@ -634,8 +637,8 @@ public class BTree implements BTreeInterface{
 			for (int i = neighbourLeaf; i > child; i--){
 
 				boolean set = false;
-				Integer parentValue = parent.getValue(i-1);
-				Integer childValue = parent.getChild(i-1).getValue((magnitude*2));
+				Object parentValue = parent.getValue(i-1);
+				Object childValue = parent.getChild(i-1).getValue((magnitude*2));
 
 				// set values to 'null' before swapping
 				parent.setValue(null, i-1);
@@ -646,7 +649,7 @@ public class BTree implements BTreeInterface{
 
 						// search and set position for parent value (from the top to the left) 
 						parent.getChild(i).setValue(parentValue, j);
-						Integer.insertionSort(parent.getChild(i).getValues());
+						insertionSort(parent.getChild(i).getValues());
 						set = true;
 					}
 				}
@@ -662,7 +665,7 @@ public class BTree implements BTreeInterface{
 		BTreeNode newLeaf = splitNode(brokenLeaf);
 
 		//Placing middle-value into parent-node
-		Integer mValue = brokenLeaf.getValue(magnitude);
+		Object mValue = brokenLeaf.getValue(magnitude);
 
 		brokenLeaf.setValue(null, magnitude); // Remove middle-value
 
@@ -697,7 +700,8 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**THE FOLLOWING METHODS ASSIST ALL BURST METHODS*/
-	public BTreeNode locateParentNode(Integer query) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public BTreeNode locateParentNode(Object query) {
 		//Enter the tree
 		BTreeNode newParent = root;
 
@@ -708,16 +712,16 @@ public class BTree implements BTreeInterface{
 	
 		do {
 			boolean nullNext = false;
-			result = query.compareTo(newParent.getValue(i));
+			result = ((Comparable)query).compareTo(newParent.getValue(i));
 
 			if (newParent.getValue(i+1) == null) {
 				nullNext = true;
 			}
 
 			if(result == -1) {
-				validRange = Integer.establishRange(newParent.getChild(i+1).getValues());
+				validRange = BTree.establishRange(newParent.getChild(i+1).getValues());
 				for(int j = 0; j < validRange; j++) {
-					if(query.compareTo(newParent.getChild(i).getValue(j)) == 0) {
+					if(((Comparable)query).compareTo(newParent.getChild(i).getValue(j)) == 0) {
 						newParent.getChild(i).setValue(null, j); // Remove located value
 						found = true;
 					}
@@ -728,9 +732,9 @@ public class BTree implements BTreeInterface{
 			}
 
 			else if(result == 1 && nullNext) {
-				validRange = Integer.establishRange(newParent.getChild(i+1).getValues());
+				validRange = BTree.establishRange(newParent.getChild(i+1).getValues());
 				for(int j = 0; j < validRange; j++) {
-					if(query.compareTo(newParent.getChild(i+1).getValue(j)) == 0) {
+					if(((Comparable)query).compareTo(newParent.getChild(i+1).getValue(j)) == 0) {
 						newParent.getChild(i+1).setValue(null, j); // Remove located value
 						found = true;
 					}
@@ -760,13 +764,13 @@ public class BTree implements BTreeInterface{
 		return newLeaf;
 	}
 
-	private int popValue(BTreeNode parent, BTreeNode newLeaf, Integer mValue) {
+	private int popValue(BTreeNode parent, BTreeNode newLeaf, Object mValue) {
 		int pos = 0;
 		while(parent.getValue(pos) != null) {
 			pos++;
 		}
 		parent.setValue(mValue, pos);
-		Integer.insertionSort(parent.getValues());
+		insertionSort(parent.getValues());
 
 		//Point the reference to the new leaf via its corresponding value
 		pos = 0;
@@ -799,7 +803,7 @@ public class BTree implements BTreeInterface{
 		return pointer-1;
 	}
 	
-	public boolean delete(Integer o){
+	public boolean delete(Object o){
 		if(contains(o)) {
 			BTreeNode pointer = root;
 			if(!delete(pointer, o)) {
@@ -810,7 +814,7 @@ public class BTree implements BTreeInterface{
 			
 		return false;
 	}
-	private boolean delete(BTreeNode parent, Integer o) {
+	private boolean delete(BTreeNode parent, Object o) {
 		parent = getParent(o);
 		BTreeNode child = getChild(parent, o);
 		boolean fixed = false;
@@ -860,7 +864,7 @@ public class BTree implements BTreeInterface{
 	private void treatRoot(BTreeNode parent) {
 		println("Treating the root");
 		int oPos = freeSpot(root.getValues());
-		Integer leafVal = leafEquivalentValue(parent, oPos);
+		Object leafVal = leafEquivalentValue(parent, oPos);
 		BTreeNode leaf = leafEquivalentNode(parent, oPos);
 		
 		//Change parent to leaf parent for later processing
@@ -888,7 +892,7 @@ public class BTree implements BTreeInterface{
 		//See if the child is a leaf-parent so it can try to take largest value from smaller child
 		if(child.getChild(0).getChild(0) == null) {
 			if(abundanceCheck(child.getChild(oPos).getValues())) {
-				Integer[] grandChildValues = child.getChild(oPos).getValues();
+				Object[] grandChildValues = child.getChild(oPos).getValues();
 				//Fill the void
 				child.setValue(lastElement(grandChildValues), oPos);
 				//Remove the duplicate
@@ -899,7 +903,7 @@ public class BTree implements BTreeInterface{
 			}
 		}
 			
-		Integer leafVal = leafEquivalentValue(child, oPos);
+		Object leafVal = leafEquivalentValue(child, oPos);
 		BTreeNode leaf = leafEquivalentNode(child, oPos);
 		
 		println("Leaf Value was: " + Integer.transformInteger(leafVal));
@@ -935,6 +939,7 @@ public class BTree implements BTreeInterface{
 		return 0;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void treatLeaf(BTreeNode parent) {
 		println("Treating via leaf parent");
 		
@@ -948,7 +953,7 @@ public class BTree implements BTreeInterface{
 				println("More kids than parents");
 				int largeChild = childCount(parent)-1;
 				int smallChild = largeChild-1;
-				Integer[] sChild, lChild;
+				Object[] sChild, lChild;
 				sChild = parent.getChild(smallChild).getValues();
 				lChild = parent.getChild(largeChild).getValues();
 				int valCount = valueCount(parent.getChild(largeChild).getValues());
@@ -957,7 +962,7 @@ public class BTree implements BTreeInterface{
 				if(lChild[0] == null) {
 					println("Child has no values");
 					//Get the parent's largest value
-					Integer lastElement = lastElement(parent.getValues());
+					Object lastElement = lastElement(parent.getValues());
 					int elementPos = getElementPosition(parent.getValues(), lastElement);
 					parent.getChild(elementPos).setValue(lastElement, freeSpot(parent.getChild(elementPos).getValues()));
 					erase(parent, lastElement);
@@ -987,7 +992,7 @@ public class BTree implements BTreeInterface{
 			BTreeNode child = parent.getChild(cPos);
 			
 			if(parent.getValue(cPos) != null) {
-				Integer replacementVal = parent.getValue(cPos);
+				Object replacementVal = parent.getValue(cPos);
 				
 				//Place parent value into child
 				child.setValue(replacementVal, freeSpot(child.getValues()));
@@ -1011,9 +1016,9 @@ public class BTree implements BTreeInterface{
 			else {
 				//Ensure we are not in the tree's last leaf and 
 				//replace the value with its corresponding exchange node value
-				if(parent.getValue(0).compareTo(lastElement(root.getValues())) == -1) {
+				if(((Comparable) parent.getValue(0)).compareTo(lastElement(root.getValues())) == -1) {
 					
-					Integer eVal;
+					Object eVal;
 					//If we have m = 1, child could be empty
 					if(child.getValue(0) == null)
 						eVal = lastElement(parent.getValues());
@@ -1028,7 +1033,7 @@ public class BTree implements BTreeInterface{
 					int ePos = 0;
 					
 					//Get the position at which we are exchanging
-					while(eVal.compareTo(exchangeNode.getValue(ePos)) == 1)
+					while(((Comparable) eVal).compareTo(exchangeNode.getValue(ePos)) == 1)
 						ePos++;
 					
 					
@@ -1050,7 +1055,7 @@ public class BTree implements BTreeInterface{
 					println("Abundant Value is: " +abundantValue + " Min is now " + Integer.transformInteger(getMin()) + " Max is now " + Integer.transformInteger(getMax()));
 					
 					if(abundantValue != -1) {
-						Integer aVal = new Integer(abundantValue);
+						Object aVal = new Integer(abundantValue);
 						rotateToLastLeaf(aVal); 
 					}
 					else{
@@ -1065,7 +1070,8 @@ public class BTree implements BTreeInterface{
 	/**HELPFUL METHODS TO REALISE DELETE*/
 	
 	/**Performs a branch-spanning right-rotation to move an abundant value within a leaf into the tree's last leaf*/
-	private void rotateToLastLeaf(Integer aVal) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void rotateToLastLeaf(Object aVal) {
 		println("WHEN THE METHOD IS CALLED AVAL IS: " + Integer.transformInteger(aVal));
 		BTreeNode parent = getParent(aVal);
 		int cAmount = childCount(parent);
@@ -1095,7 +1101,7 @@ public class BTree implements BTreeInterface{
 			
 			//Find a path to down
 			while(!path) {
-				pResult = aVal.compareTo(eNode.getValue(p));
+				pResult = ((Comparable) aVal).compareTo(eNode.getValue(p));
 				println("Comparing [parent] " + Integer.transformInteger(aVal) + " with " + Integer.transformInteger(eNode.getValue(p)) + " resulting in " + pResult);
 				
 				if(eNode.getValue(p) == null)
@@ -1112,7 +1118,7 @@ public class BTree implements BTreeInterface{
 			if(eNode.getValue(p) != null) {
 				int i = 0;
 				while(eNode.getChild(p).getValue(i) != null) {
-				pResult = aVal.compareTo(eNode.getChild(p).getValue(i));
+				pResult = ((Comparable) aVal).compareTo(eNode.getChild(p).getValue(i));
 				if(pResult == 0)
 					return;
 				else if(pResult == 1) {
@@ -1132,7 +1138,7 @@ public class BTree implements BTreeInterface{
 				eNode = eNode.getChild(p);
 				int i = 0;
 				while(eNode.getValue(i) != null) {
-				pResult = aVal.compareTo(eNode.getValue(i));
+				pResult = ((Comparable) aVal).compareTo(eNode.getValue(i));
 				if(pResult == 0)
 					return;
 				else if(pResult == 1) {
@@ -1178,11 +1184,12 @@ public class BTree implements BTreeInterface{
 		rotateToLastLeaf(aVal);
 	}
 	
-	private void erase(BTreeNode node, Integer o){
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void erase(BTreeNode node, Object o){
 		boolean removed = false;
 		int i = 0;
 		while(!removed) {
-			if(node.getValue(i).compareTo(o) == 0) {
+			if(((Comparable) node.getValue(i)).compareTo(o) == 0) {
 				node.setValue(null, i);
 				removed = true;
 			}
@@ -1191,13 +1198,14 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Finds and erases a value within a node's direct child [do not use if child is a leaf]*/
-	private void deepErase(BTreeNode node, Integer o) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void deepErase(BTreeNode node, Object replacementVal) {
 		boolean erased = false;
 		int i = 0;
 		while(!erased) {
 			if(node.getChild(i) != null) {
 				for(int j = 0; i < magnitude*2 && !erased && node.getChild(i).getValue(j) != null; j++) {
-					if(node.getChild(i).getValue(j).compareTo(o) == 0) {
+					if(((Comparable) node.getChild(i).getValue(j)).compareTo(replacementVal) == 0) {
 					node.getChild(i).setValue(null, j);
 					erased = true;
 				}
@@ -1209,19 +1217,19 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the amount of values in an array*/
-	private int valueCount(Integer[] values) {
+	private int valueCount(Object[] objects) {
 		int i = 0;
-		while(values[i] != null)
+		while(objects[i] != null)
 			i++;
 		return i;
 	}
 	
 	/**Shift along values to ensure all null-spaces are at the end of an array*/
-	private void shiftValues(Integer[] values) {
+	private void shiftValues(Object[] objects) {
 		for(int i = 0; i < magnitude*2; i++) {
-			if(values[i] == null && values[i+1] != null) {
-				values[i] = values[i+1];
-				values[i+1] = null;
+			if(objects[i] == null && objects[i+1] != null) {
+				objects[i] = objects[i+1];
+				objects[i+1] = null;
 			}
 		}
 	}
@@ -1252,10 +1260,10 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Checks if the amount of values in a node are within the required criteria*/
-	private boolean minCheck(Integer[] values) {
+	private boolean minCheck(Object[] objects) {
 		int i = 0;
 		while(i < magnitude) {
-			if(values[i] == null)
+			if(objects[i] == null)
 				return false;
 			i++;
 		}
@@ -1263,7 +1271,8 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the parent-node of a child that contains the query value*/
-	private BTreeNode getParent(Integer query) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private BTreeNode getParent(Object o) {
 		BTreeNode newParent = root;
 		int result = 0;
 		int i = 0;
@@ -1271,7 +1280,7 @@ public class BTree implements BTreeInterface{
 		do {
 			boolean nullNext = false;
 			
-			result = query.compareTo(newParent.getValue(i));
+			result = ((Comparable) o).compareTo(newParent.getValue(i));
 
 			if (newParent.getValue(i+1) == null) {
 				nullNext = true;
@@ -1282,7 +1291,7 @@ public class BTree implements BTreeInterface{
 
 			else if(result == -1) {
 				for(int j = 0; j < magnitude*2; j++) {
-					if(query.compareTo(newParent.getChild(i).getValue(j)) == 0) {
+					if(((Comparable) o).compareTo(newParent.getChild(i).getValue(j)) == 0) {
 						found = true;
 					}
 				}
@@ -1293,7 +1302,7 @@ public class BTree implements BTreeInterface{
 
 			else if(result == 1 && nullNext) {
 				for(int j = 0; j < magnitude*2; j++) {
-					if(query.compareTo(newParent.getChild(i+1).getValue(j)) == 0) {
+					if(((Comparable) o).compareTo(newParent.getChild(i+1).getValue(j)) == 0) {
 						found = true;
 					}
 				}
@@ -1313,10 +1322,11 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the child-node that contains the query-value*/
-	private BTreeNode getChild(BTreeNode parent, Integer o) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private BTreeNode getChild(BTreeNode parent, Object o) {
 		BTreeNode child = root;
 		boolean found = false;
-		Integer val = new Integer(0);
+		Object val = new Integer(0);
 		int i = 0;
 		while(!found) {
 			
@@ -1328,7 +1338,7 @@ public class BTree implements BTreeInterface{
 			
 			for(int j = 0; j < magnitude*2; j++) {
 				val = parent.getChild(i).getValue(j);
-				if(val != null && val.compareTo(o) == 0) {
+				if(val != null && ((Comparable) val).compareTo(o) == 0) {
 				found = true;
 				child = parent.getChild(i);
 				}
@@ -1339,12 +1349,13 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the child's array position in a node which contains a specific value*/
-	private int getChildPosition(BTreeNode parent, Integer o) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private int getChildPosition(BTreeNode parent, Object aVal) {
 		int i = 0;
 		
 		while(i <= magnitude*2) {
 			for(int j = 0; j < magnitude*2; j++) {
-				if(parent.getChild(i).getValue(j) != null && parent.getChild(i).getValue(j).compareTo(o) == 0) {
+				if(parent.getChild(i).getValue(j) != null && ((Comparable) parent.getChild(i).getValue(j)).compareTo(aVal) == 0) {
 					return i;
 				}
 			}
@@ -1384,10 +1395,11 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the array position of a specified value in an array*/
-	private int getElementPosition(Integer[] values, Integer o) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private int getElementPosition(Object[] objects, Object lastElement) {
 		int pos = 0;
-		while(values[pos] != null) {
-			if(values[pos].compareTo(o) == 0)
+		while(objects[pos] != null) {
+			if(((Comparable) objects[pos]).compareTo(lastElement) == 0)
 				return pos;
 			pos++;
 			
@@ -1396,7 +1408,8 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the corresponding root position of a leaf*/
-	private BTreeNode exchangeEquivalent(Integer o) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private BTreeNode exchangeEquivalent(Object eVal) {
 		//Locate exchange-node to cross branches
 				BTreeNode eNode = root;
 				boolean found = false;
@@ -1410,7 +1423,7 @@ public class BTree implements BTreeInterface{
 					
 					//Find a path to go down
 					while(!path) {
-						pResult = o.compareTo(eNode.getValue(p));
+						pResult = ((Comparable) eVal).compareTo(eNode.getValue(p));
 						
 						if(eNode.getValue(p) == null)
 							path = true; //End of array, take the last path
@@ -1424,7 +1437,7 @@ public class BTree implements BTreeInterface{
 					if(eNode.getValue(p) != null) {
 						int i = 0;
 						while(eNode.getChild(p).getValue(i) != null) {
-							pResult = o.compareTo(eNode.getChild(p).getValue(i));
+							pResult = ((Comparable) eVal).compareTo(eNode.getChild(p).getValue(i));
 							if(pResult == 1) {
 								found = true;
 								i++;	
@@ -1443,7 +1456,7 @@ public class BTree implements BTreeInterface{
 						
 						int i = 0;
 						while(eNode.getValue(i) != null) {
-						pResult = o.compareTo(eNode.getValue(i));
+						pResult = ((Comparable) eVal).compareTo(eNode.getValue(i));
 						if(pResult == 1) {
 							i++;	
 						}	
@@ -1457,7 +1470,7 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the leaf equivalent value of a root value*/
-	private Integer leafEquivalentValue(BTreeNode node, int oPos){
+	private Object leafEquivalentValue(BTreeNode node, int oPos){
 		BTreeNode leaf = node.getChild(oPos+1);
 		while(leaf.getChild(0) != null) {
 			leaf = leaf.getChild(0);
@@ -1475,17 +1488,17 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Checks if a value array contains more than "m" values*/
-	private boolean abundanceCheck(Integer[] values) {
-		if(values[magnitude] != null)
+	private boolean abundanceCheck(Object[] objects) {
+		if(objects[magnitude] != null)
 			return true;
 		return false;	
 	}
 	
 	/**Returns the index-position of the first unoccupied space in a value array*/
-	private int freeSpot(Integer[] values) {
+	private int freeSpot(Object[] objects) {
 		int i = 0;
 		while (i < magnitude*2) {
-			if(values[i] != null)
+			if(objects[i] != null)
 				i++;
 			else
 				break;
@@ -1494,10 +1507,10 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the index-position last element in an array*/
-	private int lastElementPosition(Integer[] values) {
+	private int lastElementPosition(Object[] grandChildValues) {
 		int i = 0;
 		while (i < magnitude*2) {
-			if(values[i+1] != null)
+			if(grandChildValues[i+1] != null)
 				i++;
 			else
 				break;
@@ -1506,8 +1519,8 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the last element in a value array*/
-	private Integer lastElement(Integer[] values) {
-		Integer element = values[lastElementPosition(values)];
+	private Object lastElement(Object[] grandChildValues) {
+		Object element = grandChildValues[lastElementPosition(grandChildValues)];
 		return element;
 	}
 
@@ -1536,7 +1549,7 @@ public class BTree implements BTreeInterface{
 	
 	/**Performs a left-rotation for a given interval of iterations*/
 	private void rotateLeft(BTreeNode parent, int from, int to){
-		Integer lValue, pValue = new Integer(0);
+		Object lValue, pValue = new Integer(0);
 		for(int i = from; i > to; i--) {
 			lValue = parent.getChild(i).getValue(0);
 			pValue = parent.getValue(i-1);
@@ -1559,7 +1572,7 @@ public class BTree implements BTreeInterface{
 	
 	/**Performs a right-rotation for a given interval of iterations*/
 	public void rotateRight(BTreeNode parent, int from, int to){
-		Integer lValue, pValue = new Integer(0);
+		Object lValue, pValue = new Integer(0);
 		
 		for(int i = from; i < to; i++) {
 			lValue = lastElement(parent.getChild(i).getValues());
@@ -1592,7 +1605,7 @@ public class BTree implements BTreeInterface{
 		int j = 0;
 		int k = 0;
 		int l = 0;
-		Integer target;
+		Object target;
 		boolean skip = false;
 
 		// add first node: root
@@ -1639,7 +1652,7 @@ public class BTree implements BTreeInterface{
 			l = 0;
 
 			// search: m+1
-			while (storage_2[i+1] != Integer.transformInteger(getMin())){
+			while (!(storage_2[i+1] + "").equals(getMin().toString())){
 				j = (magnitude*2)-1;
 				while (j != magnitude-1){
 
@@ -1663,7 +1676,7 @@ public class BTree implements BTreeInterface{
 		boolean found = false;
 		BTreeNode parent = root;
 		BTreeNode pointer = root;
-		Integer[] storage = new Integer[nodeCount()*(magnitude*2)];
+		Object[] storage = new Object[nodeCount()*(magnitude*2)];
 
 		// check: root gets cut
 		if (pointer.getValue(1) != null){
@@ -1708,7 +1721,7 @@ public class BTree implements BTreeInterface{
 		if (pointer != null){
 
 			// get data: current node
-			Integer[] values = pointer.getValues();
+			Object[] values = pointer.getValues();
 
 			// first: get all current node values 
 			for (int i = 0; i < values.length -1; i++){
@@ -1723,5 +1736,33 @@ public class BTree implements BTreeInterface{
 			}
 		}
 		return counter;
+	}
+	
+	// EXTRACTED INTEGER METHODS
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void insertionSort (Object[] toSort) {
+		for(int i = 1; i < establishRange(toSort); i++){
+			Object m = toSort[i];
+			int j = i;
+			
+			
+			while(j > 0 && (((Comparable) toSort[j-1]).compareTo(m) == 1)) {
+				if(((Comparable)toSort[j-1]).compareTo(m) == 1) {
+					toSort[j] = toSort[j-1];
+					j--;
+				}
+			}
+			toSort[j] = m;
+		}
+	}
+	
+	public static int establishRange(Object[] array) {
+		int i = 0;
+		while(i < array.length) {
+			if(array[i] == null)
+				return i;
+			i++;
+		}
+		return i;
 	}
 }

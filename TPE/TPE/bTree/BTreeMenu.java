@@ -175,9 +175,8 @@ public class BTreeMenu {
 				// Command 5: get max-value
 				if (command == 5){
 					command = 0;
-					value = Integer.transformInteger(storage[active].getMax());
 
-					if (value != -1){
+					if (!(storage[active].getMax().toString().equals("-1"))){
 						println("Max value contained within the B-tree is [" + value + "].");
 					}
 					else {
@@ -188,9 +187,8 @@ public class BTreeMenu {
 				// Command 6: get min-value
 				if (command == 6){
 					command = 0;
-					value = Integer.transformInteger(storage[active].getMin());
 
-					if (value != -1){
+					if (!(storage[active].getMin().toString().equals("-1"))){
 						println("Min value contained within the B-tree is [" + value + "].");
 					}
 					else {
