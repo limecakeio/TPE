@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import crapPack.*;
+
 @SuppressWarnings("unused")
 public class CarDealerMeetsJUnit {
 	
@@ -73,6 +75,23 @@ public class CarDealerMeetsJUnit {
 		assertTrue((dealersBooty[2].compareTo(dealersBooty[2]) == 0));
 		assertTrue((dealersBooty[3].compareTo(dealersBooty[3]) == 0));
 		
+	}
+	
+	@Test
+	public void bTeeStorageTest(){
+		Car car1 = new GasolineCar(01, "BMW", 25000, 2012, 2);
+		Car car2 = new GasolineCar(02, "Audi", 22000, 2011, 3);
+		Car car3 = new ElectricCar(03, "Tesla", 50000, 2015, Electric.HIGH_VOLTAGE);
+		Car car4 = new HybridCar(04, "VW", 30000, 2014, 1, Electric.LOW_VOLTAGE);
+		
+		BTree dealership = new BTree(1);
+		dealership.insert(car1);
+		dealership.insert(car2);
+		dealership.insert(car3);
+		dealership.insert(car4);
+		
+		dealership.printLevelorder();
+		System.out.println("END");
 	}
 
 }

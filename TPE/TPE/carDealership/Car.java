@@ -65,4 +65,17 @@ public abstract class Car implements Comparable {
 	public void setConstrYear(int year){
 		this.constructionYear = year;
 	}
+	
+	// SPECIAL: BTREE SUPPORT
+	public static int transformInteger(Object value) {
+		if(value != null) {
+			int newValue = ((Car) value).getID();
+			return newValue;
+		}
+		return 0;
+	}
+	
+	public String toString(){
+		return id + "";
+	}
 }
