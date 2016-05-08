@@ -98,6 +98,11 @@ public class BTreeDeleteTests {
 		t2.delete(new Integer(44));
 		println("\n\nPOST DELETE:");
 		t2.printLevelorder();
+		println("\n\nDeleting 23");
+		t2.delete(new Integer(23));
+		println("\n\nPOST DELETE:");
+		t2.printLevelorder();
+		
 	}
 
 //	@Test
