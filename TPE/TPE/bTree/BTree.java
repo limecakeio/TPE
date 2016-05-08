@@ -859,7 +859,7 @@ public class BTree implements BTreeInterface{
 	
 	private void treatRoot(BTreeNode parent) {
 		println("Treating the root");
-		int oPos = getOffendingPosition(parent.getValues());
+		int oPos = freeSpot(root.getValues());
 		Integer leafVal = leafEquivalentValue(parent, oPos);
 		BTreeNode leaf = leafEquivalentNode(parent, oPos);
 		
@@ -880,10 +880,10 @@ public class BTree implements BTreeInterface{
 	
 	private void treatNode(BTreeNode parent) {
 		println("Treating via a node parent");
-		println("Offended position was: " + getOffendingChildPosition(parent));
-		BTreeNode child = parent.getChild(getOffendingChildPosition(parent));
-		int oPos = getOffendingPosition(child.getValues());
-		println("Offending position was: " + oPos);
+		BTreeNode child = parent.getChild(getOffendingNodePosition(parent));
+		println("Offending Child was" + getOffendingNodePosition(parent));
+		int oPos = freeSpot(child.getValues());
+		println("Offending Value position was: " + oPos);
 		
 		//See if the child is a leaf-parent so it can try to take largest value from smaller child
 		if(child.getChild(0).getChild(0) == null) {
@@ -899,23 +899,42 @@ public class BTree implements BTreeInterface{
 			}
 		}
 			
-		Integer leafVal = leafEquivalentValue(parent.getChild(oPos-1), oPos);
-		BTreeNode leaf = leafEquivalentNode(parent.getChild(oPos-1), oPos);
+		Integer leafVal = leafEquivalentValue(child, oPos);
+		BTreeNode leaf = leafEquivalentNode(child, oPos);
+		
+		println("Leaf Value was: " + Integer.transformInteger(leafVal));
 		
 		//Fill the gap with its leaf equivalent
 		child.setValue(leafVal, oPos);
 		
 		//Delete the value from its leaf
+		
 		erase(leaf, leafVal);
 		shiftValues(leaf.getValues());
 		
 		//Check the leaf
 		if(!minCheck(leaf.getValues())) {
+			if(child.getChild(0).getChild(0) != null) {
+				parent = child.getChild(oPos+1);
+				println("Who is child? " + Integer.transformInteger(child.getValue(0)));
+				println("Who is parent after first step? " + Integer.transformInteger(parent.getValue(0)));
+			
+			while(parent.getChild(0).getChild(0) != null)
+				parent = parent.getChild(0);
+			}
+			else {
 			parent = child;
+			}
+			println("Who is parent? " + Integer.transformInteger(parent.getValue(0)));
 			restructureTree(parent);
 		}
 	}
 	
+	private int getOffendingPosition(BTreeNode child) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	private void treatLeaf(BTreeNode parent) {
 		println("Treating via leaf parent");
 		
@@ -991,18 +1010,36 @@ public class BTree implements BTreeInterface{
 			//Leaf is the largest in its branch
 			else {
 				//Ensure we are not in the tree's last leaf and 
-				//replace the value with it's corresponding root value
+				//replace the value with its corresponding exchange node value
 				if(parent.getValue(0).compareTo(lastElement(root.getValues())) == -1) {
 					
-					int rPos = rootEquivalent(lastElement(child.getValues()));
+					Integer eVal;
+					//If we have m = 1, child could be empty
+					if(child.getValue(0) == null)
+						eVal = lastElement(parent.getValues());
+					else
+						eVal = lastElement(child.getValues());
+					
+					println("eVal is: " + Integer.transformInteger(eVal));
+					
+					
+					BTreeNode exchangeNode = exchangeEquivalent(eVal);
+					
+					int ePos = 0;
+					
+					//Get the position at which we are exchanging
+					while(eVal.compareTo(exchangeNode.getValue(ePos)) == 1)
+						ePos++;
+					
 					
 					//Take the root's corresponding value and add it to the end of the leaf
-					child.setValue(root.getValue(rPos), freeSpot(child.getValues()));
+					child.setValue(exchangeNode.getValue(ePos), freeSpot(child.getValues()));
 					
-					//Remove the duplicate value from the root
-					erase(root, root.getValue(rPos));
-					
-					parent = root;
+					//Set the new parent and remove the duplicate value
+					parent = getParent(exchangeNode.getValue(ePos));
+					println("What is the new parent? " + Integer.transformInteger(parent.getValue(0)));
+					erase(exchangeNode, exchangeNode.getValue(ePos));
+
 					restructureTree(parent);
 				}
 					
@@ -1044,7 +1081,6 @@ public class BTree implements BTreeInterface{
 		
 		//Update the abundant value post-rotate
 		aVal = lastElement(child.getValues());
-		println("Going cross-branch with the value: " + Integer.transformInteger(aVal));
 		
 		//Locate exchange-node to cross branches
 		BTreeNode eNode = root;
@@ -1330,9 +1366,18 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the offending position in a value array [intended for nodes]*/
-	private int getOffendingPosition(Integer[] values) {
+	private int getOffendingNodePosition(BTreeNode parent) {
+		BTreeNode child;
+		int vAmount = 0;
+		int cAmount = 0;
 		int i = 0;
-		while(values[i] != null) {
+		while(parent.getChild(i) != null) {
+			child = parent.getChild(i);
+			vAmount = valueCount(child.getValues());
+			cAmount = childCount(child);
+			if(cAmount != vAmount+1)
+				return i;
+			
 			i++;
 		}
 		return i;
@@ -1351,13 +1396,64 @@ public class BTree implements BTreeInterface{
 	}
 	
 	/**Returns the corresponding root position of a leaf*/
-	private int rootEquivalent(Integer o) {
-		for(int i = 0; i < magnitude*2; i++) {
-			if(root.getValue(i).compareTo(o) == 1) {
-				return i;
-			}
-		}
-		return -1;
+	private BTreeNode exchangeEquivalent(Integer o) {
+		//Locate exchange-node to cross branches
+				BTreeNode eNode = root;
+				boolean found = false;
+				boolean path = false;
+
+				int p = 0, pResult = 0;
+
+				while(!found) {
+					p = 0;
+					path = false;
+					
+					//Find a path to go down
+					while(!path) {
+						pResult = o.compareTo(eNode.getValue(p));
+						
+						if(eNode.getValue(p) == null)
+							path = true; //End of array, take the last path
+						else if(pResult == 1)
+							p++;
+						else if(pResult == -1)
+							path = true;
+					}
+					
+					
+					if(eNode.getValue(p) != null) {
+						int i = 0;
+						while(eNode.getChild(p).getValue(i) != null) {
+							pResult = o.compareTo(eNode.getChild(p).getValue(i));
+							if(pResult == 1) {
+								found = true;
+								i++;	
+							}
+							else if(pResult == -1) {
+							eNode = eNode.getChild(p); // Become the child
+							found = true;
+							break;
+						}
+						}
+						
+					}
+					else {
+						//For now we are the largest element, become the child
+						eNode = eNode.getChild(p);
+						
+						int i = 0;
+						while(eNode.getValue(i) != null) {
+						pResult = o.compareTo(eNode.getValue(i));
+						if(pResult == 1) {
+							i++;	
+						}	
+						else if(pResult == -1) {
+							found = true;
+						}
+						}
+					}	
+				}
+		return eNode;
 	}
 	
 	/**Returns the leaf equivalent value of a root value*/
