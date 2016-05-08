@@ -1541,12 +1541,12 @@ public class BTree implements BTreeInterface{
 			}
 			// reset
 			i = storage_2.length-(magnitude*2)-1;
-			j = 0;
+			j = (magnitude*2)-1;
 			k = 0;
 			l = 0;
 
 			// search: m+1
-			while (storage_2[i] != Integer.transformInteger(getMin())){
+			while (storage_2[i+1] != Integer.transformInteger(getMin())){
 				j = (magnitude*2)-1;
 				while (j != magnitude-1){
 
