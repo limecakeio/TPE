@@ -3,7 +3,7 @@ package bTree;
 public interface BTreeInterface {
 	
 	/** Adds an Integer value to the B-Tree.
-	 * @param Integer - A value of Integer type.
+	 * @param Object - A value of Integer type.
 	 * @param o - The name of the Integer variable.
 	 * @return -  Returns 'true' if the Integer value o has been successfully added.  
 	 */
@@ -17,14 +17,14 @@ public interface BTreeInterface {
 	boolean insert(String filename);
 	
 	/** Removes the Integer value o from the B-Tree.
-	 * @param Integer - A value of Integer type.
+	 * @param Object - A value of Integer type.
 	 * @param o - The name of the Integer variable.
 	 * @return -  Returns 'true' if the Integer value o has been successfully removed.  
 	 */
 	boolean delete(Integer o);
 	
 	/** Checks wether a specific Integer value is contained within the B-Tree.
-	 * @param Integer - A value of Integer type.
+	 * @param Object - A value of Integer type.
 	 * @param o - The name of the Integer variable.
 	 * @return - Returns 'true' if Integer o has been found withing the B-Tree.
 	 */
