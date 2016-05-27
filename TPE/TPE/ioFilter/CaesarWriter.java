@@ -22,7 +22,7 @@ public class CaesarWriter extends FilterWriter {
 
 		// Ensure we're working with a positive key
 		while (key < 0)
-			key += 26;
+			key += 58;
 		this.key = key;
 
 	}
@@ -34,7 +34,7 @@ public class CaesarWriter extends FilterWriter {
 	 *             if an error occurred during the writing process
 	 */
 	public void write(int c) throws IOException {
-		super.write(toCaesar((char) c));
+		super.write((char) toCaesar(c));
 	}
 
 	/**
@@ -63,17 +63,17 @@ public class CaesarWriter extends FilterWriter {
 	}
 
 	/**
-	 * @param Requires a char for transformation into a Caesar-encoded character.
-	 * @return Returns a Caesar-encoded character for all alphabetic and
-	 *         German-accented characters other symbols are not encoded.
-	 * @throws IOException
-	 *             if an error occurred during the writing process
+	 * @param Requires an int for transformation into a Caesar-encoded character.
+	 * @return Returns a Caesar-encoded character as an int for all alphabetic and
+	 *         German-accented characters other symbols are not encoded and remain untouched.
 	 */
-	private char toCaesar(char ce) {
+	private int toCaesar(int c) {
+		char ce = (char) c;
 		int alphaPos = getAlphaPos(ce);
 		if (alphaPos != -1)
 			ce = alphabet[(alphaPos + key) % 58];
-		return ce;
+		c = (int) ce;
+		return c;
 	}
 
 	/**
@@ -81,8 +81,6 @@ public class CaesarWriter extends FilterWriter {
 	 * @return Returns a Caesar-encoded String in which all alphabetic and
 	 *         German-accented characters are encoded. Other symbols are left
 	 *         untreated.
-	 * @throws IOException
-	 *             if an error occurred during the writing process
 	 */
 	private String toCaesar(String str) {
 		String trans = "";
