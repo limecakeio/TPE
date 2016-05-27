@@ -30,4 +30,12 @@ public class GeneralFlightSimulatorException extends Exception {
 		return "GeneralFlightSimulatorException #" + id + ": "
 				+ message;
 	}
+	
+	// GETTER & SETTER
+	public int getID(){
+		return id;
+	}
+	public String getMessage(){
+		return message;
+	}
 }

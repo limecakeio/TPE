@@ -30,5 +30,5 @@ public interface Plane {
 	 * @throws GeneralFlightSimulatorException
 	 * 			In case any problems or unexpected situations occur during the flight.  
 	 */
-	public void flyNextKilometer(int additionalHeight);
+	public void flyNextKilometer(int additionalHeight) throws GeneralFlightSimulatorException;
 }

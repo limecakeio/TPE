@@ -3,9 +3,9 @@ package planeSimulation;
 public class FlightRoute {
 	
 	// core data: flight route
-	private int length;
-	private int minHeight;
-	private int maxHeight;
+	private static int length;
+	private static int minHeight;
+	private static int maxHeight;
 	
 	// constructor: flight route
 	public FlightRoute(int length, int minHeight, int maxHeight){
@@ -14,9 +14,9 @@ public class FlightRoute {
 			// validate route: throw exception
 			validateData(length, minHeight, maxHeight);
 
-			this.length = length;
-			this.minHeight = minHeight;
-			this.maxHeight = maxHeight;
+			FlightRoute.length = length * 1000;
+			FlightRoute.minHeight = minHeight * 1000;
+			FlightRoute.maxHeight = maxHeight * 1000;
 		}
 		catch (SimulatorConfigurationException e){
 			System.err.println(e.toString());
@@ -40,23 +40,26 @@ public class FlightRoute {
 	}
 
 	// GETTER & SETTER (JIC)
-	public int getLength(){
+	public static int getLength(){
 		return length;
 	}
-	public int getMinHeight(){
+	public static int getMinHeight(){
 		return minHeight;
 	}
-	public int getMaxHeight(){
+	public static int getMaxHeight(){
 		return maxHeight;
 	}
-	public void setLength(int length){
-		this.length = length;
+	public static void setLength(int length){
+		FlightRoute.length = length * 1000;
 	}
-	public void setMinHeight(int minHeight){
-		this.minHeight = minHeight;
+	public static void setMinHeight(int minHeight){
+		FlightRoute.minHeight = minHeight * 1000;
 	}
-	public void setMaxHeight(int maxHeight){
-		this.maxHeight = maxHeight;
+	public static void setMaxHeight(int maxHeight){
+		FlightRoute.maxHeight = maxHeight * 1000;
 	}
+	
+	// ADDITIONAL METHODS
+	
 	
 }
