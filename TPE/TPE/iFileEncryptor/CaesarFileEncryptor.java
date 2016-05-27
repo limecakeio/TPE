@@ -4,6 +4,7 @@
 package iFileEncryptor;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilterWriter;
 import java.io.Writer;
 
@@ -11,12 +12,10 @@ import java.io.Writer;
  * @author Richard Vladimirskij
  *
  */
-abstract class CaesarFileEncryptor extends FilterWriter {
+public class CaesarFileEncryptor implements IFileEncryptor  {
 	private int key;
-	private char[] alphabet = generateAlphabet();
 	
-	CaesarFileEncryptor(Writer out, int key) {
-		super(out);
+	CaesarFileEncryptor(int key) {
 		// Ensure we're working with a positive key
 		while (key < 0)
 			key += 58;
@@ -24,59 +23,40 @@ abstract class CaesarFileEncryptor extends FilterWriter {
 	}
 	
 	
-	/**
-	 * @param Requires a char to check if it is an alphabetic/German-accent character or another symbol.
-	 * @return Returns the index position of the char in the alphabet map as an
-	 *         int or -1 if the char is not an alphabetic or German-accented
-	 *         character.
-	 */
-	private int getAlphaPos(char alpha) {
-		for (int i = 0; i < alphabet.length; i++) {
-			if (alphabet[i] == alpha)
-				return i;
+	public File encrypt(File sourceDirectory) throws InvalidDirectoryException {
+		File dir = sourceDirectory;
+		if(dir.isDirectory()) {
+			setupStructure(dir);
+		} else {
+			throw new InvalidDirectoryException("The File-Object you submitted is not a valid directory.");	
 		}
-		return -1;
+		
+		return sourceDirectory;
+	}
+	public File decrypt(File sourceDirectory) {
+		return sourceDirectory;
 	}
 	
-	/**
-	 * @return Returns an array of chars containing all alphabetical characters
-	 *         as well as German-accented characters arranged in upper- and
-	 *         lowercase (A,..,Z,a,..z,Ö,...,Ä,ö,...,ä).
-	 */
-	private char[] generateAlphabet() {
-		char[] alphaSet = new char[58];
-		for (int i = 0; i < alphaSet.length; i++) {
-			if (i <= 25)
-				alphaSet[i] = (char) (i + 'A');
-			else if (i <= 51)
-				alphaSet[i] = (char) (i + 'G');
-			else if (i == 52)
-				alphaSet[i] = 'Ä';
-			else if (i == 53)
-				alphaSet[i] = 'Ö';
-			else if (i == 54)
-				alphaSet[i] = 'Ü';
-			else if (i == 55)
-				alphaSet[i] = 'ä';
-			else if (i == 56)
-				alphaSet[i] = 'ö';
-			else if (i == 57)
-				alphaSet[i] = 'ü';
+	//Copies the directory structure into a sub-structure
+	private void setupStructure(File dir) {
+		//Go up a level
+		String path = dir.getAbsolutePath();
+		String newPath = "";
+		int i = path.length()-1;
+		
+		while(i > 0) {
+			if(path.charAt(i) != '\\')
+				i--;
+			else
+				break;
 		}
-		return alphaSet;
+		
+		for(int j = 0; j <= i; j++)
+			newPath += path.charAt(j);
+		
+		File newSource = new File(newPath + dir.getName() + "_temp\\");
+		System.out.println("New file is: " + newSource.getName() + " and it's located at " + newSource.getAbsolutePath());
+		
 	}
-
 	
-	/**Checks if a file is a directory or an actual file*/
-	private boolean isDirectory(File f) {
-		//TODO
-		return true;
-	}
-	
-	/**Returns an array of the directory contents*/
-	private String[] directoryContents(File f) {
-		String[] dirContents = new String[0];
-		//TODO
-		return dirContents;
-	}
 }
