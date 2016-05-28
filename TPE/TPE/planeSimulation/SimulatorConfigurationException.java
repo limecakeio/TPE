@@ -9,11 +9,14 @@ public class SimulatorConfigurationException extends Exception {
 	// constructor: default
 	public SimulatorConfigurationException(){
 		super();
+		PlaneSimulationMenu.exception_configuration++;
+		PlaneSimulationMenu.exception_total++;
 	}
 
 	// constructor: fleshed out
 	public SimulatorConfigurationException(String message){
 		PlaneSimulationMenu.exception_configuration++;
+		PlaneSimulationMenu.exception_total++;
 		this.message = message;
 	}
 

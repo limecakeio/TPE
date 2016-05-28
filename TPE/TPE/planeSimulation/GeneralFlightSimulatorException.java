@@ -10,12 +10,14 @@ public class GeneralFlightSimulatorException extends Exception {
 	public GeneralFlightSimulatorException(){
 		super();
 		PlaneSimulationMenu.exception_general++;
+		PlaneSimulationMenu.exception_total++;
 	}
 
 	// constructor: fleshed out
 	public GeneralFlightSimulatorException(String message){
 		this.message = message;
 		PlaneSimulationMenu.exception_general++;
+		PlaneSimulationMenu.exception_total++;
 	}
 
 	// AUXILIARY METHODS

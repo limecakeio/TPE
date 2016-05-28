@@ -4,12 +4,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/** 
+ * TPE 
+ * TASKSHEET #3
+ * TASK #2
+ * 
+ * @author - Richard Vladimirskij (1527970)
+ * @author - Konstantin Pelevin   (1525950)
+ * 
+ */
+
 public class PlaneSimulationMenu {
 
 	// KEEP TRACK OF EXCEPTIONS THROWN
+	public static int rounds_total = 0;
+	public static int rounds_clean = 0;
 	public static int exception_io = 0;
 	public static int exception_low = 0;
 	public static int exception_high = 0;
+	public static int exception_total = 0;
 	public static int exception_general = 0;
 	public static int exception_configuration = 0;
 	public static boolean simulation_success = false;
@@ -30,11 +43,14 @@ public class PlaneSimulationMenu {
 		String info_04 = "Maximal height allowed: ";
 		String info_05 = "Minimal height allowed: ";
 		String partition = "+-------------------------------------------------------------+";
-		String end_ex_01 = "# configuration exceptions: ";
-		String end_ex_02 = "# general simulation exceptions: ";
-		String end_ex_03 = "# plane too high exceptions: ";
-		String end_ex_04 = "# plane too low exceptions: ";
-		String end_ex_05 = "# java IO exceptions: ";
+		String end_rounds_total = "\nSimlulation rounds: ";
+		String end_rounds_clean = "Undisturbed simlulation rounds: ";
+		String end_ex_01 = "# Configuration exceptions: ";
+		String end_ex_02 = "# General simulation exceptions: ";
+		String end_ex_03 = "# Plane too high exceptions: ";
+		String end_ex_04 = "# Plane too low exceptions: ";
+		String end_ex_05 = "# Java IO exceptions: ";
+		String end_ex_06 = "\n# Exceptions: ";
 
 		// core variables
 		int command = 0;
@@ -51,6 +67,7 @@ public class PlaneSimulationMenu {
 
 		// MENU: SET FLIGHT ROUTE
 		while (!FlightRoute.set){
+			rounds_total++;
 			try {
 				System.out.println(mess_02);
 				routeLength = Integer.parseInt(cons.readLine());
@@ -63,6 +80,8 @@ public class PlaneSimulationMenu {
 			catch (IOException e){
 				System.err.println("Aww no. Concentrate, future pilot!");
 				e.printStackTrace();
+				exception_io++;
+				exception_total++;
 			}
 		}
 		System.out.println(mess_04);
@@ -70,6 +89,7 @@ public class PlaneSimulationMenu {
 
 		// MENU: MAIN LOOP
 		while(!shutdown){
+			rounds_total++;
 			try {
 				if (!shutdown && command == 0){
 
@@ -130,12 +150,15 @@ public class PlaneSimulationMenu {
 			catch (IOException e){
 				System.err.println("Aww no. Concentrate, future pilot!");
 				exception_io++;
+				exception_total++;
 			}
 		}
-		System.out.println("Your personal accomplishments!");
+		rounds_clean = rounds_total - exception_total;
+		System.out.println("\n+--- STATISTICS ---+");
+		System.out.println(end_rounds_total + rounds_total);
+		System.out.println(end_rounds_clean + rounds_clean);
 		System.out.println(mess_07 + simulation_success);
-		System.out.println("# exceptions thrown: " 
-				+ (exception_configuration + exception_general+ exception_low + exception_high + exception_io));
+		System.out.println(end_ex_06 + exception_total);
 		System.out.println(end_ex_01 + exception_configuration);
 		System.out.println(end_ex_02 + exception_general);
 		System.out.println(end_ex_03 + exception_high);

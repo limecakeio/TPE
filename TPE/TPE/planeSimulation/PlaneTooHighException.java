@@ -9,6 +9,7 @@ public class PlaneTooHighException extends GeneralFlightSimulatorException {
 
 	// constructor: default
 	public PlaneTooHighException(){
+		super();
 		height = 0;
 		maxheight = 0;
 	}
