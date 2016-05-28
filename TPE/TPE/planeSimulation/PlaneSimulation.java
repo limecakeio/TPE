@@ -3,18 +3,17 @@ package planeSimulation;
 public class PlaneSimulation implements Plane {
 
 	// core data: airplane
+	private FlightRoute route;
 	private boolean planeShut;
 	private boolean planeMoving;
-	private boolean planeFlying;
 	private boolean planeLanded;
 	private int currentHeight;
 
 	// constructor: airplane
-	public PlaneSimulation(){
-
+	public PlaneSimulation(FlightRoute route){
+		this.route = route;
 		planeShut = false;
 		planeMoving = false;
-		planeFlying = false;
 		planeLanded = true;
 		currentHeight = 0;
 	}
@@ -24,19 +23,28 @@ public class PlaneSimulation implements Plane {
 	private String err_02 = "Cannot attempt to stop the plane while flying. You'd crash!";
 	private String err_03 = "Cannot attempt to fly while the doors of the airplane are still open!";
 	private String err_04 = "Cannot attempt to change the height of the flight by more than 100 meters."
-			+ "/nSpecified change of height: ";
+			+ " Specified change of height: ";
 	private String err_05 = "Cannot attempt to fly when the flight route is over!";
+	private String err_06 = "Cannot attempt to descend below the ground level. You'd crash!";
+	private String err_07 = "Plane doors are already open!";
+	private String err_08 = "The plane is already idle!";
 
 
 	// IMPLEMENTATION METHODS
 	public void openDoors() throws GeneralFlightSimulatorException {
 		try {
-			if (!checkMoving() && checkLanded()){
-				planeShut = false;
+			if (planeShut){
+				if (!checkMoving() && checkLanded()){
+					planeShut = false;
+					PlaneSimulationMenu.simulation_success = true;
+				}
+				// throw exception: plane is moving or has not landed yet.
+				else {
+					throw new GeneralFlightSimulatorException(err_01);
+				}
 			}
-			// throw exception: plane is moving or has not landed yet.
 			else {
-				throw new GeneralFlightSimulatorException(err_01);
+				throw new GeneralFlightSimulatorException(err_07);
 			}
 		}
 		catch (GeneralFlightSimulatorException e){
@@ -50,12 +58,17 @@ public class PlaneSimulation implements Plane {
 
 	public void stop() throws GeneralFlightSimulatorException {
 		try {
-			if (planeLanded){
-				planeMoving = false;
+			if (planeMoving){
+				if (planeLanded){
+					planeMoving = false;
+				}
+				// throw exception: plane has not landed yet.
+				else {
+					throw new GeneralFlightSimulatorException(err_02);
+				}
 			}
-			// throw exception: plane has not landed yet.
 			else {
-				throw new GeneralFlightSimulatorException(err_02);
+				throw new GeneralFlightSimulatorException(err_08);
 			}
 		}
 		catch (GeneralFlightSimulatorException e){
@@ -65,7 +78,7 @@ public class PlaneSimulation implements Plane {
 
 	public void flyNextKilometer(int additionalHeight) throws GeneralFlightSimulatorException {
 		try {
-			if (FlightRoute.getLength() != 0){
+			if (route.getLength() != 0){
 				// check: doors
 				if (planeShut){
 					planeMoving = true;
@@ -77,21 +90,34 @@ public class PlaneSimulation implements Plane {
 					}
 					else {
 						// check: additional height would endanger the safe flight
-						if (currentHeight + additionalHeight > FlightRoute.getMaxHeight() && FlightRoute.getLength() < 2000){
-							throw new PlaneTooHighException(currentHeight + additionalHeight);
+						if (currentHeight + additionalHeight > route.getMaxHeight()){
+							throw new PlaneTooHighException(currentHeight, route.getMaxHeight());
 						}
-						else if (currentHeight + additionalHeight < FlightRoute.getMinHeight() && FlightRoute.getLength() > 2000){
-							throw new PlaneTooLowException(currentHeight + additionalHeight);
+						else if (currentHeight + additionalHeight < route.getMinHeight()){
+							if ((route.getFullLength()-route.getLength()) >= 2 && 
+									(route.getFullLength()+ route.getLength()) > (route.getFullLength()+2)){
+								throw new PlaneTooLowException(currentHeight, route.getMinHeight());
+							}
+							else {
+								if (currentHeight + additionalHeight < 0){
+									throw new GeneralFlightSimulatorException(err_06);
+								}
+								else {
+									// update: new stats
+									currentHeight += additionalHeight;
+									route.setLength(route.getLength()-1);
+
+									// check: airplane landed
+									if (currentHeight == 0 && route.getLength() == 0){
+										planeLanded = true;
+									}
+								}
+							}
 						}
 						else {
-							// update: new states
+							// update: new stats
 							currentHeight += additionalHeight;
-							FlightRoute.setLength(FlightRoute.getLength()-1000);
-
-							// check: airplane landed
-							if (currentHeight <= 0 && FlightRoute.getLength() == 0){
-								planeLanded = true;
-							}
+							route.setLength(route.getLength()-1);
 						}
 					}
 				}
@@ -108,7 +134,7 @@ public class PlaneSimulation implements Plane {
 			System.err.println(e.toString());
 		}	
 	}
-	
+
 	// GETTER & SETTER
 	public boolean checkDoors(){
 		return planeShut;
@@ -116,14 +142,14 @@ public class PlaneSimulation implements Plane {
 	public boolean checkMoving(){
 		return planeMoving;
 	}
-	public boolean checkFlying(){
-		return planeFlying;
-	}
 	public boolean checkLanded(){
 		return planeLanded;
 	}
 	public int checkHeight(){
 		return currentHeight;
+	}
+	public FlightRoute getFlightRoute(){
+		return route;
 	}
 
 }

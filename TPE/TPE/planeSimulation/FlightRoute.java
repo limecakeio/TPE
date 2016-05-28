@@ -1,12 +1,16 @@
 package planeSimulation;
 
 public class FlightRoute {
-	
+
+	// notify the menu when set
+	public static boolean set = false;
+
 	// core data: flight route
-	private static int length;
-	private static int minHeight;
-	private static int maxHeight;
-	
+	private int length;
+	private int fullLength;
+	private int minHeight;
+	private int maxHeight;
+
 	// constructor: flight route
 	public FlightRoute(int length, int minHeight, int maxHeight){
 		try {
@@ -14,52 +18,67 @@ public class FlightRoute {
 			// validate route: throw exception
 			validateData(length, minHeight, maxHeight);
 
-			FlightRoute.length = length * 1000;
-			FlightRoute.minHeight = minHeight * 1000;
-			FlightRoute.maxHeight = maxHeight * 1000;
+			this.length = length;
+			this.minHeight = minHeight;
+			this.maxHeight = maxHeight;
+			this.fullLength = length;
+
+			// required for the core menu
+			set = true;
 		}
 		catch (SimulatorConfigurationException e){
 			System.err.println(e.toString());
 		}
 	}
-	
+
 	// FLIGHT ROUTE VALIDATION
 	private void validateData(int length, int minHeight, int maxHeight) throws SimulatorConfigurationException {
-		if (length < 1){
-			throw new SimulatorConfigurationException(length + " is not a valid route length.");
+		if (length < 2){
+			throw new SimulatorConfigurationException(length + " km is not a valid route length.");
 		}
-		else if (length == 2 && minHeight < 0 || length > 2 && minHeight != 2){
-			throw new SimulatorConfigurationException("Minimal route height " + minHeight 
-					+ " does not match the route length.");
+		if (minHeight > 200){
+			throw new SimulatorConfigurationException("The plane cannot ascend faster than 100 meters per kilometer.");
 		}
-		else if (maxHeight < minHeight){
-			throw new SimulatorConfigurationException("Maximal route height " + maxHeight 
-					+ " cannot be inferior to the minimal route length " + minHeight);
+		if (minHeight > maxHeight){
+			throw new SimulatorConfigurationException("The minimal flight height cannot excel the maximal flight height.");
+		}
+		if (minHeight < 2 && length > 2){
+			throw new SimulatorConfigurationException("The minimal flight height cannot be lower than 2 meters!");
+		}
+		if (maxHeight < 10 && length > 2){
+			throw new SimulatorConfigurationException("The maximal flight height cannot be lower than 10 meters!");
+		}
+		if (maxHeight <= 0){
+			throw new SimulatorConfigurationException("The maximal flight height cannot be negative!");
+		}
+		if (minHeight < 0){
+			throw new SimulatorConfigurationException("The minimal flight height cannot be negative!");
 		}
 		// Future additional restrictions go here.
 	}
 
 	// GETTER & SETTER (JIC)
-	public static int getLength(){
+	public int getLength(){
 		return length;
 	}
-	public static int getMinHeight(){
+	public int getMinHeight(){
 		return minHeight;
 	}
-	public static int getMaxHeight(){
+	public int getMaxHeight(){
 		return maxHeight;
 	}
-	public static void setLength(int length){
-		FlightRoute.length = length * 1000;
+	public int getFullLength(){
+		return fullLength;
 	}
-	public static void setMinHeight(int minHeight){
-		FlightRoute.minHeight = minHeight * 1000;
+	public void setLength(int length){
+		this.length = length;
 	}
-	public static void setMaxHeight(int maxHeight){
-		FlightRoute.maxHeight = maxHeight * 1000;
+	public void setMinHeight(int minHeight){
+		this.minHeight = minHeight;
 	}
-	
-	// ADDITIONAL METHODS
-	
-	
+	public void setMaxHeight(int maxHeight){
+		this.maxHeight = maxHeight;
+	}
+
+
 }
