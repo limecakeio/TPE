@@ -4,6 +4,7 @@
 package iFileEncryptor;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Richard Vladimirskij
@@ -13,15 +14,18 @@ import java.io.File;
 public interface IFileEncryptor {
 
 	/**
-	 * @param - File Object which reflects a directory
-	 * @return - File Object of an file-directory in which all files have been encrypted
-	 * @throws InvalidDirectoryException if the File-Object submitted is not a valid directory
+	 * @return File-Object of a file-directory in which all files have been encrypted
+	 * @param File-Object of the directory which is to be encrypted
+	 * @throws InvalidDirectoryException if the File-Object submitted is not a valid directory 
+	 * @throws IOException if a problem occurred during the read/write operations.
 	 * */
-	public File encrypt(File sourceDirectory) throws InvalidDirectoryException;
+	public File encrypt(File sourceDirectory) throws InvalidDirectoryException, IOException;
 	
 	/**
-	 * @param - Requires a File Object which reflects a directory
-	 * @return - Returns a File Object of a file-directory in which all files have been decrypted
+	 * @return File Object of a file-directory in which all files have been decrypted.
+	 * @param File-Object of the directory which is to be decrypted.
+	 * @throws InvalidDirectoryException if the File-Object submitted is not a valid directory.
+	 * @throws IOException if a problem occurred during the read/write operations.
 	 * */
-	public File decrypt(File sourceDirectory);
+	public File decrypt(File sourceDirectory) throws InvalidDirectoryException, IOException;
 }

@@ -17,7 +17,7 @@ public class CaesarReader extends FilterReader {
 	 *            degree of decryption.
 	 * @return Returns a CaesarReader Object.
 	 */
-	protected CaesarReader(Reader in, int key) {
+	public CaesarReader(Reader in, int key) {
 		super(in);
 		//Ensure we're working with a positive key
 		while (key < 0) 
@@ -46,7 +46,7 @@ public class CaesarReader extends FilterReader {
 	public int read(char[] cbuf, int off, int len) throws IOException {
 		int i = off;
 		int c = 0;
-		while(ready()) {
+		while(ready() && c < cbuf.length) {
 			cbuf[i] = (char)read();
 			i++;
 			c++;
