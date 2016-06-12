@@ -12,29 +12,16 @@ public class Quicksort implements SortAlgorithm {
 	private static final String title = "\n\nSEQUENTIAL RECURSION RESULTS\n";
 	private static final String hDiv = "\n--------------------------------------------------------\n";
 	private boolean test = false;
-	private double timeCount = 0;
+	private TimerThreadQuicksort t = new TimerThreadQuicksort();
 	private int recursions = 0;
 	private int swaps = 0;
 	private int comparisons = 0;
-	private boolean complete = false;
+	protected static boolean lowerComplete = false;
+	protected static boolean upperComplete = false;
+	protected static boolean completed = false;
 
 	public Quicksort() {
-		new TimerThread();
 	}
-	
-	/**
-	 * Swaps the positions of two objects in an array [AB -> BA].
-	 * @param values - the array in which the positions are swapped.
-	 * @param x - the position of object A.
-	 * @param y - the position of object B.
-	 * */
-	private void swap(Object[] values, int x, int y){
-		Object cache = values[x];
-		values[x] = values[y];
-		values[y] = cache;
-		swaps++;
-	}
-
 
 	@SuppressWarnings("rawtypes")
 	/**
@@ -45,12 +32,19 @@ public class Quicksort implements SortAlgorithm {
 		System.out.println(title);
 		if(test)
 			System.out.println("Sequence at beginning: " + toString(values) + "Called with lower = " + 0 + " and upper = " + (values.length-1) + ".");
+		
+		
 		quicksort(values, 0, values.length-1);
+		System.out.println("Statistic comparisons are: " + (Math.log(values.length-1)*values.length-1));
+		while(comparisons < (Math.log10(values.length-1)*values.length-1)){}
+		t.interrupt();
+		
 		System.out.println("Total amount of comparisons: " + comparisons + ".");
 		System.out.println("Total amount of swaps: " + swaps + ".");
 		System.out.println("Total amount of calls: " + recursions + ".");
-		System.out.println("Sequential Quicksort completed in " + (timeCount/1000) + " seconds.");
-		complete = true;
+		
+		System.out.println("Time Count is: " + t.getTimeCount());
+		
 		System.out.println(hDiv);
 	}
 
@@ -63,6 +57,10 @@ public class Quicksort implements SortAlgorithm {
 	private void quicksort(Object[] values, int lowerLimit, int upperLimit){
 		boolean entered = false;
 		
+		if(lowerLimit >= values.length-1)
+			lowerComplete = true;
+		if(upperLimit <= 0)
+			upperComplete = true;
 		if (upperLimit > lowerLimit){
 			entered = true;
 			
@@ -77,9 +75,9 @@ public class Quicksort implements SortAlgorithm {
 			recursions++;
 			quicksort(values, i+1, upperLimit);
 		}
+		
 		if(!entered && test)
 			System.out.println("Result after recursion(" + (recursions) + ") : " + toString(values) + "Called with lower = " + lowerLimit + " and upper = " + upperLimit + "-> DID NOT ENTER");
-			
 	}
 
 	/**
@@ -138,26 +136,16 @@ public class Quicksort implements SortAlgorithm {
 		this.test = test;
 	}
 	
-	/**Counts the seconds until Quicksort finishes its procedure.*/
-	
-	
 	/**
-	 * A timer to record the time it takes from the beginning of a sort until the end in milliseconds. 
+	 * Swaps the positions of two objects in an array [AB -> BA].
+	 * @param values - the array in which the positions are swapped.
+	 * @param x - the position of object A.
+	 * @param y - the position of object B.
 	 * */
-	private class TimerThread extends Thread {
-		TimerThread() {
-			start();
-		}
-		
-		/**Sleeps a millisecond at a time and records a count*/
-		public void run() {
-			while(!Quicksort.this.complete) {
-				try {
-					sleep(1);
-					Quicksort.this.timeCount++;
-				} catch (InterruptedException e) {
-				}
-			}
-		}
+	private void swap(Object[] values, int x, int y){
+		Object cache = values[x];
+		values[x] = values[y];
+		values[y] = cache;
+		swaps++;
 	}
 }

@@ -14,16 +14,30 @@ public class ParallelQuicksort extends Thread implements SortAlgorithm {
 	private TimerThread t;
 	private static Object[] values;
 	private boolean test = false;
-	private double timeCount;
+	private static double timeCount;
 	private static int recursions;
 	private static int threads;
-	private int swaps;
-	private int comparisons;
+	private static int swaps;
+	private static int comparisons;
 	private static boolean lowerComplete = false;
 	private static boolean upperComplete = false;
+	private static boolean completed = false;
 
 	public ParallelQuicksort() {
 		t = new TimerThread();
+	}
+	
+	public void run() {
+		while(!completed){
+			try {
+				while(!lowerComplete || !upperComplete)
+					sleep(1);
+				t.interrupt();
+			} catch (InterruptedException e) {
+				
+				completed = true;
+			}
+		}
 	}
 
 
@@ -36,14 +50,8 @@ public class ParallelQuicksort extends Thread implements SortAlgorithm {
 		values = array;
 		System.out.println(title);
 		System.out.println("Initial sequence: " + toString(values));
-		quicksort(0, values.length-1);
 		
-		//For some reason an empty while-loop will not do without having something do to.
-		while(!lowerComplete || !upperComplete) {
-			System.out.print("");
-		}
-		System.out.println("Lower Complete is: " + getLowerComplete() + " | Upper Complete is: " + getUpperComplete());
-		t.interrupt();
+		quicksort(0, values.length-1);
 		
 		System.out.println("Total amount of comparisons: " + comparisons + ".");
 		System.out.println("Total amount of swaps: " + swaps + ".");
@@ -51,6 +59,7 @@ public class ParallelQuicksort extends Thread implements SortAlgorithm {
 		System.out.println("Total amount of threads: " + threads + ".");
 		System.out.println("Parallel Quicksort completed in " + (timeCount/1000) + " seconds.");
 		System.out.println(hDiv);
+		
 	}
 
 	/**
@@ -201,6 +210,7 @@ public class ParallelQuicksort extends Thread implements SortAlgorithm {
 					ParallelQuicksort.this.timeCount++;
 				} catch (InterruptedException e) {
 					cease = true;
+					ParallelQuicksort.this.interrupt();
 				}
 			}
 		}

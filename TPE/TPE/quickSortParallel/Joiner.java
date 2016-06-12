@@ -1,8 +1,15 @@
 package quickSortParallel;
 
+/**
+ * @author Konstantin Pelevin
+ * @author Richard Vladimirskij
+ * 
+ * TPE SS2016 - Joiner
+ * Joins ThreadFactory Objects for sequential execution.
+ * */
+
 public class Joiner extends Thread {
 	private ThreadFactory tf;
-	Joiner(){}
 	
 	Joiner(ThreadFactory tf){
 		this.tf = tf;
