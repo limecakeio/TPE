@@ -4,35 +4,26 @@ package quickSortParallel;
  * @author Konstantin Pelevin
  * @author Richard Vladimirskij
  * 
- * TPE SS2016 - Sequential Quicksort
- * Sorts an array of objects using the Quicksort method [sequentially].
+ * TPE SS2016 - Parallel Quicksort
+ * Sorts an array of objects using the Quicksort method [parallel, using Threads].
  * */
 
-public class Quicksort implements SortAlgorithm {
-	private static final String title = "\n\nSEQUENTIAL RECURSION RESULTS\n";
+public class ParallelQuicksort extends Thread implements SortAlgorithm {
+	private static final String title = "\n\nPARALLEL RECURSION RESULTS\n";
 	private static final String hDiv = "\n--------------------------------------------------------\n";
+	private TimerThread t;
+	private static Object[] values;
 	private boolean test = false;
-	private double timeCount = 0;
-	private int recursions = 0;
-	private int swaps = 0;
-	private int comparisons = 0;
-	private boolean complete = false;
+	private double timeCount;
+	private static int recursions;
+	private static int threads;
+	private int swaps;
+	private int comparisons;
+	private static boolean lowerComplete = false;
+	private static boolean upperComplete = false;
 
-	public Quicksort() {
-		new TimerThread();
-	}
-	
-	/**
-	 * Swaps the positions of two objects in an array [AB -> BA].
-	 * @param values - the array in which the positions are swapped.
-	 * @param x - the position of object A.
-	 * @param y - the position of object B.
-	 * */
-	private void swap(Object[] values, int x, int y){
-		Object cache = values[x];
-		values[x] = values[y];
-		values[y] = cache;
-		swaps++;
+	public ParallelQuicksort() {
+		t = new TimerThread();
 	}
 
 
@@ -41,16 +32,24 @@ public class Quicksort implements SortAlgorithm {
 	 * Sorts an array of object from smallest -> largest using the Quicksort method.
 	 * @param values - an array of objects that require sorting.
 	 * */
-	public void sort(Comparable[] values){
+	public void sort(Comparable[] array){
+		values = array;
 		System.out.println(title);
-		if(test)
-			System.out.println("Sequence at beginning: " + toString(values) + "Called with lower = " + 0 + " and upper = " + (values.length-1) + ".");
-		quicksort(values, 0, values.length-1);
+		System.out.println("Initial sequence: " + toString(values));
+		quicksort(0, values.length-1);
+		
+		//For some reason an empty while-loop will not do without having something do to.
+		while(!lowerComplete || !upperComplete) {
+			System.out.print("");
+		}
+		System.out.println("Lower Complete is: " + getLowerComplete() + " | Upper Complete is: " + getUpperComplete());
+		t.interrupt();
+		
 		System.out.println("Total amount of comparisons: " + comparisons + ".");
 		System.out.println("Total amount of swaps: " + swaps + ".");
 		System.out.println("Total amount of calls: " + recursions + ".");
-		System.out.println("Sequential Quicksort completed in " + (timeCount/1000) + " seconds.");
-		complete = true;
+		System.out.println("Total amount of threads: " + threads + ".");
+		System.out.println("Parallel Quicksort completed in " + (timeCount/1000) + " seconds.");
 		System.out.println(hDiv);
 	}
 
@@ -60,26 +59,16 @@ public class Quicksort implements SortAlgorithm {
 	 * @param lowerLimit - the beginning of the partition which requires sorting.
 	 * @param upperLimit - the end of the partition which requires sorting. 
 	 * */
-	private void quicksort(Object[] values, int lowerLimit, int upperLimit){
+	private void quicksort(int lowerLimit, int upperLimit){
 		boolean entered = false;
 		
 		if (upperLimit > lowerLimit){
 			entered = true;
-			
-			int i = partition(values, lowerLimit, upperLimit);
-			if(recursions == 0 && test)
-				System.out.println("BEFORE recursion: " + toString(values) + "Called with lower = " + lowerLimit + " and upper = " + upperLimit + " => INDEX RETURNED: " + i);
-				
-			
-			recursions++;
-			quicksort(values, lowerLimit, i-1);
-			
-			recursions++;
-			quicksort(values, i+1, upperLimit);
+			int i = partition(lowerLimit, upperLimit);
+			new Joiner(new ThreadFactory(this, lowerLimit, upperLimit, i));
 		}
 		if(!entered && test)
 			System.out.println("Result after recursion(" + (recursions) + ") : " + toString(values) + "Called with lower = " + lowerLimit + " and upper = " + upperLimit + "-> DID NOT ENTER");
-			
 	}
 
 	/**
@@ -89,7 +78,7 @@ public class Quicksort implements SortAlgorithm {
 	 * @param upperLimit - the end of the partition which requires sorting. 
 	 * */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private int partition(Object[] values, int lowerLimit, int upperLimit){
+	private int partition(int lowerLimit, int upperLimit){
 
 		int pivot = upperLimit;
 		int index = lowerLimit;
@@ -114,7 +103,7 @@ public class Quicksort implements SortAlgorithm {
 	/**
 	 * @return an Integer Object as a strong
 	 * */
-	public static String toString(Object o) {
+	public String toString(Object o) {
 		Integer i = (Integer) o;
 		return  i.getValue() + "";
 	}
@@ -122,7 +111,7 @@ public class Quicksort implements SortAlgorithm {
 	/**
 	 * @return an array of Integer-Objects as a String
 	 * */
-	public static String toString(Object[] o) {
+	public String toString(Object[] o) {
 		String result = "| ";
 		for(int i = 0; i < o.length; i++) {
 			result += toString(o[i]) + " | ";
@@ -138,26 +127,83 @@ public class Quicksort implements SortAlgorithm {
 		this.test = test;
 	}
 	
-	/**Counts the seconds until Quicksort finishes its procedure.*/
+	public void doQuicksort(int lowerLimit, int upperLimit){
+		quicksort(lowerLimit, upperLimit);
+	}
 	
+	/**
+	 * Swaps the positions of two objects in an array [AB -> BA].
+	 * @param values - the array in which the positions are swapped.
+	 * @param x - the position of object A.
+	 * @param y - the position of object B.
+	 * */
+	private void swap(Object[] values, int x, int y){
+		Object cache = values[x];
+		values[x] = values[y];
+		values[y] = cache;
+		swaps++;
+	}
+	
+	public Object[] getArray() {
+		return values;
+	}
+	
+	public int getArrayLength(){
+		return values.length;
+	}
+	
+	public void increaseRecursionCount() {
+		recursions++;
+	}
+	
+	public int getRecursionCount() {
+		return recursions;
+	}
+	
+	public void increaseThreadCount() {
+		threads++;
+	}
+	
+	public void setLowerComplete(boolean val) {
+		lowerComplete = val;
+	}
+	
+	public boolean getLowerComplete() {
+		return lowerComplete;
+	}
+	
+	public void setUpperComplete(boolean val) {
+		upperComplete = val;
+	}
+	
+	public boolean getUpperComplete() {
+		return upperComplete;
+	}
+	
+	public boolean getTest() {
+		return test;
+	}
 	
 	/**
 	 * A timer to record the time it takes from the beginning of a sort until the end in milliseconds. 
 	 * */
 	private class TimerThread extends Thread {
+		private boolean cease = false;
 		TimerThread() {
 			start();
 		}
 		
 		/**Sleeps a millisecond at a time and records a count*/
 		public void run() {
-			while(!Quicksort.this.complete) {
+			while(!cease) {
 				try {
 					sleep(1);
-					Quicksort.this.timeCount++;
+					ParallelQuicksort.this.timeCount++;
 				} catch (InterruptedException e) {
+					cease = true;
 				}
 			}
 		}
 	}
+
 }
