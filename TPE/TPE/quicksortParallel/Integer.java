@@ -1,4 +1,4 @@
-package quickSortParallel;
+package quicksortParallel;
 
 @SuppressWarnings("rawtypes")
 public class Integer implements Comparable {

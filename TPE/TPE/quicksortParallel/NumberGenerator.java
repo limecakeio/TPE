@@ -1,4 +1,4 @@
-package quickSortParallel;
+package quicksortParallel;
 
 import java.io.BufferedWriter;
 import java.io.File;

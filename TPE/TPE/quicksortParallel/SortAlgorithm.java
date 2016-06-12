@@ -1,4 +1,4 @@
-package quickSortParallel;
+package quicksortParallel;
 
 public interface SortAlgorithm {
 	

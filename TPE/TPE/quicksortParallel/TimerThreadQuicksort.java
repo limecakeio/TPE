@@ -1,4 +1,4 @@
-package quickSortParallel;
+package quicksortParallel;
 
 /**
  * @author Richard Vladimirskij, Konstantin Pelevin

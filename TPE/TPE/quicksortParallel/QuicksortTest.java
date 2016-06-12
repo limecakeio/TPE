@@ -1,4 +1,4 @@
-package quickSortParallel;
+package quicksortParallel;
 
 import static org.junit.Assert.*;
 
@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import quickSortParallel.Integer;
+import quicksortParallel.Integer;
 
 public class QuicksortTest {
 	SortAlgorithm sa;
