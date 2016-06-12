@@ -15,69 +15,68 @@ package threads;
  */
 
 class Example_DeadLock {
-	
+
 	static class Knight {
-	    private String name;
-	    
-	    // constructor: Knight
-	    public Knight(String name){
-	        this.name = name;
-	    }
-	    // throw the gauntlet: challnge another noble knight.
-	    public synchronized void throwGauntlet(Knight opponent){
-	        System.out.println("I, " + name + " hereby throw down the gauntlet to thee, " + opponent.getName() + "!");
-	        System.out.println("Respond to my challnge or taint thy honor in shame and disgrace!");
-	    }
-	    // pick up the gauntlet: respond to the challenge of another noble knight.
-	    public synchronized void pickupGauntlet(Knight opponent){
-	    	System.out.println("I, " + name + " hereby accept thy challnge, " + opponent.getName() + "!");
-	    	System.out.println("Stand and fight, " + opponent.getName() + "!");
-	    }
-	    public String getName(){
-	        return name;
-	    }
+		private String name;
+
+		// constructor: Knight
+		public Knight(String name){
+			this.name = name;
+		}
+		// throw the gauntlet: challnge another noble knight.
+		public synchronized void throwGauntlet(Knight opponent){
+			System.out.println("I, " + name + " hereby throw down the gauntlet to thee, " + opponent.getName() + "!");
+			System.out.println("Respond to my challnge or taint thy honor in shame and disgrace!");
+		}
+		// pick up the gauntlet: respond to the challenge of another noble knight.
+		public synchronized void pickupGauntlet(Knight opponent){
+			System.out.println("I, " + name + " hereby accept thy challnge, " + opponent.getName() + "!");
+			System.out.println("Stand and fight, " + opponent.getName() + "!");
+		}
+		public String getName(){
+			return name;
+		}
 	}
 	// Sir Edmund throws down the gauntlet before Sir Farlic.
 	static class EdmundsGauntlet extends Thread {
 		public void run(){
-	        synchronized (knight1){
-	        	knight1.throwGauntlet(knight2);
-	           try { 
-	        	   Thread.sleep(100); 
-	        	   }
-	           catch (InterruptedException e){}
-	           synchronized (knight2){
-	        	   knight2.pickupGauntlet(knight1);
-	           }
-	        }
+			synchronized (knight1){
+				knight1.throwGauntlet(knight2);
+				try { 
+					Thread.sleep(100); 
+				}
+				catch (InterruptedException e){}
+				synchronized (knight2){
+					knight2.pickupGauntlet(knight1);
+				}
+			}
 		}
 	}
 	// Sir Farlic throws down the gauntlet before Sir Edmund.
 	static class FarlicsGauntlet extends Thread {
 		public void run(){
-	        synchronized (knight2){
-	        	knight2.throwGauntlet(knight1);
-	           try { 
-	        	   Thread.sleep(100); 
-	           }
-	           catch (InterruptedException e){}
-	           synchronized (knight1){
-	        	   knight1.pickupGauntlet(knight2);
-	           }
-	        }
+			synchronized (knight2){
+				knight2.throwGauntlet(knight1);
+				try { 
+					Thread.sleep(100); 
+				}
+				catch (InterruptedException e){}
+				synchronized (knight1){
+					knight1.pickupGauntlet(knight2);
+				}
+			}
 		}
 	}
-	
+
 	// Noble contestants for the beautiful princess' hand
 	public static Knight knight1 = new Knight("Sir Edmund");
-    public static Knight knight2 = new Knight("Sir Farlic");
-    
-    public static void main(String[] args){
-        EdmundsGauntlet duel_01 = new EdmundsGauntlet();
-        FarlicsGauntlet duel_02 = new FarlicsGauntlet();
-        
-        duel_01.start();
-        duel_02.start();    
-    }
+	public static Knight knight2 = new Knight("Sir Farlic");
+
+	public static void main(String[] args){
+		EdmundsGauntlet duel_01 = new EdmundsGauntlet();
+		FarlicsGauntlet duel_02 = new FarlicsGauntlet();
+		duel_01.start();
+		duel_02.start();    
+	}
 }
 

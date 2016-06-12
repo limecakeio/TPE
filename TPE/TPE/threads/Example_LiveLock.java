@@ -16,7 +16,6 @@ package threads;
  */
 
 class Dragon {
-
 	private Knight challenger;	
 
 	// constructor: dragon
@@ -48,11 +47,11 @@ class Knight {
 		eager = true; 
 		this.name = name; 
 	}
-	
+
 	public void challenge(Dragon dragon, Knight knight){
 		while (eager){
-			
-			// the noble knight is not the challenger
+
+			// the noble knight is not the challenger...
 			if (dragon.getChallenger() != this) {
 				try { 
 					Thread.sleep (2500); 
@@ -65,8 +64,8 @@ class Knight {
 			// another noble knight should always face the dragon first.
 			if (knight.isEager()){
 				if (name.equals("Sir Edmund")){
-				System.out.println(name + ": " + knight.getName() + "!"
-						+ "\nThy is the honor to slay the beast most foul and mischievous!");
+					System.out.println(name + ": " + knight.getName() + "!"
+							+ "\nThy is the honor to slay the beast most foul and mischievous!");
 				}
 				if (name.equals("Sir Farlic")){
 					System.out.println(name + ": Nay, honored rival! "

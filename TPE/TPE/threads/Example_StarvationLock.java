@@ -19,17 +19,17 @@ public class Example_StarvationLock {
 
 	public static class ThePrincessHeart {
 		static String favourite;
-		
+
 		// constructor: the princess' heart
 		public ThePrincessHeart(String name){
 			favourite = name;
 		}
-		
+
 		synchronized public static void tryWinningHerHeart(String contestant){
-			
+
 			// overload the beautiful princess' heart
 			for (int i = 0; i != Integer.MAX_VALUE; i++){
-					ThePrincessHeart.setFavourite(contestant);
+				ThePrincessHeart.setFavourite(contestant);
 			}
 			System.out.println("Princess: My, " + ThePrincessHeart.getFavourite() + ", thy words are honey-sweet!");
 		}
@@ -40,14 +40,14 @@ public class Example_StarvationLock {
 			return favourite;
 		}
 	}
-	
+
 	// the noble contestants for the beautiful princess' hand
 	static String contestant1 = "Sir Prattlelot";
 	static String contestant2 = "Sir Edmund";
 	static String contestant3 = "Sir Farlic";
-	
+
 	public static void main(String[] args){
-		
+
 		System.out.println("Trying to conquer the beautiful princess' heart is a lengthy procedure."
 				+ "\nPlease wait...\n");
 		System.out.println("First off, the contestants will intoduce themselves. All of them are threads."
@@ -55,21 +55,21 @@ public class Example_StarvationLock {
 				+ "\nOnce the attention of the princess is in the posession of a contestant, all others are forced"
 				+ "\nto wait for their chance. Afterwrds another round begins, with a high probability that the same "
 				+ "\nthread will have a higher priority and access the princess' heart again.\n\n");
-		
+
 		new Thread(new Runnable(){ 
 			public void run(){
 				System.out.println(contestant1 + ": 'Tis I, " + contestant1 + ", my fair lady!");
 				while(true)
-				ThePrincessHeart.tryWinningHerHeart(contestant1); }}).start();
+					ThePrincessHeart.tryWinningHerHeart(contestant1); }}).start();
 		new Thread(new Runnable(){ 
 			public void run(){
 				System.out.println(contestant2 + ": 'Tis I, " + contestant2 + ", my fair lady!");
 				while(true)
-				ThePrincessHeart.tryWinningHerHeart(contestant2); }}).start();
+					ThePrincessHeart.tryWinningHerHeart(contestant2); }}).start();
 		new Thread(new Runnable(){ 
 			public void run(){
 				System.out.println(contestant3 + ": 'Tis I, " + contestant3 + ", my fair lady!\n");
 				while(true)
-				ThePrincessHeart.tryWinningHerHeart(contestant3); }}).start();
+					ThePrincessHeart.tryWinningHerHeart(contestant3); }}).start();
 	}
 }
