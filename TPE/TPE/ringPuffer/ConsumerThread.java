@@ -1,11 +1,16 @@
 package ringPuffer;
 
+/**
+ * @author Richard Vladimirskij, Konstantin Pelevin
+ * 
+ * ConsumerThread - reads values, written by ProducerThreads from a Ringbuffer.
+ * */
+
 public class ConsumerThread extends Thread {
 	
 	private Ringpuffer rp;
 	private TimerThread t;
 	private int sleep;
-	private boolean interrupted = false;
 	
 	public ConsumerThread(Ringpuffer rp, TimerThread t, int sleep, String name) {
 		super(name);

@@ -3,6 +3,14 @@ package ringPuffer;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * @author Richard Vladimirskij, Konstantin Pelevin
+ * 
+ * RingpufferMain - a menu to allow the setting up of a Ringbuffer run.
+ * Asks the user for the size of the Ringbuffer, the amount of Producers and consumers as well as the time the operations should last.
+ * */
+
+
 public class RingpufferMain extends Thread {
 	public static final String lineDiv = "\n------------------------------------------------------------------------------------------------------------------------------------\n";
 	public static Scanner in = new Scanner(System.in);
@@ -77,11 +85,11 @@ public class RingpufferMain extends Thread {
 				/**Start the count-down*/
 				rp.startTimer();
 				
-				/**Set up the consumers*/
+				/**Set up the consumers ensuring they all have different running times*/
 				for(int i = 0; i < cAmount; i++)
 					rp.setConsumer(i, (i+1)*2000, "CONSUMER" + (i+1));
 				
-				/**Set up the producers*/
+				/**Set up the producers ensuring they all have different running times*/
 				for(int i = 0; i < pAmount; i++)
 					rp.setProducer(i, (i+1)*1500, "PRODUCER" + (i+1));
 				

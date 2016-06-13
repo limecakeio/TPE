@@ -1,7 +1,5 @@
 package ringPuffer;
 
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,57 +42,5 @@ public class RingpufferTest {
 		r1.setProducer(1, 1000, "Producer 2");
 		r1.setProducer(2, 1000, "Producer 3");	
 	}
-//	
-//	@Test(expected = RingpufferException.class)
-//	public void testGetOneTooMany() throws RingpufferException, InterruptedException {
-//			for(int i = 0; i <= 5; i++)
-//				r1.get();
-//	}
-//	
-//	@Test(expected = RingpufferException.class)
-//	public void testPutOneTooMany() throws RingpufferException, InterruptedException {
-//			r1.put(new Integer(66));
-//	}
-//	
-//	@Test
-//	public void testRead1Add1() throws RingpufferException, InterruptedException {
-//		r1.get();
-//		r1.put(new Integer(66));
-//		String result = r1.get() + "";
-//		assertEquals("55", result);
-//		r1.get();
-//		r1.get();
-//		r1.get();
-//		result = r1.get() + "";
-//		assertEquals("66", result);	
-//	}
-//	
-//	@Test(expected = RingpufferException.class)
-//	public void testFillHalfReadHalfPlusOne() throws RingpufferException, InterruptedException {
-//		r3.get();
-//		r3.get();
-//		r3.get();
-//		r3.get();
-//	}
-//	
-//	@Test
-//	public void testAlternatingFillAndRead() throws RingpufferException, InterruptedException {
-//		r3.get();
-//		r3.get();
-//		r3.put(22);
-//		r3.put(99);
-//		r3.get();
-//		r3.get();
-//		r3.put(1);
-//		r3.put(2);
-//		r3.put(3);
-//		r3.put(4);
-//		r3.get();
-//		r3.get();
-//		r3.get();
-//		r3.get();
-//		String result = r3.get() +"";
-//		assertEquals("4", result);
-//	}
 
 }

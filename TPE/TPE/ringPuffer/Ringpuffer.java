@@ -1,5 +1,14 @@
 package ringPuffer;
 
+/**
+ * @author Richard Vladimirskij, Konstantin Pelevin
+ * 
+ * Ringpuffer - an ADT which allows writing values into a Ringbuffer.
+ * A consumer can only read already written values.
+ * Producer can only write on empty or already read fields.
+ * The ring-formation allows for continuous read/write operations.
+ * */
+
 public class Ringpuffer {
 
 private Object[] rp;
@@ -70,10 +79,9 @@ public void setProducer(int pos, int sleep, String name) {
 }
 
 public void startTimer() {
-	//TODO Turn seconds into minutes
 	t = new TimerThread(time);
 	t.start();
-	System.out.println("Timer has been started with a " + time + " countdown.");
+	System.out.println("Timer has been started with a " + time + "-minute countdown.");
 }
 
 }

@@ -2,6 +2,13 @@ package ringPuffer;
 
 import java.util.Random;
 
+/**
+ * @author Richard Vladimirskij, Konstantin Pelevin
+ * 
+ * ProducerThread - writes values into a Ringbuffer.
+ * */
+
+
 public class ProducerThread extends Thread {
 	
 	private Ringpuffer rp;
