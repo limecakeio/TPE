@@ -10,16 +10,16 @@ package quicksortParallel;
 
 
 public class ThreadFactory extends Thread {
+	private ParallelQuicksort qs;
 	private int lowerLimit;
 	private int upperLimit;
 	private int index;
-	private ParallelQuicksort qs;
 	
 	ThreadFactory(ParallelQuicksort qs, int lowerLimit, int upperLimit, int index){
+		this.qs = qs;
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.index = index;
-		this.qs = qs;
 		start();
 	}
 	

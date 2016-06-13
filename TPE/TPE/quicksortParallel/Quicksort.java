@@ -8,7 +8,7 @@ package quicksortParallel;
  * Sorts an array of objects using the Quicksort method [sequentially].
  * */
 
-public class Quicksort implements SortAlgorithm {
+public class Quicksort extends Thread implements SortAlgorithm {
 	private static final String title = "\n\nSEQUENTIAL RECURSION RESULTS\n";
 	private static final String hDiv = "\n--------------------------------------------------------\n";
 	private boolean test = false;
@@ -16,9 +16,7 @@ public class Quicksort implements SortAlgorithm {
 	private int recursions = 0;
 	private int swaps = 0;
 	private int comparisons = 0;
-	protected static boolean lowerComplete = false;
-	protected static boolean upperComplete = false;
-	protected static boolean completed = false;
+	protected boolean completed = false;
 
 	public Quicksort() {
 	}
@@ -29,23 +27,17 @@ public class Quicksort implements SortAlgorithm {
 	 * @param values - an array of objects that require sorting.
 	 * */
 	public void sort(Comparable[] values){
+
 		System.out.println(title);
 		if(test)
 			System.out.println("Sequence at beginning: " + toString(values) + "Called with lower = " + 0 + " and upper = " + (values.length-1) + ".");
-		
-		
 		quicksort(values, 0, values.length-1);
-		System.out.println("Statistic comparisons are: " + (Math.log(values.length-1)*values.length-1));
-		while(comparisons < (Math.log10(values.length-1)*values.length-1)){}
-		t.interrupt();
-		
 		System.out.println("Total amount of comparisons: " + comparisons + ".");
 		System.out.println("Total amount of swaps: " + swaps + ".");
 		System.out.println("Total amount of calls: " + recursions + ".");
-		
-		System.out.println("Time Count is: " + t.getTimeCount());
-		
+		System.out.println("Time Count is: " + (t.getTimeCount()/1000) + " seconds.");
 		System.out.println(hDiv);
+		
 	}
 
 	/**
@@ -56,11 +48,9 @@ public class Quicksort implements SortAlgorithm {
 	 * */
 	private void quicksort(Object[] values, int lowerLimit, int upperLimit){
 		boolean entered = false;
+		if (lowerLimit == values.length)
+			t.setCompleted(completed);
 		
-		if(lowerLimit >= values.length-1)
-			lowerComplete = true;
-		if(upperLimit <= 0)
-			upperComplete = true;
 		if (upperLimit > lowerLimit){
 			entered = true;
 			
@@ -71,9 +61,10 @@ public class Quicksort implements SortAlgorithm {
 			
 			recursions++;
 			quicksort(values, lowerLimit, i-1);
-			
+	
 			recursions++;
 			quicksort(values, i+1, upperLimit);
+			
 		}
 		
 		if(!entered && test)
@@ -105,7 +96,9 @@ public class Quicksort implements SortAlgorithm {
 		swap(values, index, pivot);
 		if(recursions != 0 && test)
 			System.out.println("Result after recursion(" + (recursions) + ") : " + toString(values) + "Called with lower = " + lowerLimit + " and upper = " + upperLimit + " => INDEX RETURNED: " + index);
-		
+		if((upperLimit-1) - pointer <= 0) {
+			completed = true;
+		}
 		return index;	
 	}
 	

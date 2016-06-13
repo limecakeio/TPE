@@ -6,9 +6,10 @@ package quicksortParallel;
  * */
 
 public class TimerThreadQuicksort extends Thread {
-	private int timeCount = 0;
+	private double timeCount = 0;
 	private boolean completed = false;
 	TimerThreadQuicksort() {
+		setPriority(MAX_PRIORITY);
 		start();
 	}
 	
@@ -21,11 +22,10 @@ public class TimerThreadQuicksort extends Thread {
 				completed = true;
 			}
 			timeCount++;
-			System.out.println("Time Count is: " + timeCount);
 		}
 	}
 	
-	public int getTimeCount() {
+	public double getTimeCount() {
 		return timeCount;
 	}
 	

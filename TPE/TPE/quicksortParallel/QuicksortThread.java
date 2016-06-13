@@ -12,7 +12,6 @@ public class QuicksortThread extends Thread {
 	private int lowerLimit, upperLimit;
 	private ParallelQuicksort qs;
 	
-	
 	QuicksortThread(ParallelQuicksort qs, int lowerLimit, int upperLimit, String name) {
 		super(name);
 		this.lowerLimit = lowerLimit;
@@ -22,15 +21,12 @@ public class QuicksortThread extends Thread {
 	}
 	
 	public void run() {
+		if((upperLimit - lowerLimit) > 0) {
 		qs.doQuicksort(lowerLimit, upperLimit);
-		
-		//Catch if the lower partitioning is complete
-		if(upperLimit <= 0)
-			qs.setLowerComplete(true);
-		//Catch if the upper partitioning is complete
-		if(lowerLimit >= qs.getArrayLength())
-			qs.setUpperComplete(true);
-		
 		//System.out.println(this.getName() + " Result: " + qs.toString(qs.getArray()));
+		}
+		else {
+			qs.setCompleted(true);
+		}
 	}
 }

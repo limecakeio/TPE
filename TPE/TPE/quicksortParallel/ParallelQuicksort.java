@@ -11,35 +11,18 @@ package quicksortParallel;
 public class ParallelQuicksort extends Thread implements SortAlgorithm {
 	private static final String title = "\n\nPARALLEL RECURSION RESULTS\n";
 	private static final String hDiv = "\n--------------------------------------------------------\n";
-	private TimerThread t;
-	private static Object[] values;
 	private boolean test = false;
-	private static double timeCount;
+	private TimerThreadQuicksort t;
+	private static Object[] values;
 	private static int recursions;
 	private static int threads;
-	private static int swaps;
-	private static int comparisons;
-	private static boolean lowerComplete = false;
-	private static boolean upperComplete = false;
-	private static boolean completed = false;
+	private int swaps;
+	private int comparisons;
+	private boolean completed = false;
 
 	public ParallelQuicksort() {
-		t = new TimerThread();
+		t = new TimerThreadQuicksort();
 	}
-	
-	public void run() {
-		while(!completed){
-			try {
-				while(!lowerComplete || !upperComplete)
-					sleep(1);
-				t.interrupt();
-			} catch (InterruptedException e) {
-				
-				completed = true;
-			}
-		}
-	}
-
 
 	@SuppressWarnings("rawtypes")
 	/**
@@ -48,18 +31,21 @@ public class ParallelQuicksort extends Thread implements SortAlgorithm {
 	 * */
 	public void sort(Comparable[] array){
 		values = array;
-		System.out.println(title);
-		System.out.println("Initial sequence: " + toString(values));
-		
+
 		quicksort(0, values.length-1);
 		
+		//Dirty hack -> Need advice
+		while(!completed){System.out.print("");}
+		
+		System.out.println(title);
+		System.out.println("Completed is: " +completed);
 		System.out.println("Total amount of comparisons: " + comparisons + ".");
 		System.out.println("Total amount of swaps: " + swaps + ".");
 		System.out.println("Total amount of calls: " + recursions + ".");
 		System.out.println("Total amount of threads: " + threads + ".");
-		System.out.println("Parallel Quicksort completed in " + (timeCount/1000) + " seconds.");
-		System.out.println(hDiv);
-		
+		System.out.println("Parallel Quicksort completed in " + (t.getTimeCount()/1000) + " seconds.");
+		System.out.println("Resulting sequence: " + toString(values));
+		System.out.println(hDiv);	
 	}
 
 	/**
@@ -70,7 +56,6 @@ public class ParallelQuicksort extends Thread implements SortAlgorithm {
 	 * */
 	private void quicksort(int lowerLimit, int upperLimit){
 		boolean entered = false;
-		
 		if (upperLimit > lowerLimit){
 			entered = true;
 			int i = partition(lowerLimit, upperLimit);
@@ -173,47 +158,11 @@ public class ParallelQuicksort extends Thread implements SortAlgorithm {
 		threads++;
 	}
 	
-	public void setLowerComplete(boolean val) {
-		lowerComplete = val;
-	}
-	
-	public boolean getLowerComplete() {
-		return lowerComplete;
-	}
-	
-	public void setUpperComplete(boolean val) {
-		upperComplete = val;
-	}
-	
-	public boolean getUpperComplete() {
-		return upperComplete;
-	}
-	
 	public boolean getTest() {
 		return test;
 	}
 	
-	/**
-	 * A timer to record the time it takes from the beginning of a sort until the end in milliseconds. 
-	 * */
-	private class TimerThread extends Thread {
-		private boolean cease = false;
-		TimerThread() {
-			start();
-		}
-		
-		/**Sleeps a millisecond at a time and records a count*/
-		public void run() {
-			while(!cease) {
-				try {
-					sleep(1);
-					ParallelQuicksort.this.timeCount++;
-				} catch (InterruptedException e) {
-					cease = true;
-					ParallelQuicksort.this.interrupt();
-				}
-			}
-		}
+	public void setCompleted(boolean val) {
+		this.completed = val;
 	}
-
 }
